@@ -54,7 +54,7 @@ public class LoginActivity extends AppCompatActivity
 	@Override
 	public void onClick(@NonNull View view) {
 		if (view.getId() == mButtonAutenticacao.getId()) {
-			Teclado.ocultar(LoginActivity.this, view);
+			Teclado.ocultar(this, view);
 			exibirBarraDeProgresso();
 			mLoginDTO = iterarFormulario();
 			consumirToken(mLoginDTO);
@@ -125,7 +125,7 @@ public class LoginActivity extends AppCompatActivity
 			return;
 		}
 		Intent intentDashboard =
-				new Intent(LoginActivity.this, DashboardActivity.class);
+				new Intent(this, DashboardActivity.class);
 		startActivity(intentDashboard);
 		finish();
 	}
