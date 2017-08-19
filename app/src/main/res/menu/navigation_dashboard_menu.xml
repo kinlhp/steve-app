@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?><!-- @menu/navigation_dashboard_menu.xml -->
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation_dashboard_menu"
+    tools:showIn="@layout/activity_dashboard">
+
+    <item
+        android:id="@+id/item_lancamento"
+        android:title="@string/dashboard_item_lancamento">
+
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/subitem_condicao_pagamento"
+                    android:icon="@drawable/ic_condicao_pagamento_black_24dp"
+                    android:title="@string/dashboard_subitem_condicao_pagamento" />
+
+                <item
+                    android:id="@+id/subitem_conta_pagar"
+                    android:icon="@drawable/ic_conta_pagar_black_24dp"
+                    android:title="@string/dashboard_subitem_conta_pagar" />
+
+                <item
+                    android:id="@+id/subitem_conta_receber"
+                    android:icon="@drawable/ic_conta_receber_black_24dp"
+                    android:title="@string/dashboard_subitem_conta_receber" />
+
+                <item
+                    android:id="@+id/subitem_forma_pagamento"
+                    android:icon="@drawable/ic_forma_pagamento_black_24dp"
+                    android:title="@string/dashboard_subitem_forma_pagamento" />
+
+                <item
+                    android:id="@+id/subitem_ordem_servico"
+                    android:icon="@drawable/ic_ordem_servico_black_24dp"
+                    android:title="@string/dashboard_subitem_ordem_servico" />
+
+                <item
+                    android:id="@+id/subitem_pessoa"
+                    android:icon="@drawable/ic_pessoa_black_24dp"
+                    android:title="@string/dashboard_subitem_pessoa" />
+
+                <item
+                    android:id="@+id/subitem_servico"
+                    android:icon="@drawable/ic_servico_black_24dp"
+                    android:title="@string/dashboard_subitem_servico" />
+            </group>
+        </menu>
+    </item>
+
+    <item
+        android:id="@+id/item_gerenciamento"
+        android:title="@string/dashboard_item_gerenciamento">
+
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/subitem_relatorio"
+                    android:icon="@drawable/ic_relatorio_black_24dp"
+                    android:title="@string/dashboard_subitem_relatorio" />
+            </group>
+        </menu>
+    </item>
+
+    <item
+        android:id="@+id/item_seguranca"
+        android:title="@string/dashboard_item_segurança">
+
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/subitem_senha"
+                    android:icon="@drawable/ic_senha_black_24dp"
+                    android:title="@string/dashboard_subitem_senha" />
+
+                <item
+                    android:id="@+id/subitem_credencial"
+                    android:icon="@drawable/ic_credencial_black_24dp"
+                    android:title="@string/dashboard_subitem_credencial" />
+            </group>
+        </menu>
+    </item>
+</menu>

@@ -1,6 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?><!-- @values/colors.xml -->
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <!-- app wide -->
+    <color name="accent">@android:color/darker_gray</color>
+    <color name="primary">#009688</color>
+    <color name="primary_dark">#00695C</color>
+    <!-- ic_login -->
+    <color name="ic_login">#FFFFFF</color>
+    <color name="ic_login_background">#26A69A</color>
+    <color name="ic_login_background_pressed">#8826A69A</color>
 </resources>

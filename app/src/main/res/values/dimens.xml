@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?><!-- @values/dimens.xml -->
+<resources>
+    <!-- activity -->
+    <dimen name="activity_margin_horizontal">16dp</dimen>
+    <dimen name="activity_margin_vertical">16dp</dimen>
+    <!-- button -->
+    <dimen name="button_round_background">50dp</dimen>
+    <dimen name="button_round_margin">8dp</dimen>
+    <dimen name="button_round_marginBottom">16dp</dimen>
+    <dimen name="button_round_marginTop">16dp</dimen>
+    <dimen name="button_round_padding">16dp</dimen>
+    <!-- input -->
+    <dimen name="input_layout_margin">8dp</dimen>
+    <dimen name="input_layout_marginTop">16dp</dimen>
+    <!-- navigation -->
+    <dimen name="navigation_header_spacing_vertical">8dp</dimen>
+    <dimen name="navigation_header_height">176dp</dimen>
+</resources>

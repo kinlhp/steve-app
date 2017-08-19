@@ -1,4 +1,34 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?><!-- @values/strings.xml -->
 <resources>
+    <!-- app wide -->
+    <string name="action_settings">Configurações</string>
     <string name="app_name">Steve</string>
+    <string name="input_invalido">Campo inválido</string>
+    <string name="input_obrigatorio">Campo obrigatório</string>
+    <!-- dashboard -->
+    <string name="dashboard_abrir">Abrir dashboard</string>
+    <string name="dashboard_fechar">Fechar dashboard</string>
+    <string name="dashboard_header_image_description">Steve</string>
+    <string name="dashboard_item_gerenciamento">Gerenciamento</string>
+    <string name="dashboard_item_lancamento">Lançamento</string>
+    <string name="dashboard_item_segurança">Segurança</string>
+    <string name="dashboard_subitem_condicao_pagamento">Condição de pagamento</string>
+    <string name="dashboard_subitem_conta_pagar">Conta a pagar</string>
+    <string name="dashboard_subitem_conta_receber">Conta a receber</string>
+    <string name="dashboard_subitem_credencial">Credencial</string>
+    <string name="dashboard_subitem_forma_pagamento">Forma de pagamento</string>
+    <string name="dashboard_subitem_ordem_servico">Ordem de serviço</string>
+    <string name="dashboard_subitem_pessoa">Pessoa</string>
+    <string name="dashboard_subitem_relatorio">Relatório</string>
+    <string name="dashboard_subitem_senha">Alterar senha</string>
+    <string name="dashboard_subitem_servico">Serviço</string>
+    <string name="dashboard_title">Dashboard</string>
+    <!-- login -->
+    <string name="login_input_senha_hint">Senha</string>
+    <string name="login_input_usuario_hint">Usuário</string>
+    <string name="login_message_usuario_inativo">%s, seu usuário está inativo</string>
+    <string name="login_title">Login</string>
+    <!-- suporte -->
+    <string name="suporte_criptografia_senha">[suporte] Não foi possível criptografar senha</string>
+    <string name="suporte_label_email">suporte@steve.kinlhp.com</string>
 </resources>
