@@ -33,7 +33,7 @@ dependencies {
         exclude module: 'okhttp3'
     }
 //    lombok
-//    lombok requer pacote java.annotation
+//    lombok requer pacote javax.annotation
     annotationProcessor 'org.projectlombok:lombok:1.16.18'
     compileOnly 'org.glassfish:javax.annotation:3.1.1'
     compileOnly 'org.projectlombok:lombok:1.16.18'
