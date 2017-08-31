@@ -6,14 +6,16 @@ import com.kinlhp.steve.links.PessoaDTOLinks;
 import java.util.Date;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 /**
  * Created by kin on 8/15/17.
  */
+@Builder
 @Getter
 public class PessoaDTO extends DTO {
-	private static final long serialVersionUID = -8812673431932202280L;
+	private static final long serialVersionUID = -8154757587740650296L;
 
 	@SerializedName(value = "aberturaNascimento")
 	private Date aberturaNascimento;
@@ -33,6 +35,7 @@ public class PessoaDTO extends DTO {
 	@SerializedName(value = "nomeRazao")
 	private String nomeRazao;
 
+	@Builder.Default
 	@SerializedName(value = "perfilCliente")
 	private boolean perfilCliente = true;
 
@@ -45,6 +48,7 @@ public class PessoaDTO extends DTO {
 	@SerializedName(value = "perfilUsuario")
 	private boolean perfilUsuario;
 
+	@Builder.Default
 	@SerializedName(value = "situacao")
 	private SituacaoDTO situacao = SituacaoDTO.ATIVO;
 

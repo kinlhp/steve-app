@@ -22,9 +22,11 @@ public class Credencial extends Dominio<BigInteger> {
 	private static final long serialVersionUID = 5955384050527593134L;
 	private Pessoa funcionario;
 	private boolean perfilAdministrador;
+	@Builder.Default
 	private boolean perfilPadrao = true;
 	private boolean perfilSistema;
 	private String senha;
+	@Builder.Default
 	private Situacao situacao = Situacao.ATIVO;
 	private String usuario;
 

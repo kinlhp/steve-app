@@ -1,5 +1,6 @@
 package com.kinlhp.steve.atividade;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -38,18 +39,20 @@ public class DashboardActivity extends AppCompatActivity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_dashboard);
 
-		mDrawerLayout = findViewById(R.id.activity_dashboard);
 		NavigationView navigationView = findViewById(R.id.navigation_dashboard);
 		Toolbar toolbar = findViewById(R.id.toolbar_dashboard);
+		mDrawerLayout = findViewById(R.id.activity_dashboard);
 
 		setSupportActionBar(toolbar);
 
 		ActionBarDrawerToggle toggle =
-				new ActionBarDrawerToggle(DashboardActivity.this, mDrawerLayout, toolbar, R.string.dashboard_abrir, R.string.dashboard_fechar);
+				new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, R.string.dashboard_abrir, R.string.dashboard_fechar);
 		mDrawerLayout.addDrawerListener(toggle);
 		toggle.syncState();
 
 		navigationView.setNavigationItemSelectedListener(this);
+
+		dizerOla();
 	}
 
 	@Override
@@ -62,9 +65,9 @@ public class DashboardActivity extends AppCompatActivity
 	@Override
 	public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 		switch (item.getItemId()) {
-			default:
-				Toast.makeText(DashboardActivity.this, "Implementar", Toast.LENGTH_SHORT)
-						.show();
+			case R.id.subitem_pessoa:
+				iniciarPessoa();
+				break;
 		}
 		ocultarDashboard();
 		return true;
@@ -75,27 +78,36 @@ public class DashboardActivity extends AppCompatActivity
 		// Handle action bar item clicks here. The action bar will
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
-		if (item.getItemId() == R.id.action_configuracao) {
-			Toast.makeText(DashboardActivity.this, "Implementar", Toast.LENGTH_SHORT)
-					.show();
-			return true;
+		switch (item.getItemId()) {
+			case R.id.action_configuracao:
+				Toast.makeText(this, "Implementar", Toast.LENGTH_SHORT).show();
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
 		}
-		return super.onOptionsItemSelected(item);
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
 		exibirDashboard();
+	}
+
+	private void dizerOla() {
 		Credencial credencial = (Credencial) Parametro
 				.get(Parametro.Chave.CREDENCIAL);
 		String mensagem = "Olá " + credencial.getFuncionario().getNomeRazao();
-		Toast.makeText(DashboardActivity.this, mensagem, Toast.LENGTH_SHORT)
-				.show();
+		Toast.makeText(this, mensagem, Toast.LENGTH_SHORT).show();
 	}
 
 	private void exibirDashboard() {
 		mDrawerLayout.openDrawer(GravityCompat.START);
+	}
+
+	private void iniciarPessoa() {
+		Intent intentDashboard =
+				new Intent(this, PessoaCadastroActivity.class);
+		startActivityForResult(intentDashboard, 0);
 	}
 
 	private void ocultarDashboard() {

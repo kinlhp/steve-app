@@ -20,8 +20,10 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 public abstract class Requisicao implements Serializable {
 	public static final String AUTHORIZATION_HEADER = "Authorization";
-	private static final long serialVersionUID = 4451170280894402152L;
-	private static final String URL_BASE = "http://<IP>:<PORT>/<CONTEXT>/";
+	public static final String LOCATION_HEADER = "Location";
+	private static final long serialVersionUID = 5161316211256030915L;
+	private static final String URL_BASE = Parametro
+			.get(Parametro.Chave.URL_BASE).toString();
 	private static final Gson gson = new GsonBuilder()
 			.setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").create();
 	private static Retrofit.Builder retrofitBuilder = new Retrofit.Builder()

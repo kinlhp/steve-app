@@ -1,16 +1,19 @@
 package com.kinlhp.steve.requisicao;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
+import com.kinlhp.steve.R;
 import com.kinlhp.steve.dto.ErroDTO;
 
-import java.io.IOException;
 import java.io.Serializable;
+import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 
 import okhttp3.ResponseBody;
@@ -21,40 +24,89 @@ import retrofit2.Response;
  */
 public final class Falha implements Serializable {
 	private static final long serialVersionUID = -8324750503500699538L;
-	private static final String CONEXAO = "estabelecer conexão com servidor";
-	private static final String DESSERIALIZACAO = "desserializar dados";
-	private static final String INCONSISTENCIA = "identificar inconsistência";
-	private static final String SUPORTE = "[suporte] Não foi possível %s";
-	private static final String TEMPO_EXCEDIDO = "Tempo limite de conexão com servidor excedido";
 
 	private Falha() {
 	}
 
-	public static void tratar(@NonNull View view, @NonNull Response resposta) {
-		String mensagem = String.format(SUPORTE, INCONSISTENCIA);
-		ResponseBody corpo = resposta.errorBody();
-		if (corpo != null) {
-			try {
-				ErroDTO dto = new Gson()
-						.fromJson(corpo.string(), ErroDTO.class);
-				mensagem = dto.getMensagem();
-			} catch (IOException e) {
-				e.printStackTrace();
+	private static View.OnClickListener acaoClickListener(@NonNull final Context contexto,
+	                                                      @NonNull final ErroDTO erro) {
+		return new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				new AlertDialog.Builder(contexto)
+						.setIcon(android.R.drawable.ic_dialog_info)
+						.setMessage(erro.getMensagem())
+						.show();
 			}
+		};
+	}
+
+	private static void exibirMensagem(@NonNull View view,
+	                                   @NonNull String mensagem,
+	                                   @Nullable ErroDTO erro) {
+		final Context contexto = view.getContext();
+		Snackbar snackbar = Snackbar.make(view, mensagem, Snackbar.LENGTH_LONG);
+		if (erro != null) {
+			// TODO: 8/26/17 parametrizar tempo padrão
+			snackbar.setDuration(5000);
+			snackbar.setAction(contexto.getString(R.string.resposta_mensagem_label_acao), acaoClickListener(contexto, erro));
 		}
-		Snackbar.make(view, mensagem, Snackbar.LENGTH_LONG).show();
+		snackbar.show();
+	}
+
+	private static ErroDTO obterDTO(@Nullable ResponseBody corpo) {
+		try {
+			return new Gson().fromJson(corpo.string(), ErroDTO.class);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public static void tratar(@NonNull View view, @NonNull Response resposta) {
+		Context contexto = view.getContext();
+		String mensagem;
+		ErroDTO erro = null;
+		switch (resposta.code()) {
+			case HttpURLConnection.HTTP_BAD_REQUEST:
+				mensagem = contexto
+						.getString(R.string.resposta_mensagem_bad_request);
+				erro = obterDTO(resposta.errorBody());
+				break;
+			case HttpURLConnection.HTTP_CONFLICT:
+				mensagem = contexto
+						.getString(R.string.resposta_mensagem_conflict);
+				erro = obterDTO(resposta.errorBody());
+				break;
+			case HttpURLConnection.HTTP_NOT_FOUND:
+				mensagem = contexto
+						.getString(R.string.resposta_mensagem_not_found);
+				break;
+			case HttpURLConnection.HTTP_UNAUTHORIZED:
+				mensagem = contexto
+						.getString(R.string.resposta_mensagem_unauthorized);
+				erro = obterDTO(resposta.errorBody());
+				break;
+			default:
+				mensagem = contexto
+						.getString(R.string.suporte_mensagem_nao_identificado);
+		}
+		exibirMensagem(view, mensagem, erro);
 	}
 
 	public static void tratar(@NonNull View view, @Nullable Throwable causa) {
-		String mensagem = String.format(SUPORTE, CONEXAO);
+		Context contexto = view.getContext();
+		String mensagem = contexto.getString(R.string.suporte_mensagem_conexao);
 		if (causa != null) {
 			causa.printStackTrace();
 			if (causa instanceof SocketTimeoutException) {
-				mensagem = TEMPO_EXCEDIDO;
+				mensagem = contexto
+						.getString(R.string.resposta_mensagem_timeout);
 			} else if (causa instanceof JsonParseException) {
-				mensagem = String.format(SUPORTE, DESSERIALIZACAO);
+				mensagem = contexto
+						.getString(R.string.suporte_mensagem_desserializacao);
 			}
 		}
-		Snackbar.make(view, mensagem, Snackbar.LENGTH_LONG).show();
+		exibirMensagem(view, mensagem, null);
 	}
 }

@@ -28,8 +28,10 @@ public class Endereco extends Dominio<BigInteger> {
 	private Integer ibge;
 	private String logradouro;
 	private String nomeContato;
+	@Builder.Default
 	private String numero = "s.n.º";
 	private Pessoa pessoa;
+	@Builder.Default
 	private Tipo tipo = Tipo.PRINCIPAL;
 	private Uf uf;
 

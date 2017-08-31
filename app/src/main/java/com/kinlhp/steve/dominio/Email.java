@@ -23,6 +23,7 @@ public class Email extends Dominio<BigInteger> {
 	private String enderecoEletronico;
 	private String nomeContato;
 	private Pessoa pessoa;
+	@Builder.Default
 	private Tipo tipo = Tipo.PRINCIPAL;
 
 	@AllArgsConstructor

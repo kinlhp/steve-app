@@ -4,8 +4,4 @@
     <color name="accent">@android:color/darker_gray</color>
     <color name="primary">#009688</color>
     <color name="primary_dark">#00695C</color>
-    <!-- ic_login -->
-    <color name="ic_login">#FFFFFF</color>
-    <color name="ic_login_background">#26A69A</color>
-    <color name="ic_login_background_pressed">#8826A69A</color>
 </resources>

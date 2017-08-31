@@ -2,6 +2,7 @@ package com.kinlhp.steve.dominio;
 
 import java.math.BigInteger;
 import java.util.Date;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import lombok.AllArgsConstructor;
@@ -24,17 +25,22 @@ public class Pessoa extends Dominio<BigInteger> {
 	private static final long serialVersionUID = -8399368200365254075L;
 	private Date aberturaNascimento;
 	private String cnpjCpf;
-	private Set<Email> emails;
-	private Set<Endereco> enderecos;
+	@Builder.Default
+	private Set<Email> emails = new LinkedHashSet<>();
+	@Builder.Default
+	private Set<Endereco> enderecos = new LinkedHashSet<>();
 	private String fantasiaSobrenome;
 	private String ieRg;
 	private String nomeRazao;
+	@Builder.Default
 	private boolean perfilCliente = true;
 	private boolean perfilFornecedor;
 	private boolean perfilTransportador;
 	private boolean perfilUsuario;
+	@Builder.Default
 	private Situacao situacao = Situacao.ATIVO;
-	private Set<Telefone> telefones;
+	@Builder.Default
+	private Set<Telefone> telefones = new LinkedHashSet<>();
 	private Tipo tipo;
 
 	@AllArgsConstructor
@@ -54,5 +60,10 @@ public class Pessoa extends Dominio<BigInteger> {
 		SISTEMA("Sistema");
 
 		private final String descricao;
+
+		@Override
+		public String toString() {
+			return getDescricao();
+		}
 	}
 }

@@ -13,12 +13,13 @@ import java.math.BigInteger;
  * Created by kin on 8/15/17.
  */
 public final class PessoaMapeamento implements Serializable {
-	private static final long serialVersionUID = 9159284225891663601L;
+	private static final long serialVersionUID = -609620088793129086L;
 
 	private PessoaMapeamento() {
 	}
 
-	public static Pessoa deDTO(@NonNull PessoaDTO dto) {
+	@NonNull
+	public static Pessoa paraDominio(@NonNull PessoaDTO dto) {
 		final Pessoa dominio = Pessoa.builder()
 				.aberturaNascimento(dto.getAberturaNascimento())
 				.cnpjCpf(dto.getCnpjCpf())
@@ -36,6 +37,22 @@ public final class PessoaMapeamento implements Serializable {
 		dominio.setDataCriacao(dto.getDataCriacao());
 		dominio.setId(obterId(dto.getLinks().getSelf()));
 		return dominio;
+	}
+
+	public static PessoaDTO paraDTO(@NonNull Pessoa dominio) {
+		return PessoaDTO.builder()
+				.aberturaNascimento(dominio.getAberturaNascimento())
+				.cnpjCpf(dominio.getCnpjCpf())
+				.fantasiaSobrenome(dominio.getFantasiaSobrenome())
+				.ieRg(dominio.getIeRg())
+				.nomeRazao(dominio.getNomeRazao())
+				.perfilCliente(dominio.isPerfilCliente())
+				.perfilFornecedor(dominio.isPerfilFornecedor())
+				.perfilTransportador(dominio.isPerfilTransportador())
+				.perfilUsuario(dominio.isPerfilUsuario())
+				.situacao(PessoaDTO.SituacaoDTO.valueOf(dominio.getSituacao().name()))
+				.tipo(PessoaDTO.TipoDTO.valueOf(dominio.getTipo().name()))
+				.build();
 	}
 
 	private static BigInteger obterId(@NonNull HRef self) {

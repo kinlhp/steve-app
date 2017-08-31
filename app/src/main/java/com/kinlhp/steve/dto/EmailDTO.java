@@ -4,14 +4,16 @@ import com.google.gson.annotations.SerializedName;
 import com.kinlhp.steve.links.EmailDTOLinks;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 /**
  * Created by kin on 8/16/17.
  */
+@Builder
 @Getter
 public class EmailDTO extends DTO {
-	private static final long serialVersionUID = 3348452946558232706L;
+	private static final long serialVersionUID = -967187571457231789L;
 
 	@SerializedName(value = "enderecoEletronico")
 	private String enderecoEletronico;
@@ -21,6 +23,9 @@ public class EmailDTO extends DTO {
 
 	@SerializedName(value = "nomeContato")
 	private String nomeContato;
+
+	@SerializedName(value = "pessoa")
+	private String pessoa;
 
 	@SerializedName(value = "tipo")
 	private TipoDTO tipo = TipoDTO.PRINCIPAL;

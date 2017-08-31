@@ -4,14 +4,24 @@ import com.google.gson.annotations.SerializedName;
 import com.kinlhp.steve.dto.DTO;
 
 import java.io.Serializable;
+import java.util.LinkedHashSet;
 import java.util.Set;
+
+import lombok.Getter;
 
 /**
  * Created by kin on 8/14/17.
  */
-class Embedded<T extends DTO> implements Serializable {
-	private static final long serialVersionUID = -4420701579771723572L;
+@Getter
+public class Embedded<T extends DTO> implements Serializable {
+	private static final long serialVersionUID = -2983676878419872080L;
 
-	@SerializedName(alternate = {"credenciais"}, value = "dtos")
-	private Set<T> dtos;
+	@SerializedName(
+			alternate = {
+					"credenciais", "emails", "enderecos", "pessoas",
+					"telefones", "ufs"
+			},
+			value = "dtos"
+	)
+	private Set<T> dtos = new LinkedHashSet<>();
 }

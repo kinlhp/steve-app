@@ -23,6 +23,7 @@ public class Telefone extends Dominio<BigInteger> {
 	private String nomeContato;
 	private String numero;
 	private Pessoa pessoa;
+	@Builder.Default
 	private Tipo tipo = Tipo.PRINCIPAL;
 
 	@AllArgsConstructor

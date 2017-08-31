@@ -4,14 +4,16 @@ import com.google.gson.annotations.SerializedName;
 import com.kinlhp.steve.links.EnderecoDTOLinks;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 /**
  * Created by kin on 8/16/17.
  */
+@Builder
 @Getter
 public class EnderecoDTO extends DTO {
-	private static final long serialVersionUID = -3957576172168130815L;
+	private static final long serialVersionUID = 3955029816275248266L;
 
 	@SerializedName(value = "bairro")
 	private String bairro;
@@ -37,6 +39,9 @@ public class EnderecoDTO extends DTO {
 	@SerializedName(value = "logradouro")
 	private String logradouro;
 
+	@SerializedName(value = "pessoa")
+	private String pessoa;
+
 	@SerializedName(value = "nomeContato")
 	private String nomeContato;
 
@@ -45,6 +50,9 @@ public class EnderecoDTO extends DTO {
 
 	@SerializedName(value = "tipo")
 	private TipoDTO tipo = TipoDTO.PRINCIPAL;
+
+	@SerializedName(value = "uf")
+	private String uf;
 
 	@AllArgsConstructor
 	@Getter

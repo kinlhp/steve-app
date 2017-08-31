@@ -13,12 +13,13 @@ import java.math.BigInteger;
  * Created by kin on 8/14/17.
  */
 public final class CredencialMapeamento implements Serializable {
-	private static final long serialVersionUID = -274704428741036210L;
+	private static final long serialVersionUID = 216067991557361739L;
 
 	private CredencialMapeamento() {
 	}
 
-	public static Credencial deDTO(@NonNull CredencialDTO dto) {
+	@NonNull
+	public static Credencial paraDominio(@NonNull CredencialDTO dto) {
 		final Credencial dominio = Credencial.builder()
 				.perfilAdministrador(dto.isPerfilAdministrador())
 				.perfilPadrao(dto.isPerfilPadrao())

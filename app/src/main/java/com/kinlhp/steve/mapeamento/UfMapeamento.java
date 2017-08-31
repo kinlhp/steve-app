@@ -13,12 +13,13 @@ import java.math.BigInteger;
  * Created by kin on 8/14/17.
  */
 public final class UfMapeamento implements Serializable {
-	private static final long serialVersionUID = 528608315121505588L;
+	private static final long serialVersionUID = 8010087293382692431L;
 
 	private UfMapeamento() {
 	}
 
-	public static Uf deDTO(@NonNull UfDTO dto) {
+	@NonNull
+	public static Uf paraDominio(@NonNull UfDTO dto) {
 		final Uf dominio = Uf.builder()
 				.ibge(dto.getIbge())
 				.nome(dto.getNome())

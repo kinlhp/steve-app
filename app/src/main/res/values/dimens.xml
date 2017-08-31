@@ -1,18 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?><!-- @values/dimens.xml -->
 <resources>
     <!-- activity -->
-    <dimen name="activity_margin_horizontal">16dp</dimen>
-    <dimen name="activity_margin_vertical">16dp</dimen>
+    <dimen name="activity_padding">16dp</dimen>
+    <dimen name="first_view_marginTop">16dp</dimen>
+    <dimen name="last_view_marginBottom">16dp</dimen>
     <!-- button -->
-    <dimen name="button_round_background">50dp</dimen>
-    <dimen name="button_round_margin">8dp</dimen>
-    <dimen name="button_round_marginBottom">16dp</dimen>
-    <dimen name="button_round_marginTop">16dp</dimen>
-    <dimen name="button_round_padding">16dp</dimen>
+    <dimen name="button_margin">16dp</dimen>
+    <dimen name="button_height">48dp</dimen>
+    <dimen name="floating_action_button_margin">16dp</dimen>
+    <dimen name="floating_action_button_height">56dp</dimen>
+    <dimen name="floating_action_button_width">56dp</dimen>
+    <dimen name="round_button_corners_radius">24dp</dimen>
+    <dimen name="round_button_height">48dp</dimen>
+    <dimen name="round_button_padding">12dp</dimen>
+    <dimen name="round_button_width">48dp</dimen>
     <!-- input -->
-    <dimen name="input_layout_margin">8dp</dimen>
-    <dimen name="input_layout_marginTop">16dp</dimen>
+    <dimen name="input_margin">16dp</dimen>
+    <dimen name="input_textSize">18sp</dimen>
+    <!-- label -->
+    <dimen name="label_margin">16dp</dimen>
+    <dimen name="label_textSize">12sp</dimen>
     <!-- navigation -->
     <dimen name="navigation_header_spacing_vertical">8dp</dimen>
     <dimen name="navigation_header_height">176dp</dimen>
+    <!-- spinner -->
+    <dimen name="spinner_margin">16dp</dimen>
+    <!-- switch -->
+    <dimen name="switch_margin">16dp</dimen>
+    <dimen name="switch_textSize">18sp</dimen>
 </resources>

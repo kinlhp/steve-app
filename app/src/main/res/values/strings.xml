@@ -2,13 +2,12 @@
 <resources>
     <!-- app wide -->
     <string name="action_settings">Configurações</string>
-    <string name="app_name">Steve</string>
-    <string name="input_invalido">Campo inválido</string>
-    <string name="input_obrigatorio">Campo obrigatório</string>
+    <string name="app_name">Steve App</string>
     <!-- dashboard -->
     <string name="dashboard_abrir">Abrir dashboard</string>
     <string name="dashboard_fechar">Fechar dashboard</string>
-    <string name="dashboard_header_image_description">Steve</string>
+    <string name="dashboard_header_email">@string/suporte_label_email_contato</string>
+    <string name="dashboard_header_descricao_imagem">@string/app_name</string>
     <string name="dashboard_item_gerenciamento">Gerenciamento</string>
     <string name="dashboard_item_lancamento">Lançamento</string>
     <string name="dashboard_item_segurança">Segurança</string>
@@ -22,13 +21,58 @@
     <string name="dashboard_subitem_relatorio">Relatório</string>
     <string name="dashboard_subitem_senha">Alterar senha</string>
     <string name="dashboard_subitem_servico">Serviço</string>
-    <string name="dashboard_title">Dashboard</string>
+    <string name="dashboard_titulo">Dashboard</string>
+    <!-- input -->
+    <string name="input_invalido">Campo inválido</string>
+    <string name="input_obrigatorio">Campo obrigatório</string>
     <!-- login -->
     <string name="login_input_senha_hint">Senha</string>
     <string name="login_input_usuario_hint">Usuário</string>
-    <string name="login_message_usuario_inativo">%s, seu usuário está inativo</string>
-    <string name="login_title">Login</string>
+    <string name="login_mensagem_usuario_inativo">%s, seu usuário está inativo</string>
+    <string name="login_titulo">Login</string>
+    <!-- pessoa -->
+    <string name="pessoa_cadastro_button_salvar_hint">SALVAR</string>
+    <string name="pessoa_cadastro_input_emails_text">Visualizar e-mails</string>
+    <string name="pessoa_cadastro_input_enderecos_text">Visualizar endereços</string>
+    <string name="pessoa_cadastro_input_telefones_text">Visualizar telefones</string>
+    <string name="pessoa_cadastro_label_abertura_hint">Abertura</string>
+    <string name="pessoa_cadastro_label_cnpj_hint">CNPJ</string>
+    <string name="pessoa_cadastro_label_cpf_hint">CPF</string>
+    <string name="pessoa_cadastro_label_emails_hint">E-mails</string>
+    <string name="pessoa_cadastro_label_enderecos_hint">Endereços</string>
+    <string name="pessoa_cadastro_label_fantasia_hint">Nome fantasia</string>
+    <string name="pessoa_cadastro_label_id_hint">ID</string>
+    <string name="pessoa_cadastro_label_ie_hint">Inscrição estadual</string>
+    <string name="pessoa_cadastro_label_nascimento_hint">Nascimento</string>
+    <string name="pessoa_cadastro_label_nenhum_email_hint">Nenhum e-mail</string>
+    <string name="pessoa_cadastro_label_nenhum_endereco_hint">Nenhum endereço</string>
+    <string name="pessoa_cadastro_label_nenhum_telefone_hint">Nenhum telefone</string>
+    <string name="pessoa_cadastro_label_nome_hint">Nome</string>
+    <string name="pessoa_cadastro_label_razao_hint">Razão social</string>
+    <string name="pessoa_cadastro_label_rg_hint">RG</string>
+    <string name="pessoa_cadastro_label_sobrenome_hint">Sobrenome</string>
+    <string name="pessoa_cadastro_label_telefones_hint">Telefones</string>
+    <string name="pessoa_cadastro_label_tipo_hint">Tipo</string>
+    <string name="pessoa_cadastro_switch_perfil_cliente_hint">Perfil cliente</string>
+    <string name="pessoa_cadastro_switch_perfil_fornecedor_hint">Perfil fornecedor</string>
+    <string name="pessoa_cadastro_switch_perfil_transportador_hint">Perfil transportador</string>
+    <string name="pessoa_cadastro_switch_perfil_usuario_hint">Perfil usuário</string>
+    <string name="pessoa_cadastro_switch_situacao_hint">Ativo</string>
+    <string name="pessoa_cadastro_titulo">Pessoa</string>
+    <!-- requisicao -->
+    <string name="requisicao_url_base">http://&#8249;IP&#8250;:&#8249;PORT&#8250;/&#8249;CONTEXT&#8250;/</string>
+    <!-- resposta -->
+    <string name="resposta_mensagem_bad_request">Dado(s) inválido(s)</string>
+    <string name="resposta_mensagem_conflict">Conflito de dado(s)</string>
+    <string name="resposta_mensagem_label_acao">DETALHAR</string>
+    <string name="resposta_mensagem_not_found">Registro inexistente</string>
+    <string name="resposta_mensagem_timeout">Tempo limite de conexão com servidor excedido</string>
+    <string name="resposta_mensagem_unauthorized">Não autorizado</string>
     <!-- suporte -->
-    <string name="suporte_criptografia_senha">[suporte] Não foi possível criptografar senha</string>
-    <string name="suporte_label_email">suporte@steve.kinlhp.com</string>
+    <string name="suporte_label_email_contato">suporte@steve.kinlhp.com</string>
+    <string name="suporte_mensagem_conexao">[suporte] Não foi possível estabelecer conexão com servidor</string>
+    <string name="suporte_mensagem_conversao_data">[suporte] Não foi possível definir data</string>
+    <string name="suporte_mensagem_criptografia_senha">[suporte] Não foi possível criptografar senha</string>
+    <string name="suporte_mensagem_desserializacao">[suporte] Não foi possível desserializar dados</string>
+    <string name="suporte_mensagem_nao_identificado">[suporte] Não foi possível identificar inconsistência</string>
 </resources>
