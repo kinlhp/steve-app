@@ -1,13 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?><!-- @layout/content_pessoa_cadastro -->
+<?xml version="1.0" encoding="utf-8"?><!-- @layout/fragment_pessoa_cadastro.xml -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/content_pessoa_cadastro"
+    android:id="@+id/fragment_pessoa_cadastro"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".atividade.PessoaCadastroActivity"
-    tools:showIn="@layout/activity_pessoa_cadastro">
+    tools:context=".atividade.fragmento.PessoaCadastroFragment">
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/form_pessoa_cadastro"
@@ -93,7 +92,7 @@
             android:id="@+id/spinner_tipo"
             style="@style/Base.Widget.AppCompat.Spinner.Underlined"
             android:layout_width="0dp"
-            android:layout_height="50dp"
+            android:layout_height="@dimen/spinner_height"
             android:layout_marginEnd="@dimen/spinner_margin"
             android:layout_marginLeft="@dimen/spinner_margin"
             android:layout_marginRight="@dimen/spinner_margin"

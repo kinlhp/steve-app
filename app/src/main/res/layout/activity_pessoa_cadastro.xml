@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><!-- @layout/activity_pessao_cadastro -->
+<?xml version="1.0" encoding="utf-8"?><!-- @layout/activity_pessao_cadastro.xml -->
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -22,8 +22,8 @@
     </android.support.design.widget.AppBarLayout>
 
     <include
-        android:id="@+id/include_content_pessoa_cadastro"
-        layout="@layout/content_pessoa_cadastro" />
+        android:id="@+id/include_container_pessoa_cadastro"
+        layout="@layout/container_pessoa_cadastro" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/button_pessoa_pesquisa"
@@ -31,5 +31,5 @@
         android:layout_height="@dimen/floating_action_button_height"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/floating_action_button_margin"
-        app:srcCompat="@drawable/ic_pessoa_pesquisa_white_24dp" />
+        app:srcCompat="@drawable/ic_pesquisa_pessoa_white_24dp" />
 </android.support.design.widget.CoordinatorLayout>

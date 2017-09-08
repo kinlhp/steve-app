@@ -14,7 +14,7 @@ import lombok.Setter;
  */
 @AllArgsConstructor
 @Builder
-@EqualsAndHashCode(callSuper = true, of = {"usuario"})
+@EqualsAndHashCode(callSuper = false, of = {"usuario"})
 @Getter
 @NoArgsConstructor
 @Setter

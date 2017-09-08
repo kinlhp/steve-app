@@ -1,0 +1,105 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_email_cadastro"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".atividade.fragmento.EmailCadastroFragment">
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/form_email_cadastro"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/label_tipo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/label_margin"
+            android:hint="@string/email_cadastro_label_tipo_hint"
+            android:textSize="@dimen/label_textSize"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <android.support.v7.widget.AppCompatSpinner
+            android:id="@+id/spinner_tipo"
+            style="@style/Base.Widget.AppCompat.Spinner.Underlined"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/spinner_margin"
+            android:layout_marginLeft="@dimen/spinner_margin"
+            android:layout_marginRight="@dimen/spinner_margin"
+            android:layout_marginStart="@dimen/spinner_margin"
+            android:spinnerMode="dropdown"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/label_tipo" />
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/label_endereco_eletronico"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/label_margin"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/spinner_tipo">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/input_endereco_eletronico"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/email_cadastro_label_endereco_eletronico_hint"
+                android:inputType="textEmailAddress"
+                android:maxLength="64" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/label_nome_contato"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/label_margin"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/label_endereco_eletronico">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/input_nome_contato"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/email_cadastro_label_nome_contato_hint"
+                android:imeOptions="actionDone"
+                android:inputType="textCapWords|textPersonName"
+                android:maxLength="16" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/button_adicionar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/last_view_marginBottom"
+            android:layout_marginTop="@dimen/button_margin"
+            android:background="@drawable/layout_componente_arredondado_accent"
+            android:hint="@string/email_cadastro_button_adicionar_hint"
+            android:paddingEnd="@dimen/round_button_padding"
+            android:paddingLeft="@dimen/round_button_padding"
+            android:paddingRight="@dimen/round_button_padding"
+            android:paddingStart="@dimen/round_button_padding"
+            android:textColorHint="@android:color/white"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/label_nome_contato" />
+    </android.support.constraint.ConstraintLayout>
+</ScrollView>

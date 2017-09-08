@@ -12,7 +12,8 @@
     <android.support.constraint.ConstraintLayout
         android:id="@+id/form_login"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical">
 
         <ProgressBar
             android:id="@+id/progress_bar_autenticacao"

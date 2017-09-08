@@ -16,7 +16,7 @@ import lombok.Setter;
 @EqualsAndHashCode(of = {"id"})
 @Getter
 @NoArgsConstructor
-@Setter()
+@Setter
 abstract class Dominio<ID extends Serializable> implements Serializable {
 	private static final long serialVersionUID = 7069326960840551700L;
 	private Date dataAlteracao;

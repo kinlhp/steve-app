@@ -45,9 +45,11 @@ public class EnderecoDTO extends DTO {
 	@SerializedName(value = "nomeContato")
 	private String nomeContato;
 
+	@Builder.Default
 	@SerializedName(value = "numero")
 	private String numero = "s.n.º";
 
+	@Builder.Default
 	@SerializedName(value = "tipo")
 	private TipoDTO tipo = TipoDTO.PRINCIPAL;
 

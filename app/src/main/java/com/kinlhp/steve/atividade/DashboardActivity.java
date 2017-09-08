@@ -14,8 +14,6 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.kinlhp.steve.R;
-import com.kinlhp.steve.dominio.Credencial;
-import com.kinlhp.steve.util.Parametro;
 
 import java.io.Serializable;
 
@@ -51,8 +49,6 @@ public class DashboardActivity extends AppCompatActivity
 		toggle.syncState();
 
 		navigationView.setNavigationItemSelectedListener(this);
-
-		dizerOla();
 	}
 
 	@Override
@@ -91,13 +87,6 @@ public class DashboardActivity extends AppCompatActivity
 	protected void onResume() {
 		super.onResume();
 		exibirDashboard();
-	}
-
-	private void dizerOla() {
-		Credencial credencial = (Credencial) Parametro
-				.get(Parametro.Chave.CREDENCIAL);
-		String mensagem = "Olá " + credencial.getFuncionario().getNomeRazao();
-		Toast.makeText(this, mensagem, Toast.LENGTH_SHORT).show();
 	}
 
 	private void exibirDashboard() {

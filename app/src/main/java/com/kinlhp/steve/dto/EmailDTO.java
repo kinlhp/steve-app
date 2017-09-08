@@ -27,6 +27,7 @@ public class EmailDTO extends DTO {
 	@SerializedName(value = "pessoa")
 	private String pessoa;
 
+	@Builder.Default
 	@SerializedName(value = "tipo")
 	private TipoDTO tipo = TipoDTO.PRINCIPAL;
 

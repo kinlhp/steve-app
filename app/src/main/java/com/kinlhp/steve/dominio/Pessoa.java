@@ -17,7 +17,7 @@ import lombok.Setter;
  */
 @AllArgsConstructor
 @Builder
-@EqualsAndHashCode(callSuper = true, of = {"cnpjCpf"})
+@EqualsAndHashCode(callSuper = false, of = {"cnpjCpf"})
 @Getter
 @NoArgsConstructor
 @Setter

@@ -22,9 +22,19 @@
     <string name="dashboard_subitem_senha">Alterar senha</string>
     <string name="dashboard_subitem_servico">Serviço</string>
     <string name="dashboard_titulo">Dashboard</string>
+    <!-- e-mail -->
+    <string name="email_cadastro_button_adicionar_hint">ADICIONAR</string>
+    <string name="email_cadastro_label_endereco_eletronico_hint">Endereço eletrônico</string>
+    <string name="email_cadastro_label_nome_contato_hint">Nome do contato</string>
+    <string name="email_cadastro_label_tipo_hint">Tipo</string>
+    <string name="email_cadastro_titulo">E-mail</string>
     <!-- input -->
     <string name="input_invalido">Campo inválido</string>
     <string name="input_obrigatorio">Campo obrigatório</string>
+    <!-- list -->
+    <string name="list_label_conteudo_hint">Conteúdo</string>
+    <string name="list_label_descricao_hint">Descrição</string>
+    <string name="list_label_titulo_hint">Título</string>
     <!-- login -->
     <string name="login_input_senha_hint">Senha</string>
     <string name="login_input_usuario_hint">Usuário</string>

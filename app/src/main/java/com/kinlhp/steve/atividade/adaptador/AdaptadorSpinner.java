@@ -18,11 +18,11 @@ import java.util.List;
 /**
  * Created by kin on 8/20/17.
  */
-public class SpinnerAdaptador<T> extends ArrayAdapter<T>
+public class AdaptadorSpinner<T> extends ArrayAdapter<T>
 		implements Serializable {
-	private static final long serialVersionUID = 6114819175166190036L;
+	private static final long serialVersionUID = 6911828571979155506L;
 
-	public SpinnerAdaptador(@NonNull Context contexto, @NonNull List<T> itens) {
+	public AdaptadorSpinner(@NonNull Context contexto, @NonNull List<T> itens) {
 		super(contexto, 0, itens);
 		setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 	}

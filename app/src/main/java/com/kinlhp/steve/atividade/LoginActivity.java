@@ -78,6 +78,8 @@ public class LoginActivity extends AppCompatActivity
 
 		mButtonAutenticacao.setOnClickListener(this);
 		mInputSenha.setOnEditorActionListener(this);
+
+		mInputUsuario.requestFocus();
 	}
 
 	@Override
