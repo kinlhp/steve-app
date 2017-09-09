@@ -1,14 +1,14 @@
-<?xml version="1.0" encoding="utf-8"?><!-- @layout/fragment_email_cadastro.xml -->
+<?xml version="1.0" encoding="utf-8"?><!-- @layout/fragment_telefone_cadastro.xml -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/fragment_email_cadastro"
+    android:id="@+id/fragment_telefone_cadastro"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".atividade.fragmento.EmailCadastroFragment">
+    tools:context=".atividade.fragmento.TelefoneCadastroFragment">
 
     <android.support.constraint.ConstraintLayout
-        android:id="@+id/form_email_cadastro"
+        android:id="@+id/form_telefone_cadastro"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -17,7 +17,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/label_margin"
-            android:hint="@string/email_cadastro_label_tipo_hint"
+            android:hint="@string/telefone_cadastro_label_tipo_hint"
             android:textSize="@dimen/label_textSize"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -42,7 +42,7 @@
             app:layout_constraintTop_toBottomOf="@+id/label_tipo" />
 
         <android.support.design.widget.TextInputLayout
-            android:id="@+id/label_endereco_eletronico"
+            android:id="@+id/label_numero"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/label_margin"
@@ -53,11 +53,11 @@
             app:layout_constraintTop_toBottomOf="@+id/spinner_tipo">
 
             <android.support.design.widget.TextInputEditText
-                android:id="@+id/input_endereco_eletronico"
+                android:id="@+id/input_numero"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/email_cadastro_label_endereco_eletronico_hint"
-                android:inputType="textEmailAddress"
+                android:hint="@string/telefone_cadastro_label_numero_hint"
+                android:inputType="phone"
                 android:maxLength="64" />
         </android.support.design.widget.TextInputLayout>
 
@@ -70,13 +70,13 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/label_endereco_eletronico">
+            app:layout_constraintTop_toBottomOf="@+id/label_numero">
 
             <android.support.design.widget.TextInputEditText
                 android:id="@+id/input_nome_contato"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/email_cadastro_label_nome_contato_hint"
+                android:hint="@string/telefone_cadastro_label_nome_contato_hint"
                 android:imeOptions="actionDone"
                 android:inputType="textCapWords|textPersonName"
                 android:maxLength="16" />
@@ -89,7 +89,7 @@
             android:layout_marginBottom="@dimen/last_view_marginBottom"
             android:layout_marginTop="@dimen/button_margin"
             android:background="@drawable/layout_componente_arredondado_accent"
-            android:hint="@string/email_cadastro_button_adicionar_hint"
+            android:hint="@string/telefone_cadastro_button_adicionar_hint"
             android:paddingEnd="@dimen/round_button_padding"
             android:paddingLeft="@dimen/round_button_padding"
             android:paddingRight="@dimen/round_button_padding"

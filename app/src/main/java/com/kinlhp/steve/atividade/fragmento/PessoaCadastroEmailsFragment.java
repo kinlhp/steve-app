@@ -18,6 +18,7 @@ import com.kinlhp.steve.dominio.Email;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 public class PessoaCadastroEmailsFragment extends Fragment
 		implements View.OnClickListener,
@@ -111,11 +112,26 @@ public class PessoaCadastroEmailsFragment extends Fragment
 
 	@Override
 	public void onItemLongClickListener(View view, int posicao) {
-		Email email = mEmails.get(posicao);
-		if (mEmails.contains(email) && email.getId() == null) {
-			email.getPessoa().getEmails().remove(email);
+		Email emailARemover = mEmails.get(posicao);
+		if (mEmails.contains(emailARemover) && emailARemover.getId() == null) {
+			emailARemover.getPessoa().getEmails().remove(emailARemover);
+
+			// TODO: 9/9/17 corrigir essa gambiarra
+			/*
+			essa gambiarra foi necessária pois a ação acima não remove o Email
+			do Set<Email>.
+			 */
+			List<Email> emailsNaoRemovidos = new ArrayList<>();
+			for (Email email : emailARemover.getPessoa().getEmails()) {
+				if (!emailARemover.getTipo().equals(email.getTipo())) {
+					emailsNaoRemovidos.add(email);
+				}
+			}
+			emailARemover.getPessoa().getEmails().clear();
+			emailARemover.getPessoa().getEmails().addAll(emailsNaoRemovidos);
+
 			((AdaptadorRecyclerEmails) mRecyclerEmails.getAdapter())
-					.removerItem(email);
+					.removerItem(emailARemover);
 		}
 	}
 

@@ -13,6 +13,8 @@ import com.kinlhp.steve.R;
 import com.kinlhp.steve.atividade.fragmento.EmailCadastroFragment;
 import com.kinlhp.steve.atividade.fragmento.PessoaCadastroEmailsFragment;
 import com.kinlhp.steve.atividade.fragmento.PessoaCadastroFragment;
+import com.kinlhp.steve.atividade.fragmento.PessoaCadastroTelefonesFragment;
+import com.kinlhp.steve.atividade.fragmento.TelefoneCadastroFragment;
 import com.kinlhp.steve.dominio.Email;
 import com.kinlhp.steve.dominio.Endereco;
 import com.kinlhp.steve.dominio.Pessoa;
@@ -27,9 +29,14 @@ public class PessoaCadastroActivity extends AppCompatActivity
 		implements View.OnClickListener,
 		EmailCadastroFragment.OnEmailAddedListener,
 		PessoaCadastroEmailsFragment.OnEmailSelectedListener,
-		PessoaCadastroFragment.OnListClickListener, Serializable {
+		PessoaCadastroFragment.OnListClickListener,
+		TelefoneCadastroFragment.OnTelefoneAddedListener,
+		PessoaCadastroTelefonesFragment.OnTelefoneSelectedListener,
+		Serializable {
+	private static final long serialVersionUID = -2399747618761776509L;
 	private ArrayList<Email> mEmails = new ArrayList<>();
 	private Pessoa mPessoa = Pessoa.builder().build();
+	private ArrayList<Telefone> mTelefones = new ArrayList<>();
 
 	private FloatingActionButton mButtonPessoaPesquisa;
 
@@ -126,7 +133,49 @@ public class PessoaCadastroActivity extends AppCompatActivity
 	}
 
 	@Override
+	public void onTelefoneAdded(Telefone telefone) {
+		if (!mPessoa.getTelefones().contains(telefone)) {
+			// TODO: 9/8/17 corrigir essa gambiarra
+			/*
+			essa gambiarra foi necessária pois a validação acima não funciona
+			quando o Tipo é alterado, gerando assim duplicidade no Set<Telefone>.
+			 */
+			List<Telefone> telefones = new ArrayList<>(mPessoa.getTelefones());
+			int indice = telefones.indexOf(telefone);
+			if (indice < 0) {
+				mPessoa.getTelefones().add(telefone);
+			}
+		}
+		onBackPressed();
+	}
+
+	@Override
 	public void onTelefonesClick(Set<Telefone> telefones) {
-		mPessoa.setTelefones(telefones);
+		mButtonPessoaPesquisa.setVisibility(View.GONE);
+		if (mPessoa.getTelefones().isEmpty()) {
+			onTelefoneSelected(Telefone.builder().build());
+		} else {
+			mTelefones.clear();
+			mTelefones.addAll(mPessoa.getTelefones());
+			Fragment fragmento = PessoaCadastroTelefonesFragment
+					.newInstance(mTelefones);
+			String tag =
+					getString(R.string.pessoa_cadastro_label_telefones_hint);
+			getSupportFragmentManager().beginTransaction()
+					.replace(R.id.content_pessoa_cadastro, fragmento, tag)
+					.addToBackStack(tag).commit();
+		}
+	}
+
+	@Override
+	public void onTelefoneSelected(Telefone telefone) {
+		if (telefone.getPessoa() == null) {
+			telefone.setPessoa(mPessoa);
+		}
+		Fragment fragmento = TelefoneCadastroFragment.newInstance(telefone);
+		String tag = getString(R.string.telefone_cadastro_titulo);
+		getSupportFragmentManager().beginTransaction()
+				.replace(R.id.content_pessoa_cadastro, fragmento, tag)
+				.addToBackStack(tag).commit();
 	}
 }

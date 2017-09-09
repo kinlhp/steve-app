@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.kinlhp.steve.R;
-import com.kinlhp.steve.dominio.Email;
+import com.kinlhp.steve.dominio.Telefone;
 
 import java.io.Serializable;
 import java.util.List;
@@ -17,40 +17,39 @@ import java.util.List;
 /**
  * Created by luis on 9/5/17.
  */
-public class AdaptadorRecyclerEmails extends RecyclerView.Adapter
+public class AdaptadorRecyclerTelefones extends RecyclerView.Adapter
 		implements Serializable {
-	private static final long serialVersionUID = -3388936833199806112L;
-	private List<Email> mEmails;
+	private static final long serialVersionUID = 7679612353238026049L;
+	private List<Telefone> mTelefones;
 	private OnItemClickListener mOnItemClickListener;
 	private OnItemLongClickListener mOnItemLongClickListener;
 
-	public AdaptadorRecyclerEmails(@NonNull List<Email> emails) {
-		mEmails = emails;
+	public AdaptadorRecyclerTelefones(@NonNull List<Telefone> telefones) {
+		mTelefones = telefones;
 	}
 
 	@Override
 	public int getItemCount() {
-		return mEmails.size();
+		return mTelefones.size();
 	}
 
 	@Override
 	public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-		ViewHolderEmails viewHolder = (ViewHolderEmails) holder;
-		Email email = mEmails.get(position);
-		viewHolder.mLabelTipo.setText(email.getTipo().getDescricao());
-		viewHolder.mLabelEnderecoEletronico
-				.setText(email.getEnderecoEletronico());
+		ViewHolderTelefones viewHolder = (ViewHolderTelefones) holder;
+		Telefone telefone = mTelefones.get(position);
+		viewHolder.mLabelTipo.setText(telefone.getTipo().getDescricao());
+		viewHolder.mLabelNumero.setText(telefone.getNumero());
 		viewHolder.mLabelNomeContato
-				.setText(!TextUtils.isEmpty(email.getNomeContato())
-						? email.getNomeContato() : " ");
+				.setText(!TextUtils.isEmpty(telefone.getNomeContato())
+						? telefone.getNomeContato() : " ");
 	}
 
 	@Override
 	public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent,
 	                                                  int viewType) {
 		View view = LayoutInflater.from(parent.getContext())
-				.inflate(R.layout.view_lista_emails, parent, false);
-		return new ViewHolderEmails(view);
+				.inflate(R.layout.view_lista_telefones, parent, false);
+		return new ViewHolderTelefones(view);
 	}
 
 	/**
@@ -72,17 +71,17 @@ public class AdaptadorRecyclerEmails extends RecyclerView.Adapter
 		mOnItemLongClickListener = ouvinte;
 	}
 
-	public void adicionarItem(@NonNull Email email) {
-		if (!mEmails.contains(email)) {
-			mEmails.add(email);
+	public void adicionarItem(@NonNull Telefone telefone) {
+		if (!mTelefones.contains(telefone)) {
+			mTelefones.add(telefone);
 			notifyItemInserted(getItemCount());
 		}
 	}
 
-	public void removerItem(@NonNull Email email) {
-		if (mEmails.contains(email)) {
-			int posicao = mEmails.indexOf(email);
-			mEmails.remove(email);
+	public void removerItem(@NonNull Telefone telefone) {
+		if (mTelefones.contains(telefone)) {
+			int posicao = mTelefones.indexOf(telefone);
+			mTelefones.remove(telefone);
 			notifyItemRemoved(posicao);
 		}
 	}
@@ -95,16 +94,16 @@ public class AdaptadorRecyclerEmails extends RecyclerView.Adapter
 		void onItemLongClickListener(View view, int posicao);
 	}
 
-	private class ViewHolderEmails extends RecyclerView.ViewHolder
+	private class ViewHolderTelefones extends RecyclerView.ViewHolder
 			implements View.OnClickListener, View.OnLongClickListener {
-		private AppCompatTextView mLabelEnderecoEletronico;
 		private AppCompatTextView mLabelNomeContato;
+		private AppCompatTextView mLabelNumero;
 		private AppCompatTextView mLabelTipo;
 
-		ViewHolderEmails(View itemView) {
+		ViewHolderTelefones(View itemView) {
 			super(itemView);
-			mLabelEnderecoEletronico = itemView.findViewById(R.id.label_endereco_eletronico);
 			mLabelNomeContato = itemView.findViewById(R.id.label_nome_contato);
+			mLabelNumero = itemView.findViewById(R.id.label_numero);
 			mLabelTipo = itemView.findViewById(R.id.label_tipo);
 
 			itemView.setOnClickListener(this);

@@ -1,12 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?><!-- @layout/view_lista.xml -->
+<?xml version="1.0" encoding="utf-8"?><!-- @layout/view_lista_telefones.xml -->
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/view_lista"
+    android:id="@+id/view_lista_telefones"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/label_titulo"
+        android:id="@+id/label_tipo"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/list_margin"
@@ -14,7 +14,7 @@
         android:layout_marginRight="@dimen/list_margin"
         android:layout_marginStart="@dimen/list_margin"
         android:layout_marginTop="@dimen/list_margin"
-        android:hint="@string/list_label_titulo_hint"
+        android:hint="@string/telefone_cadastro_label_tipo_hint"
         android:textSize="@dimen/list_title_textSize"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -24,39 +24,39 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/label_conteudo"
+        android:id="@+id/label_numero"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/list_margin"
         android:layout_marginLeft="@dimen/list_margin"
         android:layout_marginRight="@dimen/list_margin"
         android:layout_marginStart="@dimen/list_margin"
-        android:hint="@string/list_label_conteudo_hint"
+        android:hint="@string/telefone_cadastro_label_numero_hint"
         android:textSize="@dimen/list_content_textSize"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/label_titulo" />
+        app:layout_constraintTop_toBottomOf="@+id/label_tipo" />
 
     <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/label_descricao"
+        android:id="@+id/label_nome_contato"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/list_margin"
         android:layout_marginLeft="@dimen/list_margin"
         android:layout_marginRight="@dimen/list_margin"
         android:layout_marginStart="@dimen/list_margin"
-        android:hint="@string/list_label_descricao_hint"
+        android:hint="@string/telefone_cadastro_label_nome_contato_hint"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/label_conteudo" />
+        app:layout_constraintTop_toBottomOf="@+id/label_numero" />
 
     <View
-        android:id="@+id/divider_item"
+        android:id="@+id/divider_telefone"
         android:layout_width="0dp"
         android:layout_height="@dimen/list_divider_height"
         android:layout_marginTop="@dimen/list_margin"
@@ -66,5 +66,5 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/label_descricao" />
+        app:layout_constraintTop_toBottomOf="@+id/label_nome_contato" />
 </android.support.constraint.ConstraintLayout>

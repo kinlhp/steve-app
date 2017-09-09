@@ -31,10 +31,6 @@
     <!-- input -->
     <string name="input_invalido">Campo inválido</string>
     <string name="input_obrigatorio">Campo obrigatório</string>
-    <!-- list -->
-    <string name="list_label_conteudo_hint">Conteúdo</string>
-    <string name="list_label_descricao_hint">Descrição</string>
-    <string name="list_label_titulo_hint">Título</string>
     <!-- login -->
     <string name="login_input_senha_hint">Senha</string>
     <string name="login_input_usuario_hint">Usuário</string>
@@ -78,6 +74,12 @@
     <string name="resposta_mensagem_not_found">Registro inexistente</string>
     <string name="resposta_mensagem_timeout">Tempo limite de conexão com servidor excedido</string>
     <string name="resposta_mensagem_unauthorized">Não autorizado</string>
+    <!-- telefone -->
+    <string name="telefone_cadastro_button_adicionar_hint">ADICIONAR</string>
+    <string name="telefone_cadastro_label_nome_contato_hint">Nome do contato</string>
+    <string name="telefone_cadastro_label_numero_hint">Número</string>
+    <string name="telefone_cadastro_label_tipo_hint">Tipo</string>
+    <string name="telefone_cadastro_titulo">Telefone</string>
     <!-- suporte -->
     <string name="suporte_label_email_contato">suporte@steve.kinlhp.com</string>
     <string name="suporte_mensagem_conexao">[suporte] Não foi possível estabelecer conexão com servidor</string>
