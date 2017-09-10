@@ -45,5 +45,10 @@ public class Endereco extends Dominio<BigInteger> {
 		TRABALHO("Trabalho");
 
 		private final String descricao;
+
+		@Override
+		public String toString() {
+			return descricao;
+		}
 	}
 }

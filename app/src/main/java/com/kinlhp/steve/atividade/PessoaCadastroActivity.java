@@ -11,7 +11,9 @@ import android.widget.Toast;
 
 import com.kinlhp.steve.R;
 import com.kinlhp.steve.atividade.fragmento.EmailCadastroFragment;
+import com.kinlhp.steve.atividade.fragmento.EnderecoCadastroFragment;
 import com.kinlhp.steve.atividade.fragmento.PessoaCadastroEmailsFragment;
+import com.kinlhp.steve.atividade.fragmento.PessoaCadastroEnderecosFragment;
 import com.kinlhp.steve.atividade.fragmento.PessoaCadastroFragment;
 import com.kinlhp.steve.atividade.fragmento.PessoaCadastroTelefonesFragment;
 import com.kinlhp.steve.atividade.fragmento.TelefoneCadastroFragment;
@@ -29,12 +31,16 @@ public class PessoaCadastroActivity extends AppCompatActivity
 		implements View.OnClickListener,
 		EmailCadastroFragment.OnEmailAddedListener,
 		PessoaCadastroEmailsFragment.OnEmailSelectedListener,
+		EnderecoCadastroFragment.OnEnderecoAddedListener,
+		PessoaCadastroEnderecosFragment.OnEnderecoSelectedListener,
 		PessoaCadastroFragment.OnListClickListener,
+		PessoaCadastroFragment.OnPessoaChangedListener,
 		TelefoneCadastroFragment.OnTelefoneAddedListener,
 		PessoaCadastroTelefonesFragment.OnTelefoneSelectedListener,
 		Serializable {
-	private static final long serialVersionUID = -2399747618761776509L;
+	private static final long serialVersionUID = 461722905967624588L;
 	private ArrayList<Email> mEmails = new ArrayList<>();
+	private ArrayList<Endereco> mEnderecos = new ArrayList<>();
 	private Pessoa mPessoa = Pessoa.builder().build();
 	private ArrayList<Telefone> mTelefones = new ArrayList<>();
 
@@ -73,7 +79,7 @@ public class PessoaCadastroActivity extends AppCompatActivity
 	@Override
 	public void onEmailAdded(Email email) {
 		if (!mPessoa.getEmails().contains(email)) {
-			// TODO: 9/8/17 corrigir essa gambiarra
+			// TODO: 9/8/17 corrigir essa gambiarra [problema com equals e hashCode]
 			/*
 			essa gambiarra foi necessária pois a validação acima não funciona
 			quando o Tipo é alterado, gerando assim duplicidade no Set<Email>.
@@ -90,8 +96,10 @@ public class PessoaCadastroActivity extends AppCompatActivity
 	@Override
 	public void onEmailsClick(Set<Email> emails) {
 		mButtonPessoaPesquisa.setVisibility(View.GONE);
+//		mPessoa.getEmails().clear();
+//		mPessoa.getEmails().addAll(emails);
 		if (mPessoa.getEmails().isEmpty()) {
-			onEmailSelected(Email.builder().build());
+			onEmailSelected(Email.builder().tipo(null).build());
 		} else {
 			mEmails.clear();
 			mEmails.addAll(mPessoa.getEmails());
@@ -117,8 +125,51 @@ public class PessoaCadastroActivity extends AppCompatActivity
 	}
 
 	@Override
+	public void onEnderecoAdded(Endereco endereco) {
+		if (!mPessoa.getEnderecos().contains(endereco)) {
+			// TODO: 9/8/17 corrigir essa gambiarra [problema com equals e hashCode]
+			/*
+			essa gambiarra foi necessária pois a validação acima não funciona
+			quando o Tipo é alterado, gerando assim duplicidade no Set<Endereco>.
+			 */
+			List<Endereco> enderecos = new ArrayList<>(mPessoa.getEnderecos());
+			int indice = enderecos.indexOf(endereco);
+			if (indice < 0) {
+				mPessoa.getEnderecos().add(endereco);
+			}
+		}
+		onBackPressed();
+	}
+
+	@Override
 	public void onEnderecosClick(Set<Endereco> enderecos) {
-		mPessoa.setEnderecos(enderecos);
+		mButtonPessoaPesquisa.setVisibility(View.GONE);
+//		mPessoa.getEnderecos().clear();
+//		mPessoa.getEnderecos().addAll(enderecos);
+		if (mPessoa.getEnderecos().isEmpty()) {
+			onEnderecoSelected(Endereco.builder().tipo(null).build());
+		} else {
+			mEnderecos.clear();
+			mEnderecos.addAll(mPessoa.getEnderecos());
+			Fragment fragmento = PessoaCadastroEnderecosFragment
+					.newInstance(mEnderecos);
+			String tag = getString(R.string.pessoa_cadastro_label_enderecos_hint);
+			getSupportFragmentManager().beginTransaction()
+					.replace(R.id.content_pessoa_cadastro, fragmento, tag)
+					.addToBackStack(tag).commit();
+		}
+	}
+
+	@Override
+	public void onEnderecoSelected(Endereco endereco) {
+		if (endereco.getPessoa() == null) {
+			endereco.setPessoa(mPessoa);
+		}
+		Fragment fragmento = EnderecoCadastroFragment.newInstance(endereco);
+		String tag = getString(R.string.endereco_cadastro_titulo);
+		getSupportFragmentManager().beginTransaction()
+				.replace(R.id.content_pessoa_cadastro, fragmento, tag)
+				.addToBackStack(tag).commit();
 	}
 
 	@Override
@@ -133,9 +184,14 @@ public class PessoaCadastroActivity extends AppCompatActivity
 	}
 
 	@Override
+	public void onPessoaChanged(Pessoa pessoa) {
+		mPessoa = pessoa;
+	}
+
+	@Override
 	public void onTelefoneAdded(Telefone telefone) {
 		if (!mPessoa.getTelefones().contains(telefone)) {
-			// TODO: 9/8/17 corrigir essa gambiarra
+			// TODO: 9/8/17 corrigir essa gambiarra [problema com equals e hashCode]
 			/*
 			essa gambiarra foi necessária pois a validação acima não funciona
 			quando o Tipo é alterado, gerando assim duplicidade no Set<Telefone>.
@@ -152,8 +208,10 @@ public class PessoaCadastroActivity extends AppCompatActivity
 	@Override
 	public void onTelefonesClick(Set<Telefone> telefones) {
 		mButtonPessoaPesquisa.setVisibility(View.GONE);
+//		mPessoa.getTelefones().clear();
+//		mPessoa.getTelefones().addAll(telefones);
 		if (mPessoa.getTelefones().isEmpty()) {
-			onTelefoneSelected(Telefone.builder().build());
+			onTelefoneSelected(Telefone.builder().tipo(null).build());
 		} else {
 			mTelefones.clear();
 			mTelefones.addAll(mPessoa.getTelefones());

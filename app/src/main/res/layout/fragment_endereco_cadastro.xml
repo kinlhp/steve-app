@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="utf-8"?><!-- @layout/fragment_endereco_cadastro.xml -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_endereco_cadastro"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".atividade.fragmento.EnderecoCadastroFragment">
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/form_endereco_cadastro"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ProgressBar
+            android:id="@+id/progress_bar_consumir_cep"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/button_consumir_cep"
+            app:layout_constraintEnd_toEndOf="@+id/button_consumir_cep"
+            app:layout_constraintLeft_toLeftOf="@+id/button_consumir_cep"
+            app:layout_constraintRight_toRightOf="@+id/button_consumir_cep"
+            app:layout_constraintStart_toStartOf="@+id/button_consumir_cep"
+            app:layout_constraintTop_toTopOf="@+id/button_consumir_cep" />
+
+        <ProgressBar
+            android:id="@+id/progress_bar_consumir_uf"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/spinner_uf"
+            app:layout_constraintEnd_toEndOf="@+id/spinner_uf"
+            app:layout_constraintLeft_toLeftOf="@+id/spinner_uf"
+            app:layout_constraintRight_toRightOf="@+id/spinner_uf"
+            app:layout_constraintStart_toStartOf="@+id/spinner_uf"
+            app:layout_constraintTop_toTopOf="@+id/spinner_uf" />
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/label_tipo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/label_margin"
+            android:hint="@string/endereco_cadastro_label_tipo_hint"
+            android:textSize="@dimen/label_textSize"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <android.support.v7.widget.AppCompatSpinner
+            android:id="@+id/spinner_tipo"
+            style="@style/Base.Widget.AppCompat.Spinner.Underlined"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/spinner_margin"
+            android:layout_marginLeft="@dimen/spinner_margin"
+            android:layout_marginRight="@dimen/spinner_margin"
+            android:layout_marginStart="@dimen/spinner_margin"
+            android:spinnerMode="dropdown"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/label_tipo" />
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/label_cep"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/label_margin"
+            app:layout_constraintEnd_toStartOf="@+id/button_consumir_cep"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/button_consumir_cep"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/spinner_tipo">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/input_cep"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/endereco_cadastro_label_cep_hint"
+                android:imeOptions="actionSearch"
+                android:inputType="number"
+                android:maxLength="8" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.v7.widget.AppCompatImageButton
+            android:id="@+id/button_consumir_cep"
+            android:layout_width="@dimen/round_button_width"
+            android:layout_height="@dimen/round_button_height"
+            android:layout_marginEnd="@dimen/button_margin"
+            android:layout_marginLeft="@dimen/button_margin"
+            android:layout_marginRight="@dimen/button_margin"
+            android:layout_marginStart="@dimen/button_margin"
+            android:background="@drawable/layout_componente_arredondado_transparente"
+            app:layout_constraintBottom_toBottomOf="@+id/label_cep"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/label_cep"
+            app:srcCompat="@drawable/ic_consumir_cep_accent_24dp" />
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/label_logradouro"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/label_margin"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/label_cep">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/input_logradouro"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/endereco_cadastro_label_logradouro_hint"
+                android:inputType="textCapWords|textPersonName"
+                android:maxLength="64" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/label_numero"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/label_margin"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/label_logradouro">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/input_numero"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/endereco_cadastro_label_numero_hint"
+                android:inputType="textCapWords"
+                android:maxLength="8" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/label_complemento"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/label_margin"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/label_numero">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/input_complemento"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/endereco_cadastro_label_complemento_hint"
+                android:inputType="textCapSentences"
+                android:maxLength="64" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/label_complemento2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/label_margin"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/label_complemento">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/input_complemento2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/endereco_cadastro_label_complemento2_hint"
+                android:inputType="textCapSentences"
+                android:maxLength="64" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/label_bairro"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/label_margin"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/label_complemento2">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/input_bairro"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/endereco_cadastro_label_bairro_hint"
+                android:inputType="textCapWords|textPersonName"
+                android:maxLength="64" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/label_cidade"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/label_margin"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/label_bairro">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/input_cidade"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/endereco_cadastro_label_cidade_hint"
+                android:inputType="textCapWords|textPersonName"
+                android:maxLength="64" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/label_uf"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/label_margin"
+            android:hint="@string/endereco_cadastro_label_uf_hint"
+            android:textSize="@dimen/label_textSize"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/label_cidade" />
+
+        <android.support.v7.widget.AppCompatSpinner
+            android:id="@+id/spinner_uf"
+            style="@style/Base.Widget.AppCompat.Spinner.Underlined"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/spinner_margin"
+            android:layout_marginLeft="@dimen/spinner_margin"
+            android:layout_marginRight="@dimen/spinner_margin"
+            android:layout_marginStart="@dimen/spinner_margin"
+            android:spinnerMode="dropdown"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/label_uf" />
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/label_nome_contato"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/label_margin"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/spinner_uf">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/input_nome_contato"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/endereco_cadastro_label_nome_contato_hint"
+                android:imeOptions="actionDone"
+                android:inputType="textCapWords|textPersonName"
+                android:maxLength="16" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/button_adicionar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/last_view_marginBottom"
+            android:layout_marginTop="@dimen/button_margin"
+            android:background="@drawable/layout_componente_arredondado_accent"
+            android:hint="@string/endereco_cadastro_button_adicionar_hint"
+            android:paddingEnd="@dimen/round_button_padding"
+            android:paddingLeft="@dimen/round_button_padding"
+            android:paddingRight="@dimen/round_button_padding"
+            android:paddingStart="@dimen/round_button_padding"
+            android:textColorHint="@android:color/white"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/label_nome_contato" />
+    </android.support.constraint.ConstraintLayout>
+</ScrollView>

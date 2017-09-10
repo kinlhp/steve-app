@@ -35,4 +35,16 @@ public final class UfMapeamento implements Serializable {
 		String href = self.getHref();
 		return new BigInteger(href.substring(href.lastIndexOf("/") + 1));
 	}
+
+	public static final class SiglaMapeamento implements Serializable {
+		private static final long serialVersionUID = -3777749725655666756L;
+
+		private SiglaMapeamento() {
+		}
+
+		@NonNull
+		public static UfDTO.SiglaDTO paraDTO(@NonNull Uf.Sigla sigla) {
+			return UfDTO.SiglaDTO.valueOf(sigla.name());
+		}
+	}
 }

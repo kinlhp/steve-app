@@ -16,7 +16,7 @@ public class UfDTO extends DTO {
 	@SerializedName(value = "ibge")
 	private Integer ibge;
 
-	@SerializedName(value = "links")
+	@SerializedName(value = "_links")
 	private UfDTOLinks links;
 
 	@SerializedName(value = "nome")

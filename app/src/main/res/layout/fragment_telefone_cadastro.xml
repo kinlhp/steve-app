@@ -58,7 +58,7 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/telefone_cadastro_label_numero_hint"
                 android:inputType="phone"
-                android:maxLength="64" />
+                android:maxLength="16" />
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout

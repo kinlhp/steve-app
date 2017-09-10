@@ -57,5 +57,10 @@ public class Uf extends Dominio<BigInteger> {
 		TO("Tocantins");
 
 		private final String descricao;
+
+		@Override
+		public String toString() {
+			return descricao;
+		}
 	}
 }

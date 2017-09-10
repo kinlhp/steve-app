@@ -62,12 +62,10 @@
 
         <android.support.v7.widget.AppCompatImageButton
             android:id="@+id/button_consumir_por_id"
-            android:layout_width="@dimen/round_button_width"
-            android:layout_height="@dimen/round_button_height"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_marginEnd="@dimen/button_margin"
-            android:layout_marginLeft="@dimen/button_margin"
             android:layout_marginRight="@dimen/button_margin"
-            android:layout_marginStart="@dimen/button_margin"
             android:background="@drawable/layout_componente_arredondado_transparente"
             app:layout_constraintBottom_toBottomOf="@+id/label_id"
             app:layout_constraintEnd_toEndOf="parent"
@@ -92,7 +90,7 @@
             android:id="@+id/spinner_tipo"
             style="@style/Base.Widget.AppCompat.Spinner.Underlined"
             android:layout_width="0dp"
-            android:layout_height="@dimen/spinner_height"
+            android:layout_height="50dp"
             android:layout_marginEnd="@dimen/spinner_margin"
             android:layout_marginLeft="@dimen/spinner_margin"
             android:layout_marginRight="@dimen/spinner_margin"
@@ -261,7 +259,7 @@
 
         <android.support.v7.widget.SwitchCompat
             android:id="@+id/switch_perfil_cliente"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/switch_margin"
             android:checked="true"
@@ -275,7 +273,7 @@
 
         <android.support.v7.widget.SwitchCompat
             android:id="@+id/switch_perfil_fornecedor"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/switch_margin"
             android:text="@string/pessoa_cadastro_switch_perfil_fornecedor_hint"
@@ -288,7 +286,7 @@
 
         <android.support.v7.widget.SwitchCompat
             android:id="@+id/switch_perfil_transportador"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/switch_margin"
             android:text="@string/pessoa_cadastro_switch_perfil_transportador_hint"
@@ -301,7 +299,7 @@
 
         <android.support.v7.widget.SwitchCompat
             android:id="@+id/switch_perfil_usuario"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/switch_margin"
             android:text="@string/pessoa_cadastro_switch_perfil_usuario_hint"
@@ -314,10 +312,9 @@
 
         <android.support.v7.widget.SwitchCompat
             android:id="@+id/switch_situacao"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/switch_margin"
-            android:checked="true"
             android:text="@string/pessoa_cadastro_switch_situacao_hint"
             android:textSize="@dimen/switch_textSize"
             app:layout_constraintEnd_toEndOf="parent"

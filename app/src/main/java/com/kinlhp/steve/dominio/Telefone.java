@@ -35,5 +35,10 @@ public class Telefone extends Dominio<BigInteger> {
 		TRABALHO("Trabalho");
 
 		private final String descricao;
+
+		@Override
+		public String toString() {
+			return descricao;
+		}
 	}
 }

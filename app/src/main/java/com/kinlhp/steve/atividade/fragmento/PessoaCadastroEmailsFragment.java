@@ -63,7 +63,7 @@ public class PessoaCadastroEmailsFragment extends Fragment
 		switch (view.getId()) {
 			case R.id.button_novo_email:
 				((PessoaCadastroActivity) getActivity())
-						.onEmailSelected(Email.builder().build());
+						.onEmailSelected(Email.builder().tipo(null).build());
 				break;
 		}
 	}
@@ -116,7 +116,7 @@ public class PessoaCadastroEmailsFragment extends Fragment
 		if (mEmails.contains(emailARemover) && emailARemover.getId() == null) {
 			emailARemover.getPessoa().getEmails().remove(emailARemover);
 
-			// TODO: 9/9/17 corrigir essa gambiarra
+			// TODO: 9/9/17 corrigir essa gambiarra [problema com equals e hashCode]
 			/*
 			essa gambiarra foi necessária pois a ação acima não remove o Email
 			do Set<Email>.

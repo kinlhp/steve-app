@@ -50,6 +50,11 @@ public class Pessoa extends Dominio<BigInteger> {
 		INATIVO("Inativo");
 
 		private final String descricao;
+
+		@Override
+		public String toString() {
+			return descricao;
+		}
 	}
 
 	@AllArgsConstructor
@@ -63,7 +68,7 @@ public class Pessoa extends Dominio<BigInteger> {
 
 		@Override
 		public String toString() {
-			return getDescricao();
+			return descricao;
 		}
 	}
 }

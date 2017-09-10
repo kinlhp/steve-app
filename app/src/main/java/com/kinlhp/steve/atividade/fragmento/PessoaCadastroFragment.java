@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
+import android.widget.CompoundButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,15 +32,20 @@ import com.kinlhp.steve.dominio.Email;
 import com.kinlhp.steve.dominio.Endereco;
 import com.kinlhp.steve.dominio.Pessoa;
 import com.kinlhp.steve.dominio.Telefone;
+import com.kinlhp.steve.dominio.Uf;
 import com.kinlhp.steve.dto.EmailDTO;
 import com.kinlhp.steve.dto.EnderecoDTO;
 import com.kinlhp.steve.dto.PessoaDTO;
 import com.kinlhp.steve.dto.TelefoneDTO;
+import com.kinlhp.steve.dto.UfDTO;
+import com.kinlhp.steve.href.HRef;
 import com.kinlhp.steve.mapeamento.EmailMapeamento;
 import com.kinlhp.steve.mapeamento.EnderecoMapeamento;
 import com.kinlhp.steve.mapeamento.PessoaMapeamento;
 import com.kinlhp.steve.mapeamento.TelefoneMapeamento;
+import com.kinlhp.steve.mapeamento.UfMapeamento;
 import com.kinlhp.steve.requisicao.EmailRequisicao;
+import com.kinlhp.steve.requisicao.EnderecamentoRequisicao;
 import com.kinlhp.steve.requisicao.EnderecoRequisicao;
 import com.kinlhp.steve.requisicao.Falha;
 import com.kinlhp.steve.requisicao.PessoaRequisicao;
@@ -50,6 +56,7 @@ import com.kinlhp.steve.resposta.ItemCallback;
 import com.kinlhp.steve.resposta.Resposta;
 import com.kinlhp.steve.resposta.VazioCallback;
 import com.kinlhp.steve.util.Data;
+import com.kinlhp.steve.util.Parametro;
 import com.kinlhp.steve.util.Teclado;
 
 import java.io.Serializable;
@@ -68,9 +75,10 @@ import retrofit2.Response;
 public class PessoaCadastroFragment extends Fragment
 		implements View.OnClickListener, TextView.OnEditorActionListener,
 		View.OnLongClickListener, Serializable {
-	private static final long serialVersionUID = 4334858035488377158L;
+	private static final long serialVersionUID = 2339917080257278288L;
 	private static final String PESSOA = "pessoa";
 	private OnListClickListener mListClickListener;
+	private OnPessoaChangedListener mPessoaChangedListener;
 	private Pessoa mPessoa;
 	private PessoaDTO mPessoaDTO;
 	private int mTarefasPendentes;
@@ -128,6 +136,12 @@ public class PessoaCadastroFragment extends Fragment
 			throw new RuntimeException(context.toString()
 					+ " must implement OnClickListener");
 		}
+		if (context instanceof OnPessoaChangedListener) {
+			mPessoaChangedListener = (OnPessoaChangedListener) context;
+		} else {
+			throw new RuntimeException(context.toString()
+					+ " must implement OnPessoaChangedListener");
+		}
 	}
 
 	@Override
@@ -136,7 +150,7 @@ public class PessoaCadastroFragment extends Fragment
 			case R.id.button_consumir_por_id:
 				mTarefasPendentes = 0;
 				if (mPessoa.getId() == null) {
-					consumirPorId(view);
+					consumirPessoaGETPorId(view);
 				} else {
 					limparFormulario();
 				}
@@ -224,6 +238,9 @@ public class PessoaCadastroFragment extends Fragment
 		mInputId.setOnEditorActionListener(this);
 		mInputTelefones.setOnClickListener(this);
 		mSpinnerTipo.setOnItemSelectedListener(tipoSelectedListener());
+		mSwitchSituacao.setOnCheckedChangeListener(situacaoChangeListener());
+
+		alternarSituacao();
 		return view;
 	}
 
@@ -268,6 +285,38 @@ public class PessoaCadastroFragment extends Fragment
 		} else if (tipo.equals(Pessoa.Tipo.JURIDICA)) {
 			definirFormularioPessoaJuridica();
 		}
+	}
+
+	private void alternarSituacao() {
+		mSwitchSituacao
+				.setChecked(mPessoa.getSituacao().equals(Pessoa.Situacao.ATIVO));
+	}
+
+	private ItemCallback<UfDTO> callbackEnderecoGETUf(@NonNull final Endereco endereco) {
+		return new ItemCallback<UfDTO>() {
+
+			@Override
+			public void onFailure(@NonNull Call<UfDTO> chamada,
+			                      @NonNull Throwable causa) {
+				--mTarefasPendentes;
+				ocultarProgresso(mProgressBarConsumirPorId, mButtonConsumirPorId);
+				Falha.tratar(mButtonPessoaPesquisa, causa);
+			}
+
+			@Override
+			public void onResponse(@NonNull Call<UfDTO> chamada,
+			                       @NonNull Response<UfDTO> resposta) {
+				--mTarefasPendentes;
+				if (!resposta.isSuccessful()) {
+					Falha.tratar(mButtonPessoaPesquisa, resposta);
+				} else {
+					UfDTO dto = resposta.body();
+					Uf uf = UfMapeamento.paraDominio(dto);
+					endereco.setUf(uf);
+				}
+				ocultarProgresso(mProgressBarConsumirPorId, mButtonConsumirPorId);
+			}
+		};
 	}
 
 	private ColecaoCallback<Resposta<EmailDTO>> callbackPessoaGETEmails() {
@@ -321,6 +370,15 @@ public class PessoaCadastroFragment extends Fragment
 					Set<Endereco> enderecos = EnderecoMapeamento
 							.paraDominios(dtos, mPessoa);
 					mPessoa.getEnderecos().addAll(enderecos);
+					String url = Parametro.get(Parametro.Chave.URL_BASE)
+							.toString().concat("enderecos/%d/uf");
+					for (Endereco endereco : mPessoa.getEnderecos()) {
+						++mTarefasPendentes;
+						HRef href =
+								new HRef(String.format(url, endereco.getId()));
+						EnderecamentoRequisicao
+								.getUf(callbackEnderecoGETUf(endereco), href);
+					}
 				}
 				ocultarProgresso(mProgressBarConsumirPorId, mButtonConsumirPorId);
 			}
@@ -348,6 +406,7 @@ public class PessoaCadastroFragment extends Fragment
 				} else {
 					mPessoaDTO = resposta.body();
 					mPessoa = PessoaMapeamento.paraDominio(mPessoaDTO);
+					mPessoaChangedListener.onPessoaChanged(mPessoa);
 					consumirPessoaGETEnderecos();
 					consumirPessoaGETTelefones();
 					consumirPessoaGETEmails();
@@ -511,12 +570,13 @@ public class PessoaCadastroFragment extends Fragment
 	}
 
 	private void consumirPessoaGETPorId(@NonNull View view) {
+		view.setVisibility(View.INVISIBLE);
+		exibirProgresso(mProgressBarConsumirPorId, null);
 		if (!TextUtils.isEmpty(mInputId.getText())) {
 			BigInteger id = new BigInteger(mInputId.getText().toString());
 			if (id.compareTo(BigInteger.ONE) < 0) {
 				--mTarefasPendentes;
-				mLabelId.setError(getString(R.string.input_invalido));
-				mInputId.requestFocus();
+				mInputId.getText().clear();
 			} else {
 				mLabelId.setError(null);
 				mLabelId.setErrorEnabled(false);
@@ -544,7 +604,7 @@ public class PessoaCadastroFragment extends Fragment
 		if (mPessoa.getEmails() != null) {
 			for (Email email : mPessoa.getEmails()) {
 				EmailDTO dto = EmailMapeamento.paraDTO(email);
-				mTarefasPendentes++;
+				++mTarefasPendentes;
 				EmailRequisicao.post(callbackPessoaPOSTEmail(email), dto);
 			}
 		}
@@ -554,7 +614,7 @@ public class PessoaCadastroFragment extends Fragment
 		if (mPessoa.getEnderecos() != null) {
 			for (Endereco endereco : mPessoa.getEnderecos()) {
 				EnderecoDTO dto = EnderecoMapeamento.paraDTO(endereco);
-				mTarefasPendentes++;
+				++mTarefasPendentes;
 				EnderecoRequisicao
 						.post(callbackPessoaPOSTEndereco(endereco), dto);
 			}
@@ -565,7 +625,7 @@ public class PessoaCadastroFragment extends Fragment
 		if (mPessoa.getTelefones() != null) {
 			for (Telefone telefone : mPessoa.getTelefones()) {
 				TelefoneDTO dto = TelefoneMapeamento.paraDTO(telefone);
-				mTarefasPendentes++;
+				++mTarefasPendentes;
 				TelefoneRequisicao
 						.post(callbackPessoaPOSTTelefone(telefone), dto);
 			}
@@ -576,12 +636,6 @@ public class PessoaCadastroFragment extends Fragment
 		// TODO: 8/23/17 implementar PUT
 		Toast.makeText(getActivity(), "Implementar PUT", Toast.LENGTH_SHORT)
 				.show();
-	}
-
-	private void consumirPorId(@NonNull View view) {
-		view.setVisibility(View.INVISIBLE);
-		exibirProgresso(mProgressBarConsumirPorId, null);
-		consumirPessoaGETPorId(view);
 	}
 
 	private void definirFormularioPessoaFisica() {
@@ -666,6 +720,7 @@ public class PessoaCadastroFragment extends Fragment
 
 	private void limparFormulario() {
 		mPessoa = Pessoa.builder().build();
+		mPessoaChangedListener.onPessoaChanged(mPessoa);
 		habilitarInputId(true);
 		mInputId.getText().clear();
 		mSpinnerTipo.setSelection(0);
@@ -679,8 +734,7 @@ public class PessoaCadastroFragment extends Fragment
 		mSwitchPerfilFornecedor.setChecked(mPessoa.isPerfilFornecedor());
 		mSwitchPerfilTransportador.setChecked(mPessoa.isPerfilTransportador());
 		mSwitchPerfilUsuario.setChecked(mPessoa.isPerfilUsuario());
-		mSwitchSituacao
-				.setChecked(mPessoa.getSituacao().equals(Pessoa.Situacao.ATIVO));
+		alternarSituacao();
 		ocultarProgresso(mProgressBarConsumirPorId, mButtonConsumirPorId);
 		mInputId.requestFocus();
 	}
@@ -714,8 +768,7 @@ public class PessoaCadastroFragment extends Fragment
 		mSwitchPerfilFornecedor.setChecked(mPessoa.isPerfilFornecedor());
 		mSwitchPerfilTransportador.setChecked(mPessoa.isPerfilTransportador());
 		mSwitchPerfilUsuario.setChecked(mPessoa.isPerfilUsuario());
-		mSwitchSituacao
-				.setChecked(mPessoa.getSituacao().equals(Pessoa.Situacao.ATIVO));
+		alternarSituacao();
 		mInputCnpjCpf.requestFocus();
 	}
 
@@ -735,6 +788,17 @@ public class PessoaCadastroFragment extends Fragment
 				: getString(R.string.pessoa_cadastro_label_emails_hint));
 		mInputEmails.setText(mPessoa.getEmails().isEmpty()
 				? "" : getString(R.string.pessoa_cadastro_input_emails_text));
+	}
+
+	private CompoundButton.OnCheckedChangeListener situacaoChangeListener() {
+		return new CompoundButton.OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton view, boolean checked) {
+				view.setText(checked
+						? Pessoa.Situacao.ATIVO.toString()
+						: Pessoa.Situacao.INATIVO.toString());
+			}
+		};
 	}
 
 	private void submeterFormulario(@NonNull View view) {
@@ -762,8 +826,8 @@ public class PessoaCadastroFragment extends Fragment
 
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view,
-			                           int posicao, long id) {
-				mPessoa.setTipo((Pessoa.Tipo) parent.getItemAtPosition(posicao));
+			                           int position, long id) {
+				mPessoa.setTipo((Pessoa.Tipo) parent.getItemAtPosition(position));
 				alternarFormulario(mPessoa.getTipo());
 			}
 
@@ -782,5 +846,9 @@ public class PessoaCadastroFragment extends Fragment
 		void onEnderecosClick(Set<Endereco> enderecos);
 
 		void onTelefonesClick(Set<Telefone> telefones);
+	}
+
+	public interface OnPessoaChangedListener {
+		void onPessoaChanged(Pessoa pessoa);
 	}
 }

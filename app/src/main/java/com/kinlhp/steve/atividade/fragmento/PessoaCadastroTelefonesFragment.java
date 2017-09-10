@@ -63,7 +63,7 @@ public class PessoaCadastroTelefonesFragment extends Fragment
 		switch (view.getId()) {
 			case R.id.button_novo_telefone:
 				((PessoaCadastroActivity) getActivity())
-						.onTelefoneSelected(Telefone.builder().build());
+						.onTelefoneSelected(Telefone.builder().tipo(null).build());
 				break;
 		}
 	}
@@ -120,7 +120,7 @@ public class PessoaCadastroTelefonesFragment extends Fragment
 			telefoneARemover.getPessoa().getTelefones()
 					.remove(telefoneARemover);
 
-			// TODO: 9/9/17 corrigir essa gambiarra
+			// TODO: 9/9/17 corrigir essa gambiarra [problema com equals e hashCode]
 			/*
 			essa gambiarra foi necessária pois a ação acima não remove o
 			Telefone do Set<Telefone>.
