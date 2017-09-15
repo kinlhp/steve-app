@@ -1,6 +1,5 @@
 package com.kinlhp.steve.atividade.fragmento;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -22,6 +21,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.CompoundButton;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,9 +51,9 @@ import com.kinlhp.steve.requisicao.Falha;
 import com.kinlhp.steve.requisicao.PessoaRequisicao;
 import com.kinlhp.steve.requisicao.Requisicao;
 import com.kinlhp.steve.requisicao.TelefoneRequisicao;
+import com.kinlhp.steve.resposta.Colecao;
 import com.kinlhp.steve.resposta.ColecaoCallback;
 import com.kinlhp.steve.resposta.ItemCallback;
-import com.kinlhp.steve.resposta.Resposta;
 import com.kinlhp.steve.resposta.VazioCallback;
 import com.kinlhp.steve.util.Data;
 import com.kinlhp.steve.util.Parametro;
@@ -69,22 +69,34 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import br.com.caelum.stella.validation.CNPJValidator;
+import br.com.caelum.stella.validation.CPFValidator;
+import br.com.caelum.stella.validation.InvalidStateException;
 import retrofit2.Call;
 import retrofit2.Response;
 
 public class PessoaCadastroFragment extends Fragment
-		implements View.OnClickListener, TextView.OnEditorActionListener,
-		View.OnLongClickListener, Serializable {
-	private static final long serialVersionUID = 2339917080257278288L;
+		implements CompoundButton.OnCheckedChangeListener,
+		View.OnClickListener, TextView.OnEditorActionListener,
+		View.OnFocusChangeListener,
+		AdapterView.OnItemSelectedListener, View.OnLongClickListener,
+		Serializable {
+	private static final long serialVersionUID = -6810796289648858964L;
 	private static final String PESSOA = "pessoa";
-	private OnListClickListener mListClickListener;
-	private OnPessoaChangedListener mPessoaChangedListener;
+	private AdaptadorSpinner<Pessoa.Tipo> mAdaptadorTipos;
+	private OnEmailsSelecionadosListener mOnEmailsSelecionadosListener;
+	private OnEnderecosSelecionadosListener mOnEnderecosSelecionadosListener;
+	private OnPessoasPesquisaListener mOnPessoasPesquisaListener;
+	private OnReferenciaPessoaAlteradaListener mOnReferenciaPessoaAlteradaListener;
+	private OnTelefonesSelecionadosListener mOnTelefonesSelecionadosListener;
 	private Pessoa mPessoa;
 	private PessoaDTO mPessoaDTO;
 	private int mTarefasPendentes;
+	private List<Pessoa.Tipo> mTipos = Arrays
+			.asList(Pessoa.Tipo.FISICA, Pessoa.Tipo.JURIDICA);
 
 	private AppCompatImageButton mButtonConsumirPorId;
-	private FloatingActionButton mButtonPessoaPesquisa;
+	private FloatingActionButton mButtonPessoasPesquisa;
 	private AppCompatButton mButtonSalvar;
 	private TextInputEditText mInputAberturaNascimento;
 	private TextInputEditText mInputCnpjCpf;
@@ -104,8 +116,10 @@ public class PessoaCadastroFragment extends Fragment
 	private TextInputLayout mLabelIeRg;
 	private TextInputLayout mLabelNomeRazao;
 	private TextInputLayout mLabelTelefones;
+	private ProgressBar mProgressBarConsumirPessoas;
 	private ProgressBar mProgressBarConsumirPorId;
 	private ProgressBar mProgressBarSalvar;
+	private ScrollView mScrollPessoaCadastro;
 	private AppCompatSpinner mSpinnerTipo;
 	private SwitchCompat mSwitchPerfilCliente;
 	private SwitchCompat mSwitchPerfilFornecedor;
@@ -128,48 +142,45 @@ public class PessoaCadastroFragment extends Fragment
 	}
 
 	@Override
-	public void onAttach(Context context) {
-		super.onAttach(context);
-		if (context instanceof OnListClickListener) {
-			mListClickListener = (OnListClickListener) context;
-		} else {
-			throw new RuntimeException(context.toString()
-					+ " must implement OnClickListener");
-		}
-		if (context instanceof OnPessoaChangedListener) {
-			mPessoaChangedListener = (OnPessoaChangedListener) context;
-		} else {
-			throw new RuntimeException(context.toString()
-					+ " must implement OnPessoaChangedListener");
-		}
-	}
-
-	@Override
 	public void onClick(View view) {
 		switch (view.getId()) {
 			case R.id.button_consumir_por_id:
-				mTarefasPendentes = 0;
 				if (mPessoa.getId() == null) {
-					consumirPessoaGETPorId(view);
+					consumirPessoaGETPorId();
 				} else {
 					limparFormulario();
 				}
 				break;
+			case R.id.button_pessoas_pesquisa:
+				if (mOnPessoasPesquisaListener != null) {
+					mOnPessoasPesquisaListener.onPessoasPesquisa();
+				}
+				break;
 			case R.id.button_salvar:
-				mTarefasPendentes = 0;
-				submeterFormulario(view);
+				if (isFormularioValido()) {
+					submeterFormulario();
+				}
 				break;
 			case R.id.input_abertura_nascimento:
 				exibirCalendario();
 				break;
 			case R.id.input_emails:
-				mListClickListener.onEmailsClick(mPessoa.getEmails());
+				if (mOnEmailsSelecionadosListener != null) {
+					mOnEmailsSelecionadosListener
+							.onEmailsSelecionados(view, mPessoa.getEmails());
+				}
 				break;
 			case R.id.input_enderecos:
-				mListClickListener.onEnderecosClick(mPessoa.getEnderecos());
+				if (mOnEnderecosSelecionadosListener != null) {
+					mOnEnderecosSelecionadosListener
+							.onEnderecosSelecionados(view, mPessoa.getEnderecos());
+				}
 				break;
 			case R.id.input_telefones:
-				mListClickListener.onTelefonesClick(mPessoa.getTelefones());
+				if (mOnTelefonesSelecionadosListener != null) {
+					mOnTelefonesSelecionadosListener
+							.onTelefonesSelecionados(view, mPessoa.getTelefones());
+				}
 				break;
 		}
 	}
@@ -177,9 +188,11 @@ public class PessoaCadastroFragment extends Fragment
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		mPessoa = getArguments() != null
-				? (Pessoa) getArguments().getSerializable(PESSOA)
-				: Pessoa.builder().build();
+		if (savedInstanceState != null) {
+			mPessoa = (Pessoa) savedInstanceState.getSerializable(PESSOA);
+		} else if (getArguments() != null) {
+			mPessoa = (Pessoa) getArguments().getSerializable(PESSOA);
+		}
 	}
 
 	@Override
@@ -188,8 +201,7 @@ public class PessoaCadastroFragment extends Fragment
 		View view = inflater
 				.inflate(R.layout.fragment_pessoa_cadastro, container, false);
 		mButtonConsumirPorId = view.findViewById(R.id.button_consumir_por_id);
-		mButtonPessoaPesquisa = getActivity()
-				.findViewById(R.id.button_pessoa_pesquisa);
+		mButtonPessoasPesquisa = view.findViewById(R.id.button_pessoas_pesquisa);
 		mButtonSalvar = view.findViewById(R.id.button_salvar);
 		mInputAberturaNascimento = view
 				.findViewById(R.id.input_abertura_nascimento);
@@ -213,9 +225,12 @@ public class PessoaCadastroFragment extends Fragment
 		mLabelIeRg = view.findViewById(R.id.label_ie_rg);
 		mLabelNomeRazao = view.findViewById(R.id.label_nome_razao);
 		mLabelTelefones = view.findViewById(R.id.label_telefones);
+		mProgressBarConsumirPessoas = view
+				.findViewById(R.id.progress_bar_consumir_pessoas);
 		mProgressBarConsumirPorId = view
 				.findViewById(R.id.progress_bar_consumir_por_id);
 		mProgressBarSalvar = view.findViewById(R.id.progress_bar_salvar);
+		mScrollPessoaCadastro = view.findViewById(R.id.scroll_pessoa_cadastro);
 		mSpinnerTipo = view.findViewById(R.id.spinner_tipo);
 		mSwitchPerfilCliente = view.findViewById(R.id.switch_perfil_cliente);
 		mSwitchPerfilFornecedor = view
@@ -225,29 +240,25 @@ public class PessoaCadastroFragment extends Fragment
 		mSwitchPerfilUsuario = view.findViewById(R.id.switch_perfil_usuario);
 		mSwitchSituacao = view.findViewById(R.id.switch_situacao);
 
-		List<Pessoa.Tipo> tipos = Arrays
-				.asList(Pessoa.Tipo.FISICA, Pessoa.Tipo.JURIDICA);
-		mSpinnerTipo.setAdapter(new AdaptadorSpinner<>(getActivity(), tipos));
+		mAdaptadorTipos = new AdaptadorSpinner<>(getActivity(), mTipos);
+		mSpinnerTipo.setAdapter(mAdaptadorTipos);
 
 		mButtonConsumirPorId.setOnClickListener(this);
+		mButtonPessoasPesquisa.setOnClickListener(this);
 		mButtonSalvar.setOnClickListener(this);
 		mInputAberturaNascimento.setOnClickListener(this);
 		mInputAberturaNascimento.setOnLongClickListener(this);
+		mInputCnpjCpf.setOnFocusChangeListener(this);
 		mInputEmails.setOnClickListener(this);
 		mInputEnderecos.setOnClickListener(this);
 		mInputId.setOnEditorActionListener(this);
+		mInputIeRg.setOnFocusChangeListener(this);
+		mInputNomeRazao.setOnFocusChangeListener(this);
 		mInputTelefones.setOnClickListener(this);
-		mSpinnerTipo.setOnItemSelectedListener(tipoSelectedListener());
-		mSwitchSituacao.setOnCheckedChangeListener(situacaoChangeListener());
+		mSpinnerTipo.setOnItemSelectedListener(this);
+		mSwitchSituacao.setOnCheckedChangeListener(this);
 
-		alternarSituacao();
 		return view;
-	}
-
-	@Override
-	public void onDetach() {
-		super.onDetach();
-		mListClickListener = null;
 	}
 
 	@Override
@@ -261,6 +272,34 @@ public class PessoaCadastroFragment extends Fragment
 	}
 
 	@Override
+	public void onFocusChange(View view, boolean focused) {
+		switch (view.getId()) {
+			case R.id.input_cnpj_cpf:
+				if (!focused) {
+					isCnpjCpfValido();
+				}
+				break;
+			case R.id.input_nome_razao:
+				if (!focused) {
+					isNomeRazaoValido();
+				}
+				break;
+			case R.id.input_ie_rg:
+				if (!focused) {
+					isIeRgValido();
+				}
+				break;
+		}
+	}
+
+	@Override
+	public void onItemSelected(AdapterView<?> parent, View view, int position,
+	                           long id) {
+		mPessoa.setTipo((Pessoa.Tipo) parent.getItemAtPosition(position));
+		alternarFormulario(mPessoa.getTipo());
+	}
+
+	@Override
 	public boolean onLongClick(View view) {
 		switch (view.getId()) {
 			case R.id.input_abertura_nascimento:
@@ -271,12 +310,34 @@ public class PessoaCadastroFragment extends Fragment
 	}
 
 	@Override
+	public void onNothingSelected(AdapterView<?> parent) {
+		/*
+		 */
+	}
+
+	@Override
 	public void onResume() {
 		super.onResume();
 		getActivity().setTitle(R.string.pessoa_cadastro_titulo);
-		mButtonPessoaPesquisa.setVisibility(View.VISIBLE);
-		habilitarInputId(mPessoa.getId() == null);
-		preencherViewsDeLista();
+		mButtonPessoasPesquisa.setVisibility(View.VISIBLE);
+		preencherFormulario();
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		iterarFormulario();
+		outState.putSerializable(PESSOA, mPessoa);
+	}
+
+	private void atualizarReferenciaPessoa() {
+		if (getArguments() != null) {
+			getArguments().putSerializable(PESSOA, mPessoa);
+		}
+		if (mOnReferenciaPessoaAlteradaListener != null) {
+			mOnReferenciaPessoaAlteradaListener
+					.onReferenciaPessoaAlterada(mPessoa);
+		}
 	}
 
 	private void alternarFormulario(@NonNull Pessoa.Tipo tipo) {
@@ -285,6 +346,16 @@ public class PessoaCadastroFragment extends Fragment
 		} else if (tipo.equals(Pessoa.Tipo.JURIDICA)) {
 			definirFormularioPessoaJuridica();
 		}
+	}
+
+	private void alternarInputId() {
+		mInputId.setEnabled(mPessoa.getId() == null);
+		mButtonConsumirPorId.setImageResource(mPessoa.getId() == null
+				? R.drawable.ic_consumir_por_id_accent_24dp
+				: R.drawable.ic_borracha_accent_24dp);
+		mButtonSalvar.setHint(mPessoa.getId() == null
+				? R.string.pessoa_cadastro_button_salvar_hint
+				: R.string.pessoa_cadastro_button_alterar_hint);
 	}
 
 	private void alternarSituacao() {
@@ -300,7 +371,7 @@ public class PessoaCadastroFragment extends Fragment
 			                      @NonNull Throwable causa) {
 				--mTarefasPendentes;
 				ocultarProgresso(mProgressBarConsumirPorId, mButtonConsumirPorId);
-				Falha.tratar(mButtonPessoaPesquisa, causa);
+				Falha.tratar(mButtonPessoasPesquisa, causa);
 			}
 
 			@Override
@@ -308,7 +379,7 @@ public class PessoaCadastroFragment extends Fragment
 			                       @NonNull Response<UfDTO> resposta) {
 				--mTarefasPendentes;
 				if (!resposta.isSuccessful()) {
-					Falha.tratar(mButtonPessoaPesquisa, resposta);
+					Falha.tratar(mButtonPessoasPesquisa, resposta);
 				} else {
 					UfDTO dto = resposta.body();
 					Uf uf = UfMapeamento.paraDominio(dto);
@@ -319,23 +390,23 @@ public class PessoaCadastroFragment extends Fragment
 		};
 	}
 
-	private ColecaoCallback<Resposta<EmailDTO>> callbackPessoaGETEmails() {
-		return new ColecaoCallback<Resposta<EmailDTO>>() {
+	private ColecaoCallback<Colecao<EmailDTO>> callbackPessoaGETEmails() {
+		return new ColecaoCallback<Colecao<EmailDTO>>() {
 
 			@Override
-			public void onFailure(@NonNull Call<Resposta<EmailDTO>> chamada,
+			public void onFailure(@NonNull Call<Colecao<EmailDTO>> chamada,
 			                      @NonNull Throwable causa) {
 				--mTarefasPendentes;
 				ocultarProgresso(mProgressBarConsumirPorId, mButtonConsumirPorId);
-				Falha.tratar(mButtonPessoaPesquisa, causa);
+				Falha.tratar(mButtonPessoasPesquisa, causa);
 			}
 
 			@Override
-			public void onResponse(@NonNull Call<Resposta<EmailDTO>> chamada,
-			                       @NonNull Response<Resposta<EmailDTO>> resposta) {
+			public void onResponse(@NonNull Call<Colecao<EmailDTO>> chamada,
+			                       @NonNull Response<Colecao<EmailDTO>> resposta) {
 				--mTarefasPendentes;
 				if (!resposta.isSuccessful()) {
-					Falha.tratar(mButtonPessoaPesquisa, resposta);
+					Falha.tratar(mButtonPessoasPesquisa, resposta);
 				} else {
 					Set<EmailDTO> dtos = resposta.body().getEmbedded()
 							.getDtos();
@@ -348,28 +419,30 @@ public class PessoaCadastroFragment extends Fragment
 		};
 	}
 
-	private ColecaoCallback<Resposta<EnderecoDTO>> callbackPessoaGETEnderecos() {
-		return new ColecaoCallback<Resposta<EnderecoDTO>>() {
+	private ColecaoCallback<Colecao<EnderecoDTO>> callbackPessoaGETEnderecos() {
+		return new ColecaoCallback<Colecao<EnderecoDTO>>() {
 
 			@Override
-			public void onFailure(@NonNull Call<Resposta<EnderecoDTO>> chamada,
+			public void onFailure(@NonNull Call<Colecao<EnderecoDTO>> chamada,
 			                      @NonNull Throwable causa) {
 				--mTarefasPendentes;
 				ocultarProgresso(mProgressBarConsumirPorId, mButtonConsumirPorId);
-				Falha.tratar(mButtonPessoaPesquisa, causa);
+				Falha.tratar(mButtonPessoasPesquisa, causa);
 			}
 
 			@Override
-			public void onResponse(@NonNull Call<Resposta<EnderecoDTO>> chamada,
-			                       @NonNull Response<Resposta<EnderecoDTO>> resposta) {
+			public void onResponse(@NonNull Call<Colecao<EnderecoDTO>> chamada,
+			                       @NonNull Response<Colecao<EnderecoDTO>> resposta) {
 				--mTarefasPendentes;
 				if (!resposta.isSuccessful()) {
-					Falha.tratar(mButtonPessoaPesquisa, resposta);
+					Falha.tratar(mButtonPessoasPesquisa, resposta);
 				} else {
-					Set<EnderecoDTO> dtos = resposta.body().getEmbedded().getDtos();
+					Set<EnderecoDTO> dtos = resposta.body().getEmbedded()
+							.getDtos();
 					Set<Endereco> enderecos = EnderecoMapeamento
 							.paraDominios(dtos, mPessoa);
 					mPessoa.getEnderecos().addAll(enderecos);
+					// TODO: 9/11/17 corrigir hard-coded
 					String url = Parametro.get(Parametro.Chave.URL_BASE)
 							.toString().concat("enderecos/%d/uf");
 					for (Endereco endereco : mPessoa.getEnderecos()) {
@@ -393,7 +466,7 @@ public class PessoaCadastroFragment extends Fragment
 			                      @NonNull Throwable causa) {
 				--mTarefasPendentes;
 				ocultarProgresso(mProgressBarConsumirPorId, mButtonConsumirPorId);
-				Falha.tratar(mButtonPessoaPesquisa, causa);
+				Falha.tratar(mButtonPessoasPesquisa, causa);
 				mInputId.getText().clear();
 			}
 
@@ -402,38 +475,39 @@ public class PessoaCadastroFragment extends Fragment
 			                       @NonNull Response<PessoaDTO> resposta) {
 				--mTarefasPendentes;
 				if (!resposta.isSuccessful()) {
-					Falha.tratar(mButtonPessoaPesquisa, resposta);
+					Falha.tratar(mButtonPessoasPesquisa, resposta);
+					mInputId.getText().clear();
 				} else {
 					mPessoaDTO = resposta.body();
 					mPessoa = PessoaMapeamento.paraDominio(mPessoaDTO);
-					mPessoaChangedListener.onPessoaChanged(mPessoa);
+					atualizarReferenciaPessoa();
+
+					consumirPessoaGETEmails();
 					consumirPessoaGETEnderecos();
 					consumirPessoaGETTelefones();
-					consumirPessoaGETEmails();
 				}
 				ocultarProgresso(mProgressBarConsumirPorId, mButtonConsumirPorId);
-				mInputId.getText().clear();
 			}
 		};
 	}
 
-	private ColecaoCallback<Resposta<TelefoneDTO>> callbackPessoaGETTelefones() {
-		return new ColecaoCallback<Resposta<TelefoneDTO>>() {
+	private ColecaoCallback<Colecao<TelefoneDTO>> callbackPessoaGETTelefones() {
+		return new ColecaoCallback<Colecao<TelefoneDTO>>() {
 
 			@Override
-			public void onFailure(@NonNull Call<Resposta<TelefoneDTO>> chamada,
+			public void onFailure(@NonNull Call<Colecao<TelefoneDTO>> chamada,
 			                      @NonNull Throwable causa) {
 				--mTarefasPendentes;
 				ocultarProgresso(mProgressBarConsumirPorId, mButtonConsumirPorId);
-				Falha.tratar(mButtonPessoaPesquisa, causa);
+				Falha.tratar(mButtonPessoasPesquisa, causa);
 			}
 
 			@Override
-			public void onResponse(@NonNull Call<Resposta<TelefoneDTO>> chamada,
-			                       @NonNull Response<Resposta<TelefoneDTO>> resposta) {
+			public void onResponse(@NonNull Call<Colecao<TelefoneDTO>> chamada,
+			                       @NonNull Response<Colecao<TelefoneDTO>> resposta) {
 				--mTarefasPendentes;
 				if (!resposta.isSuccessful()) {
-					Falha.tratar(mButtonPessoaPesquisa, resposta);
+					Falha.tratar(mButtonPessoasPesquisa, resposta);
 				} else {
 					Set<TelefoneDTO> dtos = resposta.body().getEmbedded()
 							.getDtos();
@@ -454,7 +528,7 @@ public class PessoaCadastroFragment extends Fragment
 			                      @NonNull Throwable causa) {
 				--mTarefasPendentes;
 				ocultarProgresso(mProgressBarSalvar, mButtonSalvar);
-				Falha.tratar(mButtonPessoaPesquisa, causa);
+				Falha.tratar(mButtonPessoasPesquisa, causa);
 			}
 
 			@Override
@@ -462,7 +536,7 @@ public class PessoaCadastroFragment extends Fragment
 			                       @NonNull Response<Void> resposta) {
 				--mTarefasPendentes;
 				if (!resposta.isSuccessful()) {
-					Falha.tratar(mButtonPessoaPesquisa, resposta);
+					Falha.tratar(mButtonPessoasPesquisa, resposta);
 				} else {
 					String location = resposta.headers()
 							.get(Requisicao.LOCATION_HEADER);
@@ -484,7 +558,7 @@ public class PessoaCadastroFragment extends Fragment
 			                      @NonNull Throwable causa) {
 				--mTarefasPendentes;
 				ocultarProgresso(mProgressBarSalvar, mButtonSalvar);
-				Falha.tratar(mButtonPessoaPesquisa, causa);
+				Falha.tratar(mButtonPessoasPesquisa, causa);
 			}
 
 			@Override
@@ -492,7 +566,7 @@ public class PessoaCadastroFragment extends Fragment
 			                       @NonNull Response<Void> resposta) {
 				--mTarefasPendentes;
 				if (!resposta.isSuccessful()) {
-					Falha.tratar(mButtonPessoaPesquisa, resposta);
+					Falha.tratar(mButtonPessoasPesquisa, resposta);
 				} else {
 					String location = resposta.headers()
 							.get(Requisicao.LOCATION_HEADER);
@@ -511,7 +585,7 @@ public class PessoaCadastroFragment extends Fragment
 			                      @NonNull Throwable causa) {
 				--mTarefasPendentes;
 				ocultarProgresso(mProgressBarSalvar, mButtonSalvar);
-				Falha.tratar(mButtonPessoaPesquisa, causa);
+				Falha.tratar(mButtonPessoasPesquisa, causa);
 			}
 
 			@Override
@@ -519,7 +593,7 @@ public class PessoaCadastroFragment extends Fragment
 			                       @NonNull Response<Void> resposta) {
 				--mTarefasPendentes;
 				if (!resposta.isSuccessful()) {
-					Falha.tratar(mButtonPessoaPesquisa, resposta);
+					Falha.tratar(mButtonPessoasPesquisa, resposta);
 				} else {
 					String location = resposta.headers()
 							.get(Requisicao.LOCATION_HEADER);
@@ -538,7 +612,7 @@ public class PessoaCadastroFragment extends Fragment
 			                      @NonNull Throwable causa) {
 				--mTarefasPendentes;
 				ocultarProgresso(mProgressBarSalvar, mButtonSalvar);
-				Falha.tratar(mButtonPessoaPesquisa, causa);
+				Falha.tratar(mButtonPessoasPesquisa, causa);
 			}
 
 			@Override
@@ -546,7 +620,7 @@ public class PessoaCadastroFragment extends Fragment
 			                       @NonNull Response<Void> resposta) {
 				--mTarefasPendentes;
 				if (!resposta.isSuccessful()) {
-					Falha.tratar(mButtonPessoaPesquisa, resposta);
+					Falha.tratar(mButtonPessoasPesquisa, resposta);
 				} else {
 					String location = resposta.headers()
 							.get(Requisicao.LOCATION_HEADER);
@@ -556,6 +630,36 @@ public class PessoaCadastroFragment extends Fragment
 			}
 		};
 	}
+
+//	private ColecaoCallback<Colecao<PessoaDTO>> callbackPessoasGETPaginado() {
+//		return new ColecaoCallback<Colecao<PessoaDTO>>() {
+//			@Override
+//			public void onFailure(@NonNull Call<Colecao<PessoaDTO>> chamada,
+//			                      @NonNull Throwable causa) {
+//				--mTarefasPendentes;
+//				ocultarProgresso(mProgressBarConsumirPessoas, mButtonPessoasPesquisa);
+//				Falha.tratar(mButtonPessoasPesquisa, causa);
+//			}
+//
+//			@Override
+//			public void onResponse(@NonNull Call<Colecao<PessoaDTO>> chamada,
+//			                       @NonNull Response<Colecao<PessoaDTO>> resposta) {
+//				--mTarefasPendentes;
+//				if (!resposta.isSuccessful()) {
+//					Falha.tratar(mButtonPessoasPesquisa, resposta);
+//				} else {
+//					Colecao<PessoaDTO> colecao = resposta.body();
+//					Set<PessoaDTO> dtos = colecao.getEmbedded().getDtos();
+//					Set<Pessoa> pessoas = PessoaMapeamento.paraDominios(dtos);
+//					if (mOnPessoasRespostaGETPaginadoListener != null) {
+//						mOnPessoasRespostaGETPaginadoListener
+//								.onRespostaPessoasGETPaginado(pessoas, colecao.getLinks());
+//					}
+//				}
+//				ocultarProgresso(mProgressBarConsumirPessoas, mButtonPessoasPesquisa);
+//			}
+//		};
+//	}
 
 	private void consumirPessoaGETEmails() {
 		++mTarefasPendentes;
@@ -569,9 +673,10 @@ public class PessoaCadastroFragment extends Fragment
 				.getEnderecos(callbackPessoaGETEnderecos(), mPessoaDTO.getLinks().getEnderecos());
 	}
 
-	private void consumirPessoaGETPorId(@NonNull View view) {
-		view.setVisibility(View.INVISIBLE);
+	private void consumirPessoaGETPorId() {
+		mTarefasPendentes = 0;
 		exibirProgresso(mProgressBarConsumirPorId, null);
+		mButtonConsumirPorId.setVisibility(View.INVISIBLE);
 		if (!TextUtils.isEmpty(mInputId.getText())) {
 			BigInteger id = new BigInteger(mInputId.getText().toString());
 			if (id.compareTo(BigInteger.ONE) < 0) {
@@ -580,7 +685,7 @@ public class PessoaCadastroFragment extends Fragment
 			} else {
 				mLabelId.setError(null);
 				mLabelId.setErrorEnabled(false);
-				Teclado.ocultar(getActivity(), view);
+				Teclado.ocultar(getActivity(), mButtonConsumirPorId);
 				++mTarefasPendentes;
 				PessoaRequisicao.getPorId(callbackPessoaGETPorId(), id);
 			}
@@ -595,40 +700,37 @@ public class PessoaCadastroFragment extends Fragment
 	}
 
 	private void consumirPessoaPOST() {
+		mTarefasPendentes = 0;
+		exibirProgresso(mProgressBarSalvar, mButtonSalvar);
+		Teclado.ocultar(getActivity(), mButtonSalvar);
 		mPessoaDTO = PessoaMapeamento.paraDTO(mPessoa);
 		++mTarefasPendentes;
 		PessoaRequisicao.post(callbackPessoaPOST(), mPessoaDTO);
 	}
 
 	private void consumirPessoaPOSTEmails() {
-		if (mPessoa.getEmails() != null) {
-			for (Email email : mPessoa.getEmails()) {
-				EmailDTO dto = EmailMapeamento.paraDTO(email);
-				++mTarefasPendentes;
-				EmailRequisicao.post(callbackPessoaPOSTEmail(email), dto);
-			}
+		for (Email email : mPessoa.getEmails()) {
+			EmailDTO dto = EmailMapeamento.paraDTO(email);
+			++mTarefasPendentes;
+			EmailRequisicao.post(callbackPessoaPOSTEmail(email), dto);
 		}
 	}
 
 	private void consumirPessoaPOSTEnderecos() {
-		if (mPessoa.getEnderecos() != null) {
-			for (Endereco endereco : mPessoa.getEnderecos()) {
-				EnderecoDTO dto = EnderecoMapeamento.paraDTO(endereco);
-				++mTarefasPendentes;
-				EnderecoRequisicao
-						.post(callbackPessoaPOSTEndereco(endereco), dto);
-			}
+		for (Endereco endereco : mPessoa.getEnderecos()) {
+			EnderecoDTO dto = EnderecoMapeamento.paraDTO(endereco);
+			++mTarefasPendentes;
+			EnderecoRequisicao
+					.post(callbackPessoaPOSTEndereco(endereco), dto);
 		}
 	}
 
 	private void consumirPessoaPOSTTelefones() {
-		if (mPessoa.getTelefones() != null) {
-			for (Telefone telefone : mPessoa.getTelefones()) {
-				TelefoneDTO dto = TelefoneMapeamento.paraDTO(telefone);
-				++mTarefasPendentes;
-				TelefoneRequisicao
-						.post(callbackPessoaPOSTTelefone(telefone), dto);
-			}
+		for (Telefone telefone : mPessoa.getTelefones()) {
+			TelefoneDTO dto = TelefoneMapeamento.paraDTO(telefone);
+			++mTarefasPendentes;
+			TelefoneRequisicao
+					.post(callbackPessoaPOSTTelefone(telefone), dto);
 		}
 	}
 
@@ -637,6 +739,14 @@ public class PessoaCadastroFragment extends Fragment
 		Toast.makeText(getActivity(), "Implementar PUT", Toast.LENGTH_SHORT)
 				.show();
 	}
+
+//	private void consumirPessoasGETPaginado() {
+//		mTarefasPendentes = 0;
+//		Teclado.ocultar(getActivity(), mProgressBarConsumirPessoas);
+//		exibirProgresso(mProgressBarConsumirPessoas, mButtonPessoasPesquisa);
+//		++mTarefasPendentes;
+//		PessoaRequisicao.get(callbackPessoasGETPaginado());
+//	}
 
 	private void definirFormularioPessoaFisica() {
 		mLabelCnpjCpf
@@ -682,7 +792,7 @@ public class PessoaCadastroFragment extends Fragment
 						calendario.get(Calendar.YEAR),
 						calendario.get(Calendar.MONTH),
 						calendario.get(Calendar.DAY_OF_MONTH))
-				.show(getFragmentManager(), "Calendário");
+				.show(getFragmentManager(), getString(R.string.pessoa_cadastro_label_calendario_hint));
 	}
 
 	private void exibirProgresso(@NonNull ProgressBar progresso,
@@ -693,22 +803,80 @@ public class PessoaCadastroFragment extends Fragment
 		}
 	}
 
-	private void habilitarInputId(boolean habilitar) {
-		mInputId.setEnabled(habilitar);
-		mButtonConsumirPorId.setImageResource(habilitar
-				? R.drawable.ic_consumir_por_id_accent_24dp
-				: R.drawable.ic_borracha_accent_24dp);
+	private boolean isCnpjValido() {
+		try {
+			new CNPJValidator().assertValid(mInputCnpjCpf.getText().toString());
+		} catch (InvalidStateException e) {
+			mLabelCnpjCpf.setError(getString(R.string.input_invalido));
+			return false;
+		}
+		mLabelCnpjCpf.setError(null);
+		mLabelCnpjCpf.setErrorEnabled(false);
+		return true;
 	}
 
-	private void iterarFormulario() throws ParseException {
+	private boolean isCnpjCpfValido() {
+		if (TextUtils.isEmpty(mInputCnpjCpf.getText())) {
+			mLabelCnpjCpf.setError(getString(R.string.input_obrigatorio));
+			return false;
+		}
+		return mSpinnerTipo.getSelectedItem().equals(Pessoa.Tipo.FISICA)
+				? isCpfValido() : isCnpjValido();
+	}
+
+	private boolean isCpfValido() {
+		try {
+			new CPFValidator().assertValid(mInputCnpjCpf.getText().toString());
+		} catch (InvalidStateException e) {
+			mLabelCnpjCpf.setError(getString(R.string.input_invalido));
+			return false;
+		}
+		mLabelCnpjCpf.setError(null);
+		mLabelCnpjCpf.setErrorEnabled(false);
+		return true;
+	}
+
+	private boolean isFormularioValido() {
+		return isCnpjCpfValido()
+				&& isIeRgValido()
+				&& isNomeRazaoValido();
+	}
+
+	private boolean isIeRgValido() {
+		if (TextUtils.isEmpty(mInputIeRg.getText())) {
+			mLabelIeRg.setError(getString(R.string.input_obrigatorio));
+			return false;
+		}
+		mLabelIeRg.setError(null);
+		mLabelIeRg.setErrorEnabled(false);
+		return true;
+	}
+
+	private boolean isNomeRazaoValido() {
+		if (TextUtils.isEmpty(mInputNomeRazao.getText())) {
+			mLabelNomeRazao.setError(getString(R.string.input_obrigatorio));
+			return false;
+		}
+		mLabelNomeRazao.setError(null);
+		mLabelNomeRazao.setErrorEnabled(false);
+		return true;
+	}
+
+	private void iterarFormulario() {
 		mPessoa.setTipo((Pessoa.Tipo) mSpinnerTipo.getSelectedItem());
 		mPessoa.setCnpjCpf(mInputCnpjCpf.getText().toString());
 		mPessoa.setNomeRazao(mInputNomeRazao.getText().toString());
 		mPessoa.setFantasiaSobrenome(mInputFantasiaSobrenome.getText().toString());
 		mPessoa.setIeRg(mInputIeRg.getText().toString());
-		mPessoa.setAberturaNascimento(TextUtils.isEmpty(mInputAberturaNascimento.getText())
-				? null
-				: Data.deStringData(mInputAberturaNascimento.getText().toString()));
+
+		try {
+			mPessoa.setAberturaNascimento(TextUtils.isEmpty(mInputAberturaNascimento.getText())
+					? null
+					: Data.deStringData(mInputAberturaNascimento.getText().toString()));
+		} catch (ParseException e) {
+			Snackbar.make(mButtonPessoasPesquisa, getString(R.string.suporte_mensagem_conversao_data), Snackbar.LENGTH_LONG)
+					.show();
+		}
 		mPessoa.setPerfilCliente(mSwitchPerfilCliente.isChecked());
 		mPessoa.setPerfilFornecedor(mSwitchPerfilFornecedor.isChecked());
 		mPessoa.setPerfilTransportador(mSwitchPerfilTransportador.isChecked());
@@ -720,23 +888,8 @@ public class PessoaCadastroFragment extends Fragment
 
 	private void limparFormulario() {
 		mPessoa = Pessoa.builder().build();
-		mPessoaChangedListener.onPessoaChanged(mPessoa);
-		habilitarInputId(true);
-		mInputId.getText().clear();
-		mSpinnerTipo.setSelection(0);
-		mInputCnpjCpf.getText().clear();
-		mInputNomeRazao.getText().clear();
-		mInputFantasiaSobrenome.getText().clear();
-		mInputIeRg.getText().clear();
-		mInputAberturaNascimento.getText().clear();
-		preencherViewsDeLista();
-		mSwitchPerfilCliente.setChecked(mPessoa.isPerfilCliente());
-		mSwitchPerfilFornecedor.setChecked(mPessoa.isPerfilFornecedor());
-		mSwitchPerfilTransportador.setChecked(mPessoa.isPerfilTransportador());
-		mSwitchPerfilUsuario.setChecked(mPessoa.isPerfilUsuario());
-		alternarSituacao();
-		ocultarProgresso(mProgressBarConsumirPorId, mButtonConsumirPorId);
-		mInputId.requestFocus();
+		atualizarReferenciaPessoa();
+		preencherFormulario();
 	}
 
 	private void ocultarProgresso(@NonNull ProgressBar progresso,
@@ -746,21 +899,24 @@ public class PessoaCadastroFragment extends Fragment
 				view.setVisibility(View.VISIBLE);
 			}
 			progresso.setVisibility(View.GONE);
-			if (mPessoa != null && mPessoa.getId() != null) {
-				preencherFormulario();
-			}
+			preencherFormulario();
 		}
 	}
 
 	private void preencherFormulario() {
-		habilitarInputId(false);
-		mInputId.setText(String.format(Locale.getDefault(), "%d", mPessoa.getId()));
-		mSpinnerTipo.setSelection(mPessoa.getTipo().ordinal());
-		mInputCnpjCpf.setText(mPessoa.getCnpjCpf());
-		mInputNomeRazao.setText(mPessoa.getNomeRazao());
+		alternarInputId();
+		mInputId.setText(mPessoa.getId() == null
+				? "" : mPessoa.getId().toString());
+		mSpinnerTipo.setSelection(mPessoa.getTipo() == null
+				? 0 : mAdaptadorTipos.getPosition(mPessoa.getTipo()));
+		mInputCnpjCpf.setText(mPessoa.getCnpjCpf() == null
+				? "" : mPessoa.getCnpjCpf());
+		mInputNomeRazao.setText(mPessoa.getNomeRazao() == null
+				? "" : mPessoa.getNomeRazao());
 		mInputFantasiaSobrenome.setText(mPessoa.getFantasiaSobrenome() == null
 				? "" : mPessoa.getFantasiaSobrenome());
-		mInputIeRg.setText(mPessoa.getIeRg());
+		mInputIeRg.setText(mPessoa.getIeRg() == null
+				? "" : mPessoa.getIeRg());
 		mInputAberturaNascimento.setText(mPessoa.getAberturaNascimento() == null
 				? "" : Data.paraStringData(mPessoa.getAberturaNascimento()));
 		preencherViewsDeLista();
@@ -769,7 +925,6 @@ public class PessoaCadastroFragment extends Fragment
 		mSwitchPerfilTransportador.setChecked(mPessoa.isPerfilTransportador());
 		mSwitchPerfilUsuario.setChecked(mPessoa.isPerfilUsuario());
 		alternarSituacao();
-		mInputCnpjCpf.requestFocus();
 	}
 
 	private void preencherViewsDeLista() {
@@ -790,29 +945,40 @@ public class PessoaCadastroFragment extends Fragment
 				? "" : getString(R.string.pessoa_cadastro_input_emails_text));
 	}
 
-	private CompoundButton.OnCheckedChangeListener situacaoChangeListener() {
-		return new CompoundButton.OnCheckedChangeListener() {
-			@Override
-			public void onCheckedChanged(CompoundButton view, boolean checked) {
-				view.setText(checked
-						? Pessoa.Situacao.ATIVO.toString()
-						: Pessoa.Situacao.INATIVO.toString());
-			}
-		};
+	public void setOnEmailsSelecionadosListener(@Nullable OnEmailsSelecionadosListener ouvinte) {
+		mOnEmailsSelecionadosListener = ouvinte;
 	}
 
-	private void submeterFormulario(@NonNull View view) {
-		Teclado.ocultar(getActivity(), view);
-		exibirProgresso(mProgressBarSalvar, mButtonSalvar);
-		try {
-			iterarFormulario();
-		} catch (ParseException e) {
-			--mTarefasPendentes;
-			ocultarProgresso(mProgressBarSalvar, mButtonSalvar);
-			Snackbar.make(mButtonPessoaPesquisa, getString(R.string.suporte_mensagem_conversao_data), Snackbar.LENGTH_LONG)
-					.show();
-			return;
-		}
+	public void setOnEnderecosSelecionadosListener(@Nullable OnEnderecosSelecionadosListener ouvinte) {
+		mOnEnderecosSelecionadosListener = ouvinte;
+	}
+
+	public void setOnPessoasPesquisaListener(@Nullable OnPessoasPesquisaListener ouvinte) {
+		mOnPessoasPesquisaListener = ouvinte;
+	}
+
+	public void setOnReferenciaPessoaAlteradaListener(@Nullable OnReferenciaPessoaAlteradaListener ouvinte) {
+		mOnReferenciaPessoaAlteradaListener = ouvinte;
+	}
+
+	public void setOnTelefonesSelecionadosListener(@Nullable OnTelefonesSelecionadosListener ouvinte) {
+		mOnTelefonesSelecionadosListener = ouvinte;
+	}
+
+	public void setPessoa(@NonNull Pessoa pessoa) {
+		mPessoa = pessoa;
+		atualizarReferenciaPessoa();
+	}
+
+	@Override
+	public void onCheckedChanged(CompoundButton view, boolean checked) {
+		view.setText(checked
+				? Pessoa.Situacao.ATIVO.toString()
+				: Pessoa.Situacao.INATIVO.toString());
+	}
+
+	private void submeterFormulario() {
+		iterarFormulario();
 		if (mPessoa.getId() == null) {
 			consumirPessoaPOST();
 		} else {
@@ -821,34 +987,28 @@ public class PessoaCadastroFragment extends Fragment
 		ocultarProgresso(mProgressBarSalvar, mButtonSalvar);
 	}
 
-	private AdapterView.OnItemSelectedListener tipoSelectedListener() {
-		return new AdapterView.OnItemSelectedListener() {
+	public interface OnEmailsSelecionadosListener {
 
-			@Override
-			public void onItemSelected(AdapterView<?> parent, View view,
-			                           int position, long id) {
-				mPessoa.setTipo((Pessoa.Tipo) parent.getItemAtPosition(position));
-				alternarFormulario(mPessoa.getTipo());
-			}
-
-			@Override
-			public void onNothingSelected(AdapterView<?> parent) {
-				/*
-				 */
-			}
-		};
+		void onEmailsSelecionados(@NonNull View view, @NonNull Set<Email> emails);
 	}
 
-	public interface OnListClickListener {
+	public interface OnEnderecosSelecionadosListener {
 
-		void onEmailsClick(Set<Email> emails);
-
-		void onEnderecosClick(Set<Endereco> enderecos);
-
-		void onTelefonesClick(Set<Telefone> telefones);
+		void onEnderecosSelecionados(@NonNull View view, @NonNull Set<Endereco> enderecos);
 	}
 
-	public interface OnPessoaChangedListener {
-		void onPessoaChanged(Pessoa pessoa);
+	public interface OnPessoasPesquisaListener {
+
+		void onPessoasPesquisa();
+	}
+
+	public interface OnReferenciaPessoaAlteradaListener {
+
+		void onReferenciaPessoaAlterada(@NonNull Pessoa novaReferencia);
+	}
+
+	public interface OnTelefonesSelecionadosListener {
+
+		void onTelefonesSelecionados(@NonNull View view, @NonNull Set<Telefone> telefones);
 	}
 }

@@ -81,6 +81,7 @@ public final class Falha implements Serializable {
 			case HttpURLConnection.HTTP_NOT_FOUND:
 				mensagem = contexto
 						.getString(R.string.resposta_mensagem_not_found);
+				erro = obterDTO(resposta.errorBody());
 				break;
 			case HttpURLConnection.HTTP_UNAUTHORIZED:
 				mensagem = contexto

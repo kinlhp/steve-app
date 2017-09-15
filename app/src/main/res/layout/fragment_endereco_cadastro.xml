@@ -13,20 +13,20 @@
         android:layout_height="wrap_content">
 
         <ProgressBar
-            android:id="@+id/progress_bar_consumir_cep"
+            android:id="@+id/progress_bar_consumir_por_cep"
             style="?android:attr/progressBarStyleLarge"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@+id/button_consumir_cep"
-            app:layout_constraintEnd_toEndOf="@+id/button_consumir_cep"
-            app:layout_constraintLeft_toLeftOf="@+id/button_consumir_cep"
-            app:layout_constraintRight_toRightOf="@+id/button_consumir_cep"
-            app:layout_constraintStart_toStartOf="@+id/button_consumir_cep"
-            app:layout_constraintTop_toTopOf="@+id/button_consumir_cep" />
+            app:layout_constraintBottom_toBottomOf="@+id/button_consumir_por_cep"
+            app:layout_constraintEnd_toEndOf="@+id/button_consumir_por_cep"
+            app:layout_constraintLeft_toLeftOf="@+id/button_consumir_por_cep"
+            app:layout_constraintRight_toRightOf="@+id/button_consumir_por_cep"
+            app:layout_constraintStart_toStartOf="@+id/button_consumir_por_cep"
+            app:layout_constraintTop_toTopOf="@+id/button_consumir_por_cep" />
 
         <ProgressBar
-            android:id="@+id/progress_bar_consumir_uf"
+            android:id="@+id/progress_bar_consumir_por_uf"
             style="?android:attr/progressBarStyleLarge"
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -72,9 +72,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/label_margin"
-            app:layout_constraintEnd_toStartOf="@+id/button_consumir_cep"
+            app:layout_constraintEnd_toStartOf="@+id/button_consumir_por_cep"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toLeftOf="@+id/button_consumir_cep"
+            app:layout_constraintRight_toLeftOf="@+id/button_consumir_por_cep"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/spinner_tipo">
 
@@ -89,7 +89,7 @@
         </android.support.design.widget.TextInputLayout>
 
         <android.support.v7.widget.AppCompatImageButton
-            android:id="@+id/button_consumir_cep"
+            android:id="@+id/button_consumir_por_cep"
             android:layout_width="@dimen/round_button_width"
             android:layout_height="@dimen/round_button_height"
             android:layout_marginEnd="@dimen/button_margin"

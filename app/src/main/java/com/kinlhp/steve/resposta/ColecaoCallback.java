@@ -9,7 +9,7 @@ import retrofit2.Response;
 /**
  * Created by kin on 8/25/17.
  */
-public interface ColecaoCallback<T extends Resposta> extends Callback<T> {
+public interface ColecaoCallback<T extends Colecao> extends Callback<T> {
 
 	@Override
 	void onFailure(@NonNull Call<T> chamada, @NonNull Throwable causa);

@@ -8,7 +8,7 @@ import com.kinlhp.steve.dto.PessoaDTO;
 import com.kinlhp.steve.dto.TelefoneDTO;
 import com.kinlhp.steve.href.HRef;
 import com.kinlhp.steve.recurso.PessoaRecurso;
-import com.kinlhp.steve.resposta.Resposta;
+import com.kinlhp.steve.resposta.Colecao;
 
 import java.io.Serializable;
 import java.math.BigInteger;
@@ -19,21 +19,30 @@ import retrofit2.Callback;
  * Created by kin on 8/16/17.
  */
 public final class PessoaRequisicao implements Serializable {
-	private static final long serialVersionUID = -790844688057871488L;
+	private static final long serialVersionUID = 8991395590581464620L;
 	private static final PessoaRecurso RECURSO = Requisicao
 			.criar(PessoaRecurso.class);
 
 	private PessoaRequisicao() {
 	}
 
-	public static void getEmails(@NonNull Callback<Resposta<EmailDTO>> callback,
+	public static void get(@NonNull Callback<Colecao<PessoaDTO>> callback) {
+		RECURSO.get().enqueue(callback);
+	}
+
+	public static void getEmails(@NonNull Callback<Colecao<EmailDTO>> callback,
 	                             @NonNull HRef emails) {
 		RECURSO.getEmails(emails.getHref()).enqueue(callback);
 	}
 
-	public static void getEnderecos(@NonNull Callback<Resposta<EnderecoDTO>> callback,
+	public static void getEnderecos(@NonNull Callback<Colecao<EnderecoDTO>> callback,
 	                                @NonNull HRef enderecos) {
 		RECURSO.getEnderecos(enderecos.getHref()).enqueue(callback);
+	}
+
+	public static void getPaginado(@NonNull Callback<Colecao<PessoaDTO>> callback,
+	                               @NonNull HRef pagina) {
+		RECURSO.getPaginado(pagina.getHref()).enqueue(callback);
 	}
 
 	public static void getPorId(@NonNull Callback<PessoaDTO> callback,
@@ -41,7 +50,7 @@ public final class PessoaRequisicao implements Serializable {
 		RECURSO.getPorId(id).enqueue(callback);
 	}
 
-	public static void getTelefones(@NonNull Callback<Resposta<TelefoneDTO>> callback,
+	public static void getTelefones(@NonNull Callback<Colecao<TelefoneDTO>> callback,
 	                                @NonNull HRef telefones) {
 		RECURSO.getTelefones(telefones.getHref()).enqueue(callback);
 	}

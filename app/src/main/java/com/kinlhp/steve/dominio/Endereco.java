@@ -19,7 +19,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Setter
 public class Endereco extends Dominio<BigInteger> {
-	private static final long serialVersionUID = 4428831223262923513L;
+	private static final long serialVersionUID = -8194589352442654461L;
 	private String bairro;
 	private String cep;
 	private String cidade;
@@ -34,6 +34,17 @@ public class Endereco extends Dominio<BigInteger> {
 	@Builder.Default
 	private Tipo tipo = Tipo.PRINCIPAL;
 	private Uf uf;
+
+	@Override
+	public String toString() {
+		return new StringBuilder()
+				.append(logradouro != null ? logradouro : "")
+				.append(numero != null ? ", " + numero : "")
+				.append(cidade != null ? " - " + cidade : "")
+				.append(uf != null && uf.getSigla() != null
+						? "/" + uf.getSigla() : "")
+				.toString();
+	}
 
 	@AllArgsConstructor
 	@Getter

@@ -1,18 +1,18 @@
-<?xml version="1.0" encoding="utf-8"?><!-- @layout/fragment_pessoa_cadastro_emails.xml -->
+<?xml version="1.0" encoding="utf-8"?><!-- @layout/fragment_enderecos_pesquisa.xml -->
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/fragment_pessoa_cadastro_emails"
+    android:id="@+id/fragment_pessoa_cadastro_enderecos"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".atividade.fragmento.PessoaCadastroEmailsFragment">
+    tools:context=".atividade.fragmento.EnderecosPesquisaFragment">
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_emails"
+        android:id="@+id/recycler_enderecos"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:scrollbars="vertical"
-        app:layout_constraintBottom_toTopOf="@+id/button_novo_email"
+        app:layout_constraintBottom_toTopOf="@+id/button_novo_endereco"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -20,7 +20,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <android.support.v7.widget.AppCompatImageButton
-        android:id="@+id/button_novo_email"
+        android:id="@+id/button_novo_endereco"
         android:layout_width="0dp"
         android:layout_height="@dimen/button_height"
         android:layout_marginBottom="@dimen/last_view_marginBottom"
@@ -30,5 +30,5 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/ic_novo_email_accent_24dp" />
+        app:srcCompat="@drawable/ic_novo_endereco_accent_24dp" />
 </android.support.constraint.ConstraintLayout>

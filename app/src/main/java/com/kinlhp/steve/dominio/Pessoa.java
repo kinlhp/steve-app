@@ -22,7 +22,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Setter
 public class Pessoa extends Dominio<BigInteger> {
-	private static final long serialVersionUID = -8399368200365254075L;
+	private static final long serialVersionUID = -4740713832520882855L;
 	private Date aberturaNascimento;
 	private String cnpjCpf;
 	@Builder.Default
@@ -42,6 +42,14 @@ public class Pessoa extends Dominio<BigInteger> {
 	@Builder.Default
 	private Set<Telefone> telefones = new LinkedHashSet<>();
 	private Tipo tipo;
+
+	@Override
+	public String toString() {
+		return new StringBuilder()
+				.append(nomeRazao != null ? nomeRazao : "")
+				.append(fantasiaSobrenome != null ? " " + fantasiaSobrenome : "")
+				.toString();
+	}
 
 	@AllArgsConstructor
 	@Getter

@@ -24,12 +24,4 @@
     <include
         android:id="@+id/include_container_pessoa_cadastro"
         layout="@layout/container_pessoa_cadastro" />
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/button_pessoa_pesquisa"
-        android:layout_width="@dimen/floating_action_button_width"
-        android:layout_height="@dimen/floating_action_button_height"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/floating_action_button_margin"
-        app:srcCompat="@drawable/ic_pesquisa_pessoa_white_24dp" />
 </android.support.design.widget.CoordinatorLayout>

@@ -1,9 +1,8 @@
 package com.kinlhp.steve.atividade.fragmento;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
@@ -22,22 +21,22 @@ import com.kinlhp.steve.dominio.Telefone;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 public class TelefoneCadastroFragment extends Fragment
-		implements View.OnClickListener, Serializable {
-	private static final long serialVersionUID = 5036312639921542373L;
+		implements View.OnClickListener, View.OnFocusChangeListener,
+		Serializable {
+	private static final long serialVersionUID = -5259170939884758017L;
 	private static final String TELEFONE = "telefone";
-	ArrayList<Telefone.Tipo> mTipos =
-			new ArrayList<>(Arrays.asList(Telefone.Tipo.values()));
-	private AdaptadorSpinner<Telefone.Tipo> mAdaptador;
+	private AdaptadorSpinner<Telefone.Tipo> mAdaptadorTipos;
+	private OnTelefoneAdicionadoListener mOnTelefoneAdicionadoListener;
 	private Telefone mTelefone;
-	private OnTelefoneAddedListener mTelefoneAddedListener;
+	private ArrayList<Telefone.Tipo> mTipos;
 
 	private AppCompatButton mButtonAdicionar;
 	private TextInputEditText mInputNomeContato;
 	private TextInputEditText mInputNumero;
 	private TextInputLayout mLabelNumero;
+	private ScrollView mScrollTelefoneCadastro;
 	private AppCompatSpinner mSpinnerTipo;
 
 	/**
@@ -55,28 +54,18 @@ public class TelefoneCadastroFragment extends Fragment
 	}
 
 	@Override
-	public void onAttach(Context context) {
-		super.onAttach(context);
-		if (context instanceof OnTelefoneAddedListener) {
-			mTelefoneAddedListener = (OnTelefoneAddedListener) context;
-		} else {
-			throw new RuntimeException(context.toString()
-					+ " must implement OnTelefoneAddedListener");
-		}
-	}
-
-	@Override
 	public void onClick(View view) {
 		switch (view.getId()) {
 			case R.id.button_adicionar:
 				if (isFormularioValido()) {
 					iterarFormulario();
-					mTelefoneAddedListener.onTelefoneAdded(mTelefone);
+					if (mOnTelefoneAdicionadoListener != null) {
+						mOnTelefoneAdicionadoListener
+								.onTelefoneAdicionado(view, mTelefone);
+					}
+					getActivity().onBackPressed();
 				} else {
-					((ScrollView) getActivity().findViewById(R.id.fragment_telefone_cadastro))
-							.fullScroll(View.FOCUS_UP);
-					Snackbar.make(mButtonAdicionar, getString(R.string.form_mensagem_invalido), Snackbar.LENGTH_LONG)
-							.show();
+					mScrollTelefoneCadastro.fullScroll(View.FOCUS_UP);
 				}
 				break;
 		}
@@ -85,9 +74,11 @@ public class TelefoneCadastroFragment extends Fragment
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		mTelefone = getArguments() != null
-				? (Telefone) getArguments().getSerializable(TELEFONE)
-				: Telefone.builder().build();
+		if (savedInstanceState != null) {
+			mTelefone = (Telefone) savedInstanceState.getSerializable(TELEFONE);
+		} else if (getArguments() != null) {
+			mTelefone = (Telefone) getArguments().getSerializable(TELEFONE);
+		}
 	}
 
 	@Override
@@ -95,33 +86,47 @@ public class TelefoneCadastroFragment extends Fragment
 	                         Bundle savedInstanceState) {
 		View view = inflater
 				.inflate(R.layout.fragment_telefone_cadastro, container, false);
+		mScrollTelefoneCadastro = (ScrollView) view;
 		mButtonAdicionar = view.findViewById(R.id.button_adicionar);
 		mInputNomeContato = view.findViewById(R.id.input_nome_contato);
 		mInputNumero = view.findViewById(R.id.input_numero);
 		mLabelNumero = view.findViewById(R.id.label_numero);
 		mSpinnerTipo = view.findViewById(R.id.spinner_tipo);
 
-		mAdaptador = new AdaptadorSpinner<>(getActivity(), mTipos);
-		mSpinnerTipo.setAdapter(mAdaptador);
+		mTipos = new ArrayList<>(Arrays.asList(Telefone.Tipo.values()));
+		mAdaptadorTipos = new AdaptadorSpinner<>(getActivity(), mTipos);
+		mSpinnerTipo.setAdapter(mAdaptadorTipos);
 
 		mButtonAdicionar.setOnClickListener(this);
-		mInputNumero.setOnFocusChangeListener(numeroFocusChangeListener());
+		mInputNumero.setOnFocusChangeListener(this);
 
-		limitarTiposDisponiveis();
-		preencherFormulario();
 		return view;
 	}
 
 	@Override
-	public void onDetach() {
-		super.onDetach();
-		mTelefoneAddedListener = null;
+	public void onFocusChange(View view, boolean focused) {
+		switch (view.getId()) {
+			case R.id.input_numero:
+				if (!focused) {
+					isNumeroValido();
+				}
+				break;
+		}
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
 		getActivity().setTitle(R.string.telefone_cadastro_titulo);
+		limitarTiposDisponiveis();
+		preencherFormulario();
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		iterarFormulario();
+		outState.putSerializable(TELEFONE, mTelefone);
 	}
 
 	private boolean isFormularioValido() {
@@ -138,43 +143,30 @@ public class TelefoneCadastroFragment extends Fragment
 			mLabelNumero.setError(getString(R.string.input_invalido));
 			return false;
 		}
+		mLabelNumero.setError(null);
+		mLabelNumero.setErrorEnabled(false);
 		return true;
 	}
 
 	private void iterarFormulario() {
 		mTelefone.setTipo((Telefone.Tipo) mSpinnerTipo.getSelectedItem());
 		mTelefone.setNumero(mInputNumero.getText().toString());
-		mTelefone.setNomeContato(TextUtils.isEmpty(mInputNomeContato.getText())
-				? null : mInputNomeContato.getText().toString());
+		mTelefone.setNomeContato(mInputNomeContato.getText().toString());
 	}
 
 	private void limitarTiposDisponiveis() {
 		for (Telefone telefone : mTelefone.getPessoa().getTelefones()) {
 			if (!telefone.equals(mTelefone)
 					|| TextUtils.isEmpty(mTelefone.getNumero())) {
-				mAdaptador.remove(telefone.getTipo());
+				mAdaptadorTipos.remove(telefone.getTipo());
 			}
 		}
-		mAdaptador.notifyDataSetChanged();
-	}
-
-	private View.OnFocusChangeListener numeroFocusChangeListener() {
-		return new View.OnFocusChangeListener() {
-			@Override
-			public void onFocusChange(View view, boolean focused) {
-				if (!focused) {
-					if (isNumeroValido()) {
-						mLabelNumero.setError(null);
-						mLabelNumero.setErrorEnabled(false);
-					}
-				}
-			}
-		};
+		mAdaptadorTipos.notifyDataSetChanged();
 	}
 
 	private void preencherFormulario() {
 		mSpinnerTipo.setSelection(mTelefone.getTipo() == null
-				? 0 : mAdaptador.getPosition(mTelefone.getTipo()));
+				? 0 : mAdaptadorTipos.getPosition(mTelefone.getTipo()));
 		mInputNumero.setText(mTelefone.getNumero() == null
 				? "" : mTelefone.getNumero());
 		mInputNomeContato.setText(mTelefone.getNomeContato() == null
@@ -183,23 +175,23 @@ public class TelefoneCadastroFragment extends Fragment
 			mButtonAdicionar
 					.setHint(R.string.telefone_cadastro_button_alterar_hint);
 		}
+		mInputNumero.requestFocus();
+	}
 
-		// TODO: 9/9/17 corrigir essa gambiarra [problema com equals e hashCode]
-			/*
-			essa gambiarra foi necessária pois a validação acima não funciona
-			quando o Tipo foi alterado, gerando assim inconsistência no hint do
-			mButtonAdicionar.
-			 */
-		List<Telefone> telefones =
-				new ArrayList<>(mTelefone.getPessoa().getTelefones());
-		int indice = telefones.indexOf(mTelefone);
-		if (indice > -1) {
-			mButtonAdicionar
-					.setHint(R.string.telefone_cadastro_button_alterar_hint);
+	public void setOnTelefoneAdicionadoListener(@Nullable OnTelefoneAdicionadoListener ouvinte) {
+		mOnTelefoneAdicionadoListener = ouvinte;
+	}
+
+	public void setTelefone(@NonNull Telefone telefone) {
+		mTelefone = telefone;
+		if (getArguments() != null) {
+			getArguments().putSerializable(TELEFONE, mTelefone);
 		}
 	}
 
-	public interface OnTelefoneAddedListener {
-		void onTelefoneAdded(Telefone telefone);
+	public interface OnTelefoneAdicionadoListener {
+
+		void onTelefoneAdicionado(@NonNull View view,
+		                          @NonNull Telefone telefone);
 	}
 }

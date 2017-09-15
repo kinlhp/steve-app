@@ -8,12 +8,14 @@ import com.kinlhp.steve.href.HRef;
 
 import java.io.Serializable;
 import java.math.BigInteger;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * Created by kin on 8/15/17.
  */
 public final class PessoaMapeamento implements Serializable {
-	private static final long serialVersionUID = -609620088793129086L;
+	private static final long serialVersionUID = -5696219413816116607L;
 
 	private PessoaMapeamento() {
 	}
@@ -37,6 +39,15 @@ public final class PessoaMapeamento implements Serializable {
 		dominio.setDataCriacao(dto.getDataCriacao());
 		dominio.setId(obterId(dto.getLinks().getSelf()));
 		return dominio;
+	}
+
+	@NonNull
+	public static Set<Pessoa> paraDominios(@NonNull Set<PessoaDTO> dtos) {
+		Set<Pessoa> dominios = new LinkedHashSet<>();
+		for (PessoaDTO dto : dtos) {
+			dominios.add(paraDominio(dto));
+		}
+		return dominios;
 	}
 
 	public static PessoaDTO paraDTO(@NonNull Pessoa dominio) {

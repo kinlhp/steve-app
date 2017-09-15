@@ -1,8 +1,8 @@
 package com.kinlhp.steve.atividade;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -11,12 +11,13 @@ import android.widget.Toast;
 
 import com.kinlhp.steve.R;
 import com.kinlhp.steve.atividade.fragmento.EmailCadastroFragment;
+import com.kinlhp.steve.atividade.fragmento.EmailsPesquisaFragment;
 import com.kinlhp.steve.atividade.fragmento.EnderecoCadastroFragment;
-import com.kinlhp.steve.atividade.fragmento.PessoaCadastroEmailsFragment;
-import com.kinlhp.steve.atividade.fragmento.PessoaCadastroEnderecosFragment;
+import com.kinlhp.steve.atividade.fragmento.EnderecosPesquisaFragment;
 import com.kinlhp.steve.atividade.fragmento.PessoaCadastroFragment;
-import com.kinlhp.steve.atividade.fragmento.PessoaCadastroTelefonesFragment;
+import com.kinlhp.steve.atividade.fragmento.PessoasPesquisaFragment;
 import com.kinlhp.steve.atividade.fragmento.TelefoneCadastroFragment;
+import com.kinlhp.steve.atividade.fragmento.TelefonesPesquisaFragment;
 import com.kinlhp.steve.dominio.Email;
 import com.kinlhp.steve.dominio.Endereco;
 import com.kinlhp.steve.dominio.Pessoa;
@@ -28,33 +29,33 @@ import java.util.List;
 import java.util.Set;
 
 public class PessoaCadastroActivity extends AppCompatActivity
-		implements View.OnClickListener,
-		EmailCadastroFragment.OnEmailAddedListener,
-		PessoaCadastroEmailsFragment.OnEmailSelectedListener,
-		EnderecoCadastroFragment.OnEnderecoAddedListener,
-		PessoaCadastroEnderecosFragment.OnEnderecoSelectedListener,
-		PessoaCadastroFragment.OnListClickListener,
-		PessoaCadastroFragment.OnPessoaChangedListener,
-		TelefoneCadastroFragment.OnTelefoneAddedListener,
-		PessoaCadastroTelefonesFragment.OnTelefoneSelectedListener,
+		implements EmailCadastroFragment.OnEmailAdicionadoListener,
+		EmailsPesquisaFragment.OnEmailSelecionadoListener,
+		EmailsPesquisaFragment.OnLongoEmailSelecionadoListener,
+		EnderecoCadastroFragment.OnEnderecoAdicionadoListener,
+		EnderecosPesquisaFragment.OnEnderecoSelecionadoListener,
+		EnderecosPesquisaFragment.OnLongoEnderecoSelecionadoListener,
+		PessoaCadastroFragment.OnEmailsSelecionadosListener,
+		PessoaCadastroFragment.OnEnderecosSelecionadosListener,
+		PessoaCadastroFragment.OnPessoasPesquisaListener,
+		PessoaCadastroFragment.OnReferenciaPessoaAlteradaListener,
+		PessoaCadastroFragment.OnTelefonesSelecionadosListener,
+		PessoasPesquisaFragment.OnLongoPessoaSelecionadaListener,
+		PessoasPesquisaFragment.OnPessoaSelecionadaListener,
+		TelefoneCadastroFragment.OnTelefoneAdicionadoListener,
+		TelefonesPesquisaFragment.OnTelefoneSelecionadoListener,
+		TelefonesPesquisaFragment.OnLongoTelefoneSelecionadoListener,
 		Serializable {
-	private static final long serialVersionUID = 461722905967624588L;
-	private ArrayList<Email> mEmails = new ArrayList<>();
-	private ArrayList<Endereco> mEnderecos = new ArrayList<>();
+	private static final long serialVersionUID = 8444981203026770685L;
+	private EmailCadastroFragment mFragmentoEmailCadastro;
+	private EmailsPesquisaFragment mFragmentoEmailsPesquisa;
+	private EnderecoCadastroFragment mFragmentoEnderecoCadastro;
+	private EnderecosPesquisaFragment mFragmentoEnderecosPesquisa;
+	private PessoaCadastroFragment mFragmentoPessoaCadastro;
+	private PessoasPesquisaFragment mFragmentoPessoasPesquisa;
+	private TelefoneCadastroFragment mFragmentoTelefoneCadastro;
+	private TelefonesPesquisaFragment mFragmentoTelefonesPesquisa;
 	private Pessoa mPessoa = Pessoa.builder().build();
-	private ArrayList<Telefone> mTelefones = new ArrayList<>();
-
-	private FloatingActionButton mButtonPessoaPesquisa;
-
-	@Override
-	public void onClick(View view) {
-		switch (view.getId()) {
-			case R.id.button_pessoa_pesquisa:
-				Toast.makeText(this, "Inflar pesquisa de pessoas", Toast.LENGTH_SHORT)
-						.show();
-				break;
-		}
-	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -62,114 +63,159 @@ public class PessoaCadastroActivity extends AppCompatActivity
 		setContentView(R.layout.activity_pessoa_cadastro);
 
 		Toolbar toolbar = findViewById(R.id.toolbar_pessoa_cadastro);
-		mButtonPessoaPesquisa = findViewById(R.id.button_pessoa_pesquisa);
-
 		setSupportActionBar(toolbar);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-		mButtonPessoaPesquisa.setOnClickListener(this);
-
-		PessoaCadastroFragment fragmento = PessoaCadastroFragment
-				.newInstance(mPessoa);
-		String tag = getString(R.string.pessoa_cadastro_titulo);
-		getSupportFragmentManager().beginTransaction()
-				.add(R.id.content_pessoa_cadastro, fragmento, tag).commit();
+		inflarPessoaCadastro(savedInstanceState);
 	}
 
 	@Override
-	public void onEmailAdded(Email email) {
-		if (!mPessoa.getEmails().contains(email)) {
-			// TODO: 9/8/17 corrigir essa gambiarra [problema com equals e hashCode]
-			/*
-			essa gambiarra foi necessária pois a validação acima não funciona
-			quando o Tipo é alterado, gerando assim duplicidade no Set<Email>.
-			 */
-			List<Email> emails = new ArrayList<>(mPessoa.getEmails());
-			int indice = emails.indexOf(email);
-			if (indice < 0) {
-				mPessoa.getEmails().add(email);
+	public void onEmailAdicionado(@NonNull View view, @NonNull Email email) {
+		/*
+		Método contains não se comparta corretamente
+		 */
+//		if (!mPessoa.getEmails().contains(email)) {
+//			mPessoa.getEmails().add(email);
+//		}
+		// TODO: 9/13/17 resolver de forma elegante a inconsistência acima (método contains não se comporta corretamente)
+		List<Email> emails = new ArrayList<>(email.getPessoa().getEmails());
+		if (!emails.contains(email)) {
+			emails.add(email);
+			if (mFragmentoEmailsPesquisa != null) {
+				mFragmentoEmailsPesquisa.addEmail(email);
 			}
 		}
-		onBackPressed();
+		mPessoa.getEmails().clear();
+		mPessoa.getEmails().addAll(emails);
 	}
 
 	@Override
-	public void onEmailsClick(Set<Email> emails) {
-		mButtonPessoaPesquisa.setVisibility(View.GONE);
-//		mPessoa.getEmails().clear();
-//		mPessoa.getEmails().addAll(emails);
-		if (mPessoa.getEmails().isEmpty()) {
-			onEmailSelected(Email.builder().tipo(null).build());
+	public void onEmailSelecionado(@NonNull View view, @NonNull Email email) {
+		inflarEmailCadastro(email);
+	}
+
+	@Override
+	public void onEmailsSelecionados(@NonNull View view,
+	                                 @NonNull Set<Email> emails) {
+		if (emails.isEmpty()) {
+			Email email = Email.builder().pessoa(mPessoa).tipo(null).build();
+			inflarEmailCadastro(email);
 		} else {
-			mEmails.clear();
-			mEmails.addAll(mPessoa.getEmails());
-			Fragment fragmento = PessoaCadastroEmailsFragment
-					.newInstance(mEmails);
-			String tag = getString(R.string.pessoa_cadastro_label_emails_hint);
-			getSupportFragmentManager().beginTransaction()
-					.replace(R.id.content_pessoa_cadastro, fragmento, tag)
-					.addToBackStack(tag).commit();
+			inflarEmailsPesquisa(emails);
 		}
 	}
 
 	@Override
-	public void onEmailSelected(Email email) {
-		if (email.getPessoa() == null) {
-			email.setPessoa(mPessoa);
-		}
-		Fragment fragmento = EmailCadastroFragment.newInstance(email);
-		String tag = getString(R.string.email_cadastro_titulo);
-		getSupportFragmentManager().beginTransaction()
-				.replace(R.id.content_pessoa_cadastro, fragmento, tag)
-				.addToBackStack(tag).commit();
-	}
-
-	@Override
-	public void onEnderecoAdded(Endereco endereco) {
-		if (!mPessoa.getEnderecos().contains(endereco)) {
-			// TODO: 9/8/17 corrigir essa gambiarra [problema com equals e hashCode]
-			/*
-			essa gambiarra foi necessária pois a validação acima não funciona
-			quando o Tipo é alterado, gerando assim duplicidade no Set<Endereco>.
-			 */
-			List<Endereco> enderecos = new ArrayList<>(mPessoa.getEnderecos());
-			int indice = enderecos.indexOf(endereco);
-			if (indice < 0) {
-				mPessoa.getEnderecos().add(endereco);
+	public void onEnderecoAdicionado(@NonNull View view,
+	                                 @NonNull Endereco endereco) {
+		/*
+		Método contains não se comparta corretamente
+		 */
+//		if (!mPessoa.getEnderecos().contains(endereco)) {
+//			mPessoa.getEnderecos().add(endereco);
+//		}
+		// TODO: 9/13/17 resolver de forma elegante a inconsistência acima (método contains não se comporta corretamente)
+		List<Endereco> enderecos =
+				new ArrayList<>(endereco.getPessoa().getEnderecos());
+		if (!enderecos.contains(endereco)) {
+			enderecos.add(endereco);
+			if (mFragmentoEnderecosPesquisa != null) {
+				mFragmentoEnderecosPesquisa.addEndereco(endereco);
 			}
 		}
-		onBackPressed();
+		mPessoa.getEnderecos().clear();
+		mPessoa.getEnderecos().addAll(enderecos);
 	}
 
 	@Override
-	public void onEnderecosClick(Set<Endereco> enderecos) {
-		mButtonPessoaPesquisa.setVisibility(View.GONE);
-//		mPessoa.getEnderecos().clear();
-//		mPessoa.getEnderecos().addAll(enderecos);
-		if (mPessoa.getEnderecos().isEmpty()) {
-			onEnderecoSelected(Endereco.builder().tipo(null).build());
+	public void onEnderecoSelecionado(@NonNull View view,
+	                                  @NonNull Endereco endereco) {
+		inflarEnderecoCadastro(endereco);
+	}
+
+	@Override
+	public void onEnderecosSelecionados(@NonNull View view,
+	                                    @NonNull Set<Endereco> enderecos) {
+		if (enderecos.isEmpty()) {
+			Endereco endereco = Endereco.builder().pessoa(mPessoa).tipo(null)
+					.build();
+			inflarEnderecoCadastro(endereco);
 		} else {
-			mEnderecos.clear();
-			mEnderecos.addAll(mPessoa.getEnderecos());
-			Fragment fragmento = PessoaCadastroEnderecosFragment
-					.newInstance(mEnderecos);
-			String tag = getString(R.string.pessoa_cadastro_label_enderecos_hint);
-			getSupportFragmentManager().beginTransaction()
-					.replace(R.id.content_pessoa_cadastro, fragmento, tag)
-					.addToBackStack(tag).commit();
+			inflarEnderecosPesquisa(enderecos);
 		}
 	}
 
 	@Override
-	public void onEnderecoSelected(Endereco endereco) {
-		if (endereco.getPessoa() == null) {
-			endereco.setPessoa(mPessoa);
+	public void onLongoEmailSelecionado(@NonNull View view,
+	                                    @NonNull Email email) {
+		/*
+		Método contains não se comparta corretamente
+		 */
+//		if (mPessoa.getEmails().contains(email) && email.getId() == null) {
+//			mPessoa.getEmails().remove(email);
+//		}
+		// TODO: 9/13/17 resolver de forma elegante a inconsistência acima (método contains não se comporta corretamente)
+		List<Email> emails = new ArrayList<>(email.getPessoa().getEmails());
+		if (emails.contains(email) && email.getId() == null) {
+			emails.remove(email);
+			if (mFragmentoEmailsPesquisa != null) {
+				mFragmentoEmailsPesquisa.removeEmail(email);
+			}
 		}
-		Fragment fragmento = EnderecoCadastroFragment.newInstance(endereco);
-		String tag = getString(R.string.endereco_cadastro_titulo);
-		getSupportFragmentManager().beginTransaction()
-				.replace(R.id.content_pessoa_cadastro, fragmento, tag)
-				.addToBackStack(tag).commit();
+		mPessoa.getEmails().clear();
+		mPessoa.getEmails().addAll(emails);
+	}
+
+	@Override
+	public void onLongoEnderecoSelecionado(@NonNull View view,
+	                                       @NonNull Endereco endereco) {
+		/*
+		Método contains não se comparta corretamente
+		 */
+//		if (mPessoa.getEnderecos().contains(endereco) && endereco.getId() == null) {
+//			mPessoa.getEnderecos().remove(endereco);
+//		}
+		// TODO: 9/13/17 resolver de forma elegante a inconsistência acima (método contains não se comporta corretamente)
+		List<Endereco> enderecos = new ArrayList<>(endereco.getPessoa()
+				.getEnderecos());
+		if (enderecos.contains(endereco) && endereco.getId() == null) {
+			enderecos.remove(endereco);
+			if (mFragmentoEnderecosPesquisa != null) {
+				mFragmentoEnderecosPesquisa.removeEndereco(endereco);
+			}
+		}
+		mPessoa.getEnderecos().clear();
+		mPessoa.getEnderecos().addAll(enderecos);
+	}
+
+	@Override
+	public void onLongoPessoaSelecionada(@NonNull View view,
+	                                     @NonNull Pessoa pessoa) {
+		mPessoa = pessoa;
+		// TODO: 9/14/17 inflar cadastro de pessoa
+		Toast.makeText(this, "Inflar cadastro de pessoa com a pessoa selecionada", Toast.LENGTH_SHORT).show();
+	}
+
+	@Override
+	public void onLongoTelefoneSelecionado(@NonNull View view,
+	                                       @NonNull Telefone telefone) {
+		/*
+		Método contains não se comparta corretamente
+		 */
+//		if (mPessoa.getTelefones().contains(telefone) && telefone.getId() == null) {
+//			mPessoa.getTelefones().remove(telefone);
+//		}
+		// TODO: 9/13/17 resolver de forma elegante a inconsistência acima (método contains não se comporta corretamente)
+		List<Telefone> telefones = new ArrayList<>(telefone.getPessoa()
+				.getTelefones());
+		if (telefones.contains(telefone) && telefone.getId() == null) {
+			telefones.remove(telefone);
+			if (mFragmentoTelefonesPesquisa != null) {
+				mFragmentoTelefonesPesquisa.removeTelefone(telefone);
+			}
+		}
+		mPessoa.getTelefones().clear();
+		mPessoa.getTelefones().addAll(telefones);
 	}
 
 	@Override
@@ -184,56 +230,199 @@ public class PessoaCadastroActivity extends AppCompatActivity
 	}
 
 	@Override
-	public void onPessoaChanged(Pessoa pessoa) {
+	public void onPessoaSelecionada(@NonNull View view,
+	                                @NonNull Pessoa pessoa) {
 		mPessoa = pessoa;
+		// TODO: 9/14/17 inflar cadastro de pessoa
+		Toast.makeText(this, "Inflar cadastro de pessoa com a pessoa selecionada", Toast.LENGTH_SHORT).show();
 	}
 
 	@Override
-	public void onTelefoneAdded(Telefone telefone) {
-		if (!mPessoa.getTelefones().contains(telefone)) {
-			// TODO: 9/8/17 corrigir essa gambiarra [problema com equals e hashCode]
-			/*
-			essa gambiarra foi necessária pois a validação acima não funciona
-			quando o Tipo é alterado, gerando assim duplicidade no Set<Telefone>.
-			 */
-			List<Telefone> telefones = new ArrayList<>(mPessoa.getTelefones());
-			int indice = telefones.indexOf(telefone);
-			if (indice < 0) {
-				mPessoa.getTelefones().add(telefone);
+	public void onReferenciaPessoaAlterada(@NonNull Pessoa novaReferencia) {
+		mPessoa = novaReferencia;
+	}
+
+	@Override
+	public void onPessoasPesquisa() {
+		inflarPessoasPesquisa();
+	}
+
+	@Override
+	public void onTelefoneAdicionado(@NonNull View view,
+	                                 @NonNull Telefone telefone) {
+		/*
+		Método contains não se comparta corretamente
+		 */
+//		if (!mPessoa.getTelefones().contains(telefone)) {
+//			mPessoa.getTelefones().add(telefone);
+//		}
+		// TODO: 9/13/17 resolver de forma elegante a inconsistência acima (método contains não se comporta corretamente)
+		List<Telefone> telefones = new ArrayList<>(telefone.getPessoa()
+				.getTelefones());
+		if (!telefones.contains(telefone)) {
+			telefones.add(telefone);
+			if (mFragmentoTelefonesPesquisa != null) {
+				mFragmentoTelefonesPesquisa.addTelefone(telefone);
 			}
 		}
-		onBackPressed();
+		mPessoa.getTelefones().clear();
+		mPessoa.getTelefones().addAll(telefones);
 	}
 
 	@Override
-	public void onTelefonesClick(Set<Telefone> telefones) {
-		mButtonPessoaPesquisa.setVisibility(View.GONE);
-//		mPessoa.getTelefones().clear();
-//		mPessoa.getTelefones().addAll(telefones);
-		if (mPessoa.getTelefones().isEmpty()) {
-			onTelefoneSelected(Telefone.builder().tipo(null).build());
+	public void onTelefoneSelecionado(@NonNull View view,
+	                                  @NonNull Telefone telefone) {
+		inflarTelefoneCadastro(telefone);
+	}
+
+	@Override
+	public void onTelefonesSelecionados(@NonNull View view,
+	                                    @NonNull Set<Telefone> telefones) {
+		if (telefones.isEmpty()) {
+			Telefone telefone = Telefone.builder().pessoa(mPessoa).tipo(null)
+					.build();
+			inflarTelefoneCadastro(telefone);
 		} else {
-			mTelefones.clear();
-			mTelefones.addAll(mPessoa.getTelefones());
-			Fragment fragmento = PessoaCadastroTelefonesFragment
-					.newInstance(mTelefones);
-			String tag =
-					getString(R.string.pessoa_cadastro_label_telefones_hint);
-			getSupportFragmentManager().beginTransaction()
-					.replace(R.id.content_pessoa_cadastro, fragmento, tag)
-					.addToBackStack(tag).commit();
+			inflarTelefonesPesquisa(telefones);
 		}
 	}
 
-	@Override
-	public void onTelefoneSelected(Telefone telefone) {
+	private void inflarEmailCadastro(@NonNull Email email) {
+		if (email.getPessoa() == null) {
+			email.setPessoa(mPessoa);
+		}
+		if (mFragmentoEmailCadastro == null) {
+			mFragmentoEmailCadastro = EmailCadastroFragment
+					.newInstance(email);
+		} else {
+			mFragmentoEmailCadastro.setEmail(email);
+		}
+		mFragmentoEmailCadastro.setOnEmailAdicionadoListener(this);
+		String tag = getString(R.string.email_cadastro_titulo);
+
+		getSupportFragmentManager().beginTransaction()
+				.replace(R.id.content_pessoa_cadastro, mFragmentoEmailCadastro, tag)
+				.addToBackStack(tag).commit();
+	}
+
+	private void inflarEmailsPesquisa(@NonNull Set<Email> emails) {
+		if (mFragmentoEmailsPesquisa == null) {
+			mFragmentoEmailsPesquisa = EmailsPesquisaFragment
+					.newInstance(new ArrayList<>(emails));
+		} else {
+			mFragmentoEmailsPesquisa.setEmails(new ArrayList<>(emails));
+		}
+		mFragmentoEmailsPesquisa.setOnEmailSelecionadoListener(this);
+		mFragmentoEmailsPesquisa.setOnLongoEmailSelecionadoListener(this);
+		String tag = getString(R.string.emails_pesquisa_titulo);
+
+		getSupportFragmentManager().beginTransaction()
+				.replace(R.id.content_pessoa_cadastro, mFragmentoEmailsPesquisa, tag)
+				.addToBackStack(tag).commit();
+	}
+
+	private void inflarEnderecoCadastro(@NonNull Endereco endereco) {
+		if (endereco.getPessoa() == null) {
+			endereco.setPessoa(mPessoa);
+		}
+		if (mFragmentoEnderecoCadastro == null) {
+			mFragmentoEnderecoCadastro = EnderecoCadastroFragment
+					.newInstance(endereco);
+		} else {
+			mFragmentoEnderecoCadastro.setEndereco(endereco);
+		}
+		mFragmentoEnderecoCadastro.setOnEnderecoAdicionadoListener(this);
+		String tag = getString(R.string.endereco_cadastro_titulo);
+
+		getSupportFragmentManager().beginTransaction()
+				.replace(R.id.content_pessoa_cadastro, mFragmentoEnderecoCadastro, tag)
+				.addToBackStack(tag).commit();
+	}
+
+	private void inflarEnderecosPesquisa(@NonNull Set<Endereco> enderecos) {
+		if (mFragmentoEnderecosPesquisa == null) {
+			mFragmentoEnderecosPesquisa = EnderecosPesquisaFragment
+					.newInstance(new ArrayList<>(enderecos));
+		} else {
+			mFragmentoEnderecosPesquisa
+					.setEnderecos(new ArrayList<>(enderecos));
+		}
+		mFragmentoEnderecosPesquisa.setOnEnderecoSelecionadoListener(this);
+		mFragmentoEnderecosPesquisa.setOnLongoEnderecoSelecionadoListener(this);
+		String tag = getString(R.string.enderecos_pesquisa_titulo);
+
+		getSupportFragmentManager().beginTransaction()
+				.replace(R.id.content_pessoa_cadastro, mFragmentoEnderecosPesquisa, tag)
+				.addToBackStack(tag).commit();
+	}
+
+	private void inflarPessoaCadastro(@Nullable Bundle savedInstanceState) {
+		if (mFragmentoPessoaCadastro == null) {
+			mFragmentoPessoaCadastro = PessoaCadastroFragment
+					.newInstance(mPessoa);
+		} else {
+			mFragmentoPessoaCadastro.setPessoa(mPessoa);
+		}
+		mFragmentoPessoaCadastro.setOnEmailsSelecionadosListener(this);
+		mFragmentoPessoaCadastro.setOnEnderecosSelecionadosListener(this);
+		mFragmentoPessoaCadastro.setOnPessoasPesquisaListener(this);
+		mFragmentoPessoaCadastro.setOnReferenciaPessoaAlteradaListener(this);
+		mFragmentoPessoaCadastro.setOnTelefonesSelecionadosListener(this);
+		String tag = getString(R.string.pessoa_cadastro_titulo);
+
+		if (savedInstanceState == null) {
+			getSupportFragmentManager().beginTransaction()
+					.replace(R.id.content_pessoa_cadastro, mFragmentoPessoaCadastro, tag)
+					.commit();
+		}
+	}
+
+	private void inflarPessoasPesquisa() {
+		if (mFragmentoPessoasPesquisa == null) {
+			mFragmentoPessoasPesquisa = PessoasPesquisaFragment.newInstance();
+		}
+		mFragmentoPessoasPesquisa.setOnPessoaSelecionadaListener(this);
+		mFragmentoPessoasPesquisa.setOnLongoPessoaSelecionadaListener(this);
+
+		String tag = getString(R.string.pessoas_pesquisa_titulo);
+
+		getSupportFragmentManager().beginTransaction()
+				.replace(R.id.content_pessoa_cadastro, mFragmentoPessoasPesquisa, tag)
+				.addToBackStack(tag).commit();
+	}
+
+	private void inflarTelefoneCadastro(@NonNull Telefone telefone) {
 		if (telefone.getPessoa() == null) {
 			telefone.setPessoa(mPessoa);
 		}
-		Fragment fragmento = TelefoneCadastroFragment.newInstance(telefone);
+		if (mFragmentoTelefoneCadastro == null) {
+			mFragmentoTelefoneCadastro = TelefoneCadastroFragment
+					.newInstance(telefone);
+		} else {
+			mFragmentoTelefoneCadastro.setTelefone(telefone);
+		}
+		mFragmentoTelefoneCadastro.setOnTelefoneAdicionadoListener(this);
 		String tag = getString(R.string.telefone_cadastro_titulo);
+
 		getSupportFragmentManager().beginTransaction()
-				.replace(R.id.content_pessoa_cadastro, fragmento, tag)
+				.replace(R.id.content_pessoa_cadastro, mFragmentoTelefoneCadastro, tag)
+				.addToBackStack(tag).commit();
+	}
+
+	private void inflarTelefonesPesquisa(@NonNull Set<Telefone> telefones) {
+		if (mFragmentoTelefonesPesquisa == null) {
+			mFragmentoTelefonesPesquisa = TelefonesPesquisaFragment
+					.newInstance(new ArrayList<>(telefones));
+		} else {
+			mFragmentoTelefonesPesquisa
+					.setTelefones(new ArrayList<>(telefones));
+		}
+		mFragmentoTelefonesPesquisa.setOnTelefoneSelecionadoListener(this);
+		mFragmentoTelefonesPesquisa.setOnLongoTelefoneSelecionadoListener(this);
+		String tag = getString(R.string.telefones_pesquisa_titulo);
+
+		getSupportFragmentManager().beginTransaction()
+				.replace(R.id.content_pessoa_cadastro, mFragmentoTelefonesPesquisa, tag)
 				.addToBackStack(tag).commit();
 	}
 }

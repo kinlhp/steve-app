@@ -6,7 +6,7 @@ import com.kinlhp.steve.dto.EmailDTO;
 import com.kinlhp.steve.dto.EnderecoDTO;
 import com.kinlhp.steve.dto.PessoaDTO;
 import com.kinlhp.steve.dto.TelefoneDTO;
-import com.kinlhp.steve.resposta.Resposta;
+import com.kinlhp.steve.resposta.Colecao;
 
 import java.math.BigInteger;
 
@@ -24,17 +24,23 @@ import retrofit2.http.Url;
  */
 public interface PessoaRecurso {
 
-	@GET
-	Call<Resposta<EmailDTO>> getEmails(@NonNull @Url String href);
+	@GET(value = "pessoas?sort=nomeRazao,asc")
+	Call<Colecao<PessoaDTO>> get();
 
 	@GET
-	Call<Resposta<EnderecoDTO>> getEnderecos(@NonNull @Url String href);
+	Call<Colecao<EmailDTO>> getEmails(@NonNull @Url String href);
+
+	@GET
+	Call<Colecao<EnderecoDTO>> getEnderecos(@NonNull @Url String href);
+
+	@GET
+	Call<Colecao<PessoaDTO>> getPaginado(@NonNull @Url String href);
 
 	@GET(value = "pessoas/{id}")
 	Call<PessoaDTO> getPorId(@NonNull @Path(value = "id") BigInteger id);
 
 	@GET
-	Call<Resposta<TelefoneDTO>> getTelefones(@NonNull @Url String href);
+	Call<Colecao<TelefoneDTO>> getTelefones(@NonNull @Url String href);
 
 	@PATCH(value = "pessoas/{id}")
 	Call<Void> patch(@NonNull @Path(value = "id") BigInteger id,

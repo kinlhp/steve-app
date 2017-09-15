@@ -17,8 +17,8 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 @Setter
-abstract class Dominio<ID extends Serializable> implements Serializable {
-	private static final long serialVersionUID = 7069326960840551700L;
+public abstract class Dominio<ID extends Serializable> implements Serializable {
+	private static final long serialVersionUID = -8686697590358479444L;
 	private Date dataAlteracao;
 	private Date dataCriacao;
 	private ID id;

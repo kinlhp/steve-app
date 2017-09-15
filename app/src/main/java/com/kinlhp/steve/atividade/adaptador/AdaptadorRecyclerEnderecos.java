@@ -1,6 +1,8 @@
 package com.kinlhp.steve.atividade.adaptador;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v7.widget.AppCompatImageButton;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -13,14 +15,14 @@ import com.kinlhp.steve.dominio.Endereco;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Created by luis on 9/5/17.
  */
-public class AdaptadorRecyclerEnderecos extends RecyclerView.Adapter
+public class AdaptadorRecyclerEnderecos
+		extends RecyclerView.Adapter<AdaptadorRecyclerEnderecos.ViewHolderEnderecos>
 		implements Serializable {
-	private static final long serialVersionUID = -815188722971721467L;
+	private static final long serialVersionUID = 1075524588439191761L;
 	private List<Endereco> mEnderecos;
 	private OnItemClickListener mOnItemClickListener;
 	private OnItemLongClickListener mOnItemLongClickListener;
@@ -35,76 +37,57 @@ public class AdaptadorRecyclerEnderecos extends RecyclerView.Adapter
 	}
 
 	@Override
-	public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-		ViewHolderEnderecos viewHolder = (ViewHolderEnderecos) holder;
+	public void onBindViewHolder(ViewHolderEnderecos viewHolder, int position) {
 		Endereco endereco = mEnderecos.get(position);
 		viewHolder.mLabelTipo.setText(endereco.getTipo().getDescricao());
-		String logradouro = "%1s, %2s - %3s/%4s";
-		viewHolder.mLabelLogradouro
-				.setText(String.format(Locale.getDefault(), logradouro, endereco.getLogradouro(), endereco.getNumero(), endereco.getCidade(), endereco.getUf().getSigla()));
+		viewHolder.mLabelLogradouro.setText(endereco.toString());
 		viewHolder.mLabelNomeContato
 				.setText(!TextUtils.isEmpty(endereco.getNomeContato())
-						? endereco.getNomeContato() : " ");
+						? endereco.getNomeContato() : "");
+		viewHolder.mButtonRemover
+				.setVisibility(endereco.getId() == null
+						? View.VISIBLE : View.GONE);
 	}
 
 	@Override
-	public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent,
-	                                                  int viewType) {
+	public ViewHolderEnderecos onCreateViewHolder(ViewGroup parent,
+	                                              int viewType) {
 		View view = LayoutInflater.from(parent.getContext())
 				.inflate(R.layout.view_lista_enderecos, parent, false);
 		return new ViewHolderEnderecos(view);
 	}
 
-	/**
-	 * Delega um {@link OnItemClickListener} para lidar com o clique no item
-	 *
-	 * @param ouvinte
-	 */
-	public void addOnItemClickListener(OnItemClickListener ouvinte) {
+	public void setOnItemClickListener(@Nullable OnItemClickListener ouvinte) {
 		mOnItemClickListener = ouvinte;
 	}
 
-	/**
-	 * Delega um {@link OnItemLongClickListener} para lidar com o clique longo
-	 * no item
-	 *
-	 * @param ouvinte
-	 */
-	public void addOnItemLongClickListener(OnItemLongClickListener ouvinte) {
+	public void setOnItemLongClickListener(@Nullable OnItemLongClickListener ouvinte) {
 		mOnItemLongClickListener = ouvinte;
 	}
 
-	public void adicionarItem(@NonNull Endereco endereco) {
-		if (!mEnderecos.contains(endereco)) {
-			mEnderecos.add(endereco);
-			notifyItemInserted(getItemCount());
-		}
-	}
-
-	public void removerItem(@NonNull Endereco endereco) {
-		if (mEnderecos.contains(endereco)) {
-			int posicao = mEnderecos.indexOf(endereco);
-			mEnderecos.remove(endereco);
-			notifyItemRemoved(posicao);
-		}
-	}
-
 	public interface OnItemClickListener {
+
 		void onItemClick(View view, int posicao);
 	}
 
 	public interface OnItemLongClickListener {
+
 		void onItemLongClickListener(View view, int posicao);
 	}
 
-	private class ViewHolderEnderecos extends RecyclerView.ViewHolder
-			implements View.OnClickListener, View.OnLongClickListener {
+	class ViewHolderEnderecos extends RecyclerView.ViewHolder
+			implements View.OnClickListener, View.OnLongClickListener,
+			Serializable {
+		private static final long serialVersionUID = 6503784243903583380L;
+		private AppCompatImageButton mButtonRemover;
 		private AppCompatTextView mLabelLogradouro;
 		private AppCompatTextView mLabelNomeContato;
 		private AppCompatTextView mLabelTipo;
 
 		ViewHolderEnderecos(View itemView) {
 			super(itemView);
+			mButtonRemover = itemView
+					.findViewById(R.id.button_remover_endereco);
 			mLabelLogradouro = itemView.findViewById(R.id.label_numero);
 			mLabelNomeContato = itemView.findViewById(R.id.label_nome_contato);
 			mLabelTipo = itemView.findViewById(R.id.label_tipo);

@@ -5,11 +5,14 @@ import com.kinlhp.steve.href.HRef;
 
 import java.io.Serializable;
 
+import lombok.Getter;
+
 /**
  * Created by kin on 8/16/17.
  */
-class Links implements Serializable {
-	private static final long serialVersionUID = -467019849185166625L;
+@Getter
+public class Links implements Serializable {
+	private static final long serialVersionUID = -8368998941252368568L;
 
 	@SerializedName(value = "first")
 	private HRef first;
@@ -25,6 +28,9 @@ class Links implements Serializable {
 
 	@SerializedName(value = "profile")
 	private HRef profile;
+
+	@SerializedName(value = "search")
+	private HRef search;
 
 	@SerializedName(value = "self")
 	private HRef self;

@@ -1,10 +1,8 @@
 package com.kinlhp.steve.atividade.fragmento;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
@@ -39,29 +37,26 @@ import com.kinlhp.steve.util.Teclado;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Response;
 
 public class EnderecoCadastroFragment extends Fragment
 		implements View.OnClickListener, TextView.OnEditorActionListener,
+		View.OnFocusChangeListener, AdapterView.OnItemSelectedListener,
 		Serializable {
-	private static final long serialVersionUID = 4826434755909163950L;
+	private static final long serialVersionUID = -8925798097971534682L;
 	private static final String ENDERECO = "endereco";
-	private AdaptadorSpinner<Endereco.Tipo> mAdaptadorTipo;
-	private AdaptadorSpinner<Uf.Sigla> mAdaptadorUf;
+	private AdaptadorSpinner<Endereco.Tipo> mAdaptadorTipos;
+	private AdaptadorSpinner<Uf.Sigla> mAdaptadorUfs;
 	private Endereco mEndereco;
-	private OnEnderecoAddedListener mEnderecoAddedListener;
+	private OnEnderecoAdicionadoListener mOnEnderecoAdicionadoListener;
 	private int mTarefasPendentes;
-	private ArrayList<Endereco.Tipo> mTipos =
-			new ArrayList<>(Arrays.asList(Endereco.Tipo.values()));
-	private ArrayList<Uf.Sigla> mUfs =
-			new ArrayList<>(Arrays.asList(Uf.Sigla.values()));
+	private ArrayList<Endereco.Tipo> mTipos;
+	private ArrayList<Uf.Sigla> mUfs;
 
 	private AppCompatButton mButtonAdicionar;
-	private AppCompatImageButton mButtonConsumirCep;
+	private AppCompatImageButton mButtonConsumirPorCep;
 	private TextInputEditText mInputBairro;
 	private TextInputEditText mInputCep;
 	private TextInputEditText mInputCidade;
@@ -75,8 +70,9 @@ public class EnderecoCadastroFragment extends Fragment
 	private TextInputLayout mLabelCidade;
 	private TextInputLayout mLabelLogradouro;
 	private TextInputLayout mLabelNumero;
-	private ProgressBar mProgressBarConsumirCep;
-	private ProgressBar mProgressBarConsumirUfPorSigla;
+	private ProgressBar mProgressBarConsumirPorCep;
+	private ProgressBar mProgressBarConsumirPorUf;
+	private ScrollView mScrollEnderecoCadastro;
 	private AppCompatSpinner mSpinnerTipo;
 	private AppCompatSpinner mSpinnerUf;
 
@@ -95,32 +91,21 @@ public class EnderecoCadastroFragment extends Fragment
 	}
 
 	@Override
-	public void onAttach(Context context) {
-		super.onAttach(context);
-		if (context instanceof OnEnderecoAddedListener) {
-			mEnderecoAddedListener = (OnEnderecoAddedListener) context;
-		} else {
-			throw new RuntimeException(context.toString()
-					+ " must implement OnEnderecoAddedListener");
-		}
-	}
-
-	@Override
 	public void onClick(View view) {
 		switch (view.getId()) {
 			case R.id.button_adicionar:
 				if (isFormularioValido()) {
 					iterarFormulario();
-					mEnderecoAddedListener.onEnderecoAdded(mEndereco);
+					if (mOnEnderecoAdicionadoListener != null) {
+						mOnEnderecoAdicionadoListener
+								.onEnderecoAdicionado(view, mEndereco);
+					}
+					getActivity().onBackPressed();
 				} else {
-					((ScrollView) getActivity().findViewById(R.id.fragment_endereco_cadastro))
-							.fullScroll(View.FOCUS_UP);
-					Snackbar.make(mButtonAdicionar, getString(R.string.form_mensagem_invalido), Snackbar.LENGTH_LONG)
-							.show();
+					mScrollEnderecoCadastro.fullScroll(View.FOCUS_UP);
 				}
 				break;
-			case R.id.button_consumir_cep:
-				mTarefasPendentes = 0;
+			case R.id.button_consumir_por_cep:
 				consumirEnderecamentoGETPorCep(view);
 				break;
 		}
@@ -129,9 +114,11 @@ public class EnderecoCadastroFragment extends Fragment
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		mEndereco = getArguments() != null
-				? (Endereco) getArguments().getSerializable(ENDERECO)
-				: Endereco.builder().build();
+		if (savedInstanceState != null) {
+			mEndereco = (Endereco) savedInstanceState.getSerializable(ENDERECO);
+		} else if (getArguments() != null) {
+			mEndereco = (Endereco) getArguments().getSerializable(ENDERECO);
+		}
 	}
 
 	@Override
@@ -139,8 +126,9 @@ public class EnderecoCadastroFragment extends Fragment
 	                         Bundle savedInstanceState) {
 		View view = inflater
 				.inflate(R.layout.fragment_endereco_cadastro, container, false);
+		mScrollEnderecoCadastro = (ScrollView) view;
 		mButtonAdicionar = view.findViewById(R.id.button_adicionar);
-		mButtonConsumirCep = view.findViewById(R.id.button_consumir_cep);
+		mButtonConsumirPorCep = view.findViewById(R.id.button_consumir_por_cep);
 		mInputBairro = view.findViewById(R.id.input_bairro);
 		mInputCep = view.findViewById(R.id.input_cep);
 		mInputCidade = view.findViewById(R.id.input_cidade);
@@ -154,78 +142,114 @@ public class EnderecoCadastroFragment extends Fragment
 		mLabelCidade = view.findViewById(R.id.label_cidade);
 		mLabelLogradouro = view.findViewById(R.id.label_logradouro);
 		mLabelNumero = view.findViewById(R.id.label_numero);
-		mProgressBarConsumirCep = view
-				.findViewById(R.id.progress_bar_consumir_cep);
-		mProgressBarConsumirUfPorSigla = view
-				.findViewById(R.id.progress_bar_consumir_uf);
+		mProgressBarConsumirPorCep = view
+				.findViewById(R.id.progress_bar_consumir_por_cep);
+		mProgressBarConsumirPorUf = view
+				.findViewById(R.id.progress_bar_consumir_por_uf);
 		mSpinnerTipo = view.findViewById(R.id.spinner_tipo);
 		mSpinnerUf = view.findViewById(R.id.spinner_uf);
 
-		mAdaptadorTipo = new AdaptadorSpinner<>(getActivity(), mTipos);
-		mSpinnerTipo.setAdapter(mAdaptadorTipo);
+		mTipos = new ArrayList<>(Arrays.asList(Endereco.Tipo.values()));
+		mAdaptadorTipos = new AdaptadorSpinner<>(getActivity(), mTipos);
+		mSpinnerTipo.setAdapter(mAdaptadorTipos);
 
-		mAdaptadorUf = new AdaptadorSpinner<>(getActivity(), mUfs);
-		mSpinnerUf.setAdapter(mAdaptadorUf);
+		mUfs = new ArrayList<>(Arrays.asList(Uf.Sigla.values()));
+		mAdaptadorUfs = new AdaptadorSpinner<>(getActivity(), mUfs);
+		mSpinnerUf.setAdapter(mAdaptadorUfs);
 
 		mButtonAdicionar.setOnClickListener(this);
-		mButtonConsumirCep.setOnClickListener(this);
-		mInputBairro.setOnFocusChangeListener(bairroFocusChangeListener());
-		mInputCep.setOnFocusChangeListener(cepFocusChangeListener());
-		mInputCidade.setOnFocusChangeListener(cidadeFocusChangeListener());
-		mInputLogradouro
-				.setOnFocusChangeListener(logradouroFocusChangeListener());
-		mInputNumero.setOnFocusChangeListener(numeroFocusChangeListener());
-		mSpinnerUf.setOnItemSelectedListener(ufSelectedListener());
+		mButtonConsumirPorCep.setOnClickListener(this);
+		mInputBairro.setOnFocusChangeListener(this);
+		mInputCep.setOnEditorActionListener(this);
+		mInputCep.setOnFocusChangeListener(this);
+		mInputCidade.setOnFocusChangeListener(this);
+		mInputLogradouro.setOnFocusChangeListener(this);
+		mInputNumero.setOnFocusChangeListener(this);
+		mSpinnerUf.setOnItemSelectedListener(this);
 
-		limitarTiposDisponiveis();
-		preencherFormulario();
 		return view;
-	}
-
-	@Override
-	public void onDetach() {
-		super.onDetach();
-		mEnderecoAddedListener = null;
 	}
 
 	@Override
 	public boolean onEditorAction(TextView view, int id, KeyEvent event) {
 		switch (id) {
 			case EditorInfo.IME_ACTION_SEARCH:
-				mButtonConsumirCep.performClick();
+				mButtonConsumirPorCep.performClick();
 				break;
 		}
 		return false;
 	}
 
 	@Override
+	public void onFocusChange(View view, boolean focused) {
+		switch (view.getId()) {
+			case R.id.input_bairro:
+				if (!focused) {
+					isBairroValido();
+				}
+				break;
+			case R.id.input_cep:
+				if (!focused) {
+					isCepValido();
+				}
+				break;
+			case R.id.input_cidade:
+				if (!focused) {
+					isCidadeValido();
+				}
+				break;
+			case R.id.input_logradouro:
+				if (!focused) {
+					isLogradouroValido();
+				}
+				break;
+			case R.id.input_numero:
+				if (!focused) {
+					isNumeroValido();
+				}
+				break;
+		}
+	}
+
+	@Override
+	public void onItemSelected(AdapterView<?> parent, View view, int position,
+	                           long id) {
+		switch (parent.getId()) {
+			case R.id.spinner_uf:
+				consumirUfGETPorSigla((Uf.Sigla) parent.getSelectedItem());
+				break;
+		}
+	}
+
+	@Override
+	public void onNothingSelected(AdapterView<?> parent) {
+		/*
+		 */
+	}
+
+	@Override
 	public void onResume() {
 		super.onResume();
 		getActivity().setTitle(R.string.endereco_cadastro_titulo);
+		limitarTiposDisponiveis();
+		preencherFormulario();
 	}
 
-	private View.OnFocusChangeListener bairroFocusChangeListener() {
-		return new View.OnFocusChangeListener() {
-			@Override
-			public void onFocusChange(View view, boolean focused) {
-				if (!focused) {
-					if (isBairroValido()) {
-						mLabelBairro.setError(null);
-						mLabelBairro.setErrorEnabled(false);
-					}
-				}
-			}
-		};
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		iterarFormulario();
+		outState.putSerializable(ENDERECO, mEndereco);
 	}
 
-	private Callback<EnderecamentoDTO> callbackEnderecamentoGETPorCep() {
-		return new Callback<EnderecamentoDTO>() {
+	private ItemCallback<EnderecamentoDTO> callbackEnderecamentoGETPorCep() {
+		return new ItemCallback<EnderecamentoDTO>() {
 
 			@Override
 			public void onFailure(@NonNull Call<EnderecamentoDTO> chamada,
 			                      @NonNull Throwable causa) {
 				--mTarefasPendentes;
-				ocultarProgresso(mProgressBarConsumirCep, mButtonConsumirCep);
+				ocultarProgresso(mProgressBarConsumirPorCep, mButtonConsumirPorCep);
 				Falha.tratar(mButtonAdicionar, causa);
 			}
 
@@ -233,32 +257,13 @@ public class EnderecoCadastroFragment extends Fragment
 			public void onResponse(@NonNull Call<EnderecamentoDTO> chamada,
 			                       @NonNull Response<EnderecamentoDTO> resposta) {
 				--mTarefasPendentes;
-				if (!resposta.isSuccessful()) {
-					Falha.tratar(mButtonAdicionar, resposta);
-				} else {
+				if (resposta.isSuccessful()) {
 					EnderecamentoDTO dto = resposta.body();
-					mInputCep.requestFocus();
-					mInputCep.setText(dto.getCep() == null
-							? "" : dto.getCep().replace("-", ""));
-					mInputLogradouro.requestFocus();
-					mInputLogradouro.setText(dto.getLogradouro() == null
-							? "" : dto.getLogradouro());
-					mInputComplemento.requestFocus();
-					mInputComplemento.setText(dto.getComplemento() == null
-							? "" : dto.getComplemento());
-					mInputBairro.requestFocus();
-					mInputBairro.setText(dto.getBairro() == null
-							? "" : dto.getBairro());
-					mInputCidade.requestFocus();
-					mInputCidade.setText(dto.getLocalidade() == null
-							? "" : dto.getLocalidade());
-					Uf.Sigla sigla = Uf.Sigla.valueOf(dto.getUf().name());
-					mSpinnerUf.setSelection(dto.getUf() == null
-							? 0 : mAdaptadorUf.getPosition(sigla));
-					mInputNumero.getText().clear();
-					mInputNumero.requestFocus();
+					if (!dto.isErro()) {
+						preencherEnderecamento(dto);
+					}
 				}
-				ocultarProgresso(mProgressBarConsumirCep, mButtonConsumirCep);
+				ocultarProgresso(mProgressBarConsumirPorCep, mButtonConsumirPorCep);
 			}
 		};
 	}
@@ -270,7 +275,7 @@ public class EnderecoCadastroFragment extends Fragment
 			public void onFailure(@NonNull Call<UfDTO> chamada,
 			                      @NonNull Throwable causa) {
 				--mTarefasPendentes;
-				ocultarProgresso(mProgressBarConsumirUfPorSigla, mSpinnerUf);
+				ocultarProgresso(mProgressBarConsumirPorUf, mSpinnerUf);
 				Falha.tratar(mButtonAdicionar, causa);
 			}
 
@@ -285,56 +290,33 @@ public class EnderecoCadastroFragment extends Fragment
 					Uf uf = UfMapeamento.paraDominio(dto);
 					mEndereco.setUf(uf);
 					mSpinnerUf
-							.setSelection(mAdaptadorUf.getPosition(mEndereco.getUf().getSigla()));
+							.setSelection(mAdaptadorUfs.getPosition(mEndereco.getUf().getSigla()));
 				}
-				ocultarProgresso(mProgressBarConsumirUfPorSigla, mSpinnerUf);
-			}
-		};
-	}
-
-	private View.OnFocusChangeListener cepFocusChangeListener() {
-		return new View.OnFocusChangeListener() {
-			@Override
-			public void onFocusChange(View view, boolean focused) {
-				if (!focused) {
-					if (isCepValido()) {
-						mLabelCep.setError(null);
-						mLabelCep.setErrorEnabled(false);
-					}
-				}
-			}
-		};
-	}
-
-	private View.OnFocusChangeListener cidadeFocusChangeListener() {
-		return new View.OnFocusChangeListener() {
-			@Override
-			public void onFocusChange(View view, boolean focused) {
-				if (!focused) {
-					if (isCidadeValido()) {
-						mLabelCidade.setError(null);
-						mLabelCidade.setErrorEnabled(false);
-					}
-				}
+				ocultarProgresso(mProgressBarConsumirPorUf, mSpinnerUf);
 			}
 		};
 	}
 
 	private void consumirEnderecamentoGETPorCep(@NonNull View view) {
+		mTarefasPendentes = 0;
+		exibirProgresso(mProgressBarConsumirPorCep, null);
 		view.setVisibility(View.INVISIBLE);
-		exibirProgresso(mProgressBarConsumirCep, null);
 		if (isCepValido()) {
 			Teclado.ocultar(getActivity(), view);
-			++mTarefasPendentes;
 			String href = String
 					.format(getString(R.string.requisicao_url_cep), mInputCep.getText().toString());
+			++mTarefasPendentes;
 			EnderecamentoRequisicao
 					.getPorCep(callbackEnderecamentoGETPorCep(), new HRef(href));
 		}
-		ocultarProgresso(mProgressBarConsumirCep, view);
+		ocultarProgresso(mProgressBarConsumirPorCep, view);
 	}
 
 	private void consumirUfGETPorSigla(@NonNull Uf.Sigla sigla) {
+		mTarefasPendentes = 0;
+		exibirProgresso(mProgressBarConsumirPorUf, null);
+		mSpinnerUf.setVisibility(View.INVISIBLE);
+		Teclado.ocultar(getActivity(), mSpinnerUf);
 		UfDTO.SiglaDTO siglaDTO = UfMapeamento.SiglaMapeamento.paraDTO(sigla);
 		++mTarefasPendentes;
 		UfRequisicao.getPorSigla(callbackUfGETPorSigla(), siglaDTO);
@@ -353,6 +335,8 @@ public class EnderecoCadastroFragment extends Fragment
 			mLabelBairro.setError(getString(R.string.input_obrigatorio));
 			return false;
 		}
+		mLabelBairro.setError(null);
+		mLabelBairro.setErrorEnabled(false);
 		return true;
 	}
 
@@ -366,6 +350,8 @@ public class EnderecoCadastroFragment extends Fragment
 			mLabelCep.setError(getString(R.string.input_invalido));
 			return false;
 		}
+		mLabelCep.setError(null);
+		mLabelCep.setErrorEnabled(false);
 		return true;
 	}
 
@@ -374,6 +360,8 @@ public class EnderecoCadastroFragment extends Fragment
 			mLabelCidade.setError(getString(R.string.input_obrigatorio));
 			return false;
 		}
+		mLabelCidade.setError(null);
+		mLabelCidade.setErrorEnabled(false);
 		return true;
 	}
 
@@ -390,6 +378,8 @@ public class EnderecoCadastroFragment extends Fragment
 			mLabelLogradouro.setError(getString(R.string.input_obrigatorio));
 			return false;
 		}
+		mLabelLogradouro.setError(null);
+		mLabelLogradouro.setErrorEnabled(false);
 		return true;
 	}
 
@@ -398,6 +388,8 @@ public class EnderecoCadastroFragment extends Fragment
 			mLabelNumero.setError(getString(R.string.input_obrigatorio));
 			return false;
 		}
+		mLabelNumero.setError(null);
+		mLabelNumero.setErrorEnabled(false);
 		return true;
 	}
 
@@ -406,52 +398,21 @@ public class EnderecoCadastroFragment extends Fragment
 		mEndereco.setCep(mInputCep.getText().toString());
 		mEndereco.setLogradouro(mInputLogradouro.getText().toString());
 		mEndereco.setNumero(mInputNumero.getText().toString());
-		mEndereco.setComplemento(TextUtils.isEmpty(mInputComplemento.getText())
-				? null : mInputComplemento.getText().toString());
-		mEndereco.setComplemento2(TextUtils.isEmpty(mInputComplemento2.getText())
-				? null : mInputComplemento2.getText().toString());
+		mEndereco.setComplemento(mInputComplemento.getText().toString());
+		mEndereco.setComplemento2(mInputComplemento2.getText().toString());
 		mEndereco.setBairro(mInputBairro.getText().toString());
 		mEndereco.setCidade(mInputCidade.getText().toString());
-		mEndereco.setNomeContato(TextUtils.isEmpty(mInputNomeContato.getText())
-				? null : mInputNomeContato.getText().toString());
+		mEndereco.setNomeContato(mInputNomeContato.getText().toString());
 	}
 
 	private void limitarTiposDisponiveis() {
 		for (Endereco endereco : mEndereco.getPessoa().getEnderecos()) {
 			if (!endereco.equals(mEndereco)
 					|| TextUtils.isEmpty(mEndereco.getNumero())) {
-				mAdaptadorTipo.remove(endereco.getTipo());
+				mAdaptadorTipos.remove(endereco.getTipo());
 			}
 		}
-		mAdaptadorTipo.notifyDataSetChanged();
-	}
-
-	private View.OnFocusChangeListener logradouroFocusChangeListener() {
-		return new View.OnFocusChangeListener() {
-			@Override
-			public void onFocusChange(View view, boolean focused) {
-				if (!focused) {
-					if (isLogradouroValido()) {
-						mLabelLogradouro.setError(null);
-						mLabelLogradouro.setErrorEnabled(false);
-					}
-				}
-			}
-		};
-	}
-
-	private View.OnFocusChangeListener numeroFocusChangeListener() {
-		return new View.OnFocusChangeListener() {
-			@Override
-			public void onFocusChange(View view, boolean focused) {
-				if (!focused) {
-					if (isNumeroValido()) {
-						mLabelNumero.setError(null);
-						mLabelNumero.setErrorEnabled(false);
-					}
-				}
-			}
-		};
+		mAdaptadorTipos.notifyDataSetChanged();
 	}
 
 	private void ocultarProgresso(@NonNull ProgressBar progresso,
@@ -464,9 +425,29 @@ public class EnderecoCadastroFragment extends Fragment
 		}
 	}
 
+	private void preencherEnderecamento(@NonNull EnderecamentoDTO enderecamento) {
+		mInputCep.requestFocus();
+		mInputCep.setText(enderecamento.getCep() == null
+				? "" : enderecamento.getCep().replace("-", ""));
+		mInputLogradouro.requestFocus();
+		mInputLogradouro.setText(enderecamento.getLogradouro() == null
+				? "" : enderecamento.getLogradouro());
+		mInputComplemento2.setText(enderecamento.getComplemento() == null
+				? "" : enderecamento.getComplemento());
+		mInputBairro.requestFocus();
+		mInputBairro.setText(enderecamento.getBairro() == null
+				? "" : enderecamento.getBairro());
+		mInputCidade.requestFocus();
+		mInputCidade.setText(enderecamento.getLocalidade() == null
+				? "" : enderecamento.getLocalidade());
+		Uf.Sigla sigla = Uf.Sigla.valueOf(enderecamento.getUf().name());
+		mSpinnerUf.setSelection(enderecamento.getUf() == null
+				? 0 : mAdaptadorUfs.getPosition(sigla));
+	}
+
 	private void preencherFormulario() {
 		mSpinnerTipo.setSelection(mEndereco.getTipo() == null
-				? 0 : mAdaptadorTipo.getPosition(mEndereco.getTipo()));
+				? 0 : mAdaptadorTipos.getPosition(mEndereco.getTipo()));
 		mInputCep.setText(mEndereco.getCep() == null ? "" : mEndereco.getCep());
 		mInputLogradouro.setText(mEndereco.getLogradouro() == null
 				? "" : mEndereco.getLogradouro());
@@ -481,51 +462,30 @@ public class EnderecoCadastroFragment extends Fragment
 		mInputCidade.setText(mEndereco.getCidade() == null
 				? "" : mEndereco.getCidade());
 		mSpinnerUf.setSelection(mEndereco.getUf() == null
-				? 0 : mAdaptadorUf.getPosition(mEndereco.getUf().getSigla()));
+				? 0 : mAdaptadorUfs.getPosition(mEndereco.getUf().getSigla()));
 		mInputNomeContato.setText(mEndereco.getNomeContato() == null
 				? "" : mEndereco.getNomeContato());
 		if (mEndereco.getPessoa().getEnderecos().contains(mEndereco)) {
 			mButtonAdicionar
 					.setHint(R.string.endereco_cadastro_button_alterar_hint);
 		}
+		mInputCep.requestFocus();
+	}
 
-		// TODO: 9/9/17 corrigir essa gambiarra [problema com equals e hashCode]
-			/*
-			essa gambiarra foi necessária pois a validação acima não funciona
-			quando o Tipo foi alterado, gerando assim inconsistência no hint do
-			mButtonAdicionar.
-			 */
-		List<Endereco> enderecos =
-				new ArrayList<>(mEndereco.getPessoa().getEnderecos());
-		int indice = enderecos.indexOf(mEndereco);
-		if (indice > -1) {
-			mButtonAdicionar
-					.setHint(R.string.endereco_cadastro_button_alterar_hint);
+	public void setEndereco(@NonNull Endereco endereco) {
+		mEndereco = endereco;
+		if (getArguments() != null) {
+			getArguments().putSerializable(ENDERECO, mEndereco);
 		}
 	}
 
-	private AdapterView.OnItemSelectedListener ufSelectedListener() {
-		return new AdapterView.OnItemSelectedListener() {
-
-			@Override
-			public void onItemSelected(AdapterView<?> parent, View view,
-			                           int position, long id) {
-				Teclado.ocultar(getActivity(), parent);
-				mTarefasPendentes = 0;
-				parent.setVisibility(View.INVISIBLE);
-				exibirProgresso(mProgressBarConsumirUfPorSigla, null);
-				consumirUfGETPorSigla((Uf.Sigla) parent.getSelectedItem());
-			}
-
-			@Override
-			public void onNothingSelected(AdapterView<?> parent) {
-				/*
-				 */
-			}
-		};
+	public void setOnEnderecoAdicionadoListener(@Nullable OnEnderecoAdicionadoListener ouvinte) {
+		mOnEnderecoAdicionadoListener = ouvinte;
 	}
 
-	public interface OnEnderecoAddedListener {
-		void onEnderecoAdded(Endereco endereco);
+	public interface OnEnderecoAdicionadoListener {
+
+		void onEnderecoAdicionado(@NonNull View view,
+		                          @NonNull Endereco endereco);
 	}
 }

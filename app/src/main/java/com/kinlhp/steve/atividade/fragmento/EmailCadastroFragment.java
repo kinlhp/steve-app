@@ -1,9 +1,8 @@
 package com.kinlhp.steve.atividade.fragmento;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
@@ -23,22 +22,22 @@ import com.kinlhp.steve.dominio.Email;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 public class EmailCadastroFragment extends Fragment
-		implements View.OnClickListener, Serializable {
-	private static final long serialVersionUID = -5951104757888021298L;
+		implements View.OnClickListener, View.OnFocusChangeListener,
+		Serializable {
+	private static final long serialVersionUID = 2077237610120314776L;
 	private static final String EMAIL = "email";
-	private AdaptadorSpinner<Email.Tipo> mAdaptador;
+	private AdaptadorSpinner<Email.Tipo> mAdaptadorTipos;
 	private Email mEmail;
-	private OnEmailAddedListener mEmailAddedListener;
-	private ArrayList<Email.Tipo> mTipos =
-			new ArrayList<>(Arrays.asList(Email.Tipo.values()));
+	private OnEmailAdicionadoListener mOnEmailAdicionadoListener;
+	private ArrayList<Email.Tipo> mTipos;
 
 	private AppCompatButton mButtonAdicionar;
 	private TextInputEditText mInputEnderecoEletronico;
 	private TextInputEditText mInputNomeContato;
 	private TextInputLayout mLabelEnderecoEletronico;
+	private ScrollView mScrollEmailCadastro;
 	private AppCompatSpinner mSpinnerTipo;
 
 	/**
@@ -56,28 +55,18 @@ public class EmailCadastroFragment extends Fragment
 	}
 
 	@Override
-	public void onAttach(Context context) {
-		super.onAttach(context);
-		if (context instanceof OnEmailAddedListener) {
-			mEmailAddedListener = (OnEmailAddedListener) context;
-		} else {
-			throw new RuntimeException(context.toString()
-					+ " must implement OnEmailAddedListener");
-		}
-	}
-
-	@Override
 	public void onClick(View view) {
 		switch (view.getId()) {
 			case R.id.button_adicionar:
 				if (isFormularioValido()) {
 					iterarFormulario();
-					mEmailAddedListener.onEmailAdded(mEmail);
+					if (mOnEmailAdicionadoListener != null) {
+						mOnEmailAdicionadoListener
+								.onEmailAdicionado(view, mEmail);
+					}
+					getActivity().onBackPressed();
 				} else {
-					((ScrollView) getActivity().findViewById(R.id.fragment_email_cadastro))
-							.fullScroll(View.FOCUS_UP);
-					Snackbar.make(mButtonAdicionar, getString(R.string.form_mensagem_invalido), Snackbar.LENGTH_LONG)
-							.show();
+					mScrollEmailCadastro.fullScroll(View.FOCUS_UP);
 				}
 				break;
 		}
@@ -86,9 +75,11 @@ public class EmailCadastroFragment extends Fragment
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		mEmail = getArguments() != null
-				? (Email) getArguments().getSerializable(EMAIL)
-				: Email.builder().build();
+		if (savedInstanceState != null) {
+			mEmail = (Email) savedInstanceState.getSerializable(EMAIL);
+		} else if (getArguments() != null) {
+			mEmail = (Email) getArguments().getSerializable(EMAIL);
+		}
 	}
 
 	@Override
@@ -96,6 +87,7 @@ public class EmailCadastroFragment extends Fragment
 	                         Bundle savedInstanceState) {
 		View view = inflater
 				.inflate(R.layout.fragment_email_cadastro, container, false);
+		mScrollEmailCadastro = (ScrollView) view;
 		mButtonAdicionar = view.findViewById(R.id.button_adicionar);
 		mInputEnderecoEletronico = view
 				.findViewById(R.id.input_endereco_eletronico);
@@ -104,42 +96,40 @@ public class EmailCadastroFragment extends Fragment
 				.findViewById(R.id.label_endereco_eletronico);
 		mSpinnerTipo = view.findViewById(R.id.spinner_tipo);
 
-		mAdaptador = new AdaptadorSpinner<>(getActivity(), mTipos);
-		mSpinnerTipo.setAdapter(mAdaptador);
+		mTipos = new ArrayList<>(Arrays.asList(Email.Tipo.values()));
+		mAdaptadorTipos = new AdaptadorSpinner<>(getActivity(), mTipos);
+		mSpinnerTipo.setAdapter(mAdaptadorTipos);
 
 		mButtonAdicionar.setOnClickListener(this);
-		mInputEnderecoEletronico
-				.setOnFocusChangeListener(enderecoEletronicoFocusChangeListener());
+		mInputEnderecoEletronico.setOnFocusChangeListener(this);
 
-		limitarTiposDisponiveis();
-		preencherFormulario();
 		return view;
 	}
 
 	@Override
-	public void onDetach() {
-		super.onDetach();
-		mEmailAddedListener = null;
+	public void onFocusChange(View view, boolean focused) {
+		switch (view.getId()) {
+			case R.id.input_endereco_eletronico:
+				if (!focused) {
+					isEnderecoEletronicoValido();
+				}
+				break;
+		}
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
 		getActivity().setTitle(R.string.email_cadastro_titulo);
+		limitarTiposDisponiveis();
+		preencherFormulario();
 	}
 
-	private View.OnFocusChangeListener enderecoEletronicoFocusChangeListener() {
-		return new View.OnFocusChangeListener() {
-			@Override
-			public void onFocusChange(View view, boolean focused) {
-				if (!focused) {
-					if (isEnderecoEletronicoValido()) {
-						mLabelEnderecoEletronico.setError(null);
-						mLabelEnderecoEletronico.setErrorEnabled(false);
-					}
-				}
-			}
-		};
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		iterarFormulario();
+		outState.putSerializable(EMAIL, mEmail);
 	}
 
 	private boolean isEnderecoEletronicoValido() {
@@ -153,6 +143,8 @@ public class EmailCadastroFragment extends Fragment
 					.setError(getString(R.string.input_invalido));
 			return false;
 		}
+		mLabelEnderecoEletronico.setError(null);
+		mLabelEnderecoEletronico.setErrorEnabled(false);
 		return true;
 	}
 
@@ -163,23 +155,22 @@ public class EmailCadastroFragment extends Fragment
 	private void iterarFormulario() {
 		mEmail.setTipo((Email.Tipo) mSpinnerTipo.getSelectedItem());
 		mEmail.setEnderecoEletronico(mInputEnderecoEletronico.getText().toString());
-		mEmail.setNomeContato(TextUtils.isEmpty(mInputNomeContato.getText())
-				? null : mInputNomeContato.getText().toString());
+		mEmail.setNomeContato(mInputNomeContato.getText().toString());
 	}
 
 	private void limitarTiposDisponiveis() {
 		for (Email email : mEmail.getPessoa().getEmails()) {
 			if (!email.equals(mEmail)
 					|| TextUtils.isEmpty(mEmail.getEnderecoEletronico())) {
-				mAdaptador.remove(email.getTipo());
+				mAdaptadorTipos.remove(email.getTipo());
 			}
 		}
-		mAdaptador.notifyDataSetChanged();
+		mAdaptadorTipos.notifyDataSetChanged();
 	}
 
 	private void preencherFormulario() {
 		mSpinnerTipo.setSelection(mEmail.getTipo() == null
-				? 0 : mAdaptador.getPosition(mEmail.getTipo()));
+				? 0 : mAdaptadorTipos.getPosition(mEmail.getTipo()));
 		mInputEnderecoEletronico.setText(mEmail.getEnderecoEletronico() == null
 				? "" : mEmail.getEnderecoEletronico());
 		mInputNomeContato.setText(mEmail.getNomeContato() == null
@@ -188,23 +179,22 @@ public class EmailCadastroFragment extends Fragment
 			mButtonAdicionar
 					.setHint(R.string.email_cadastro_button_alterar_hint);
 		}
+		mInputEnderecoEletronico.requestFocus();
+	}
 
-		// TODO: 9/9/17 corrigir essa gambiarra [problema com equals e hashCode]
-			/*
-			essa gambiarra foi necessária pois a validação acima não funciona
-			quando o Tipo foi alterado, gerando assim inconsistência no hint do
-			mButtonAdicionar.
-			 */
-		List<Email> emails =
-				new ArrayList<>(mEmail.getPessoa().getEmails());
-		int indice = emails.indexOf(mEmail);
-		if (indice > -1) {
-			mButtonAdicionar
-					.setHint(R.string.email_cadastro_button_alterar_hint);
+	public void setEmail(@NonNull Email email) {
+		mEmail = email;
+		if (getArguments() != null) {
+			getArguments().putSerializable(EMAIL, mEmail);
 		}
 	}
 
-	public interface OnEmailAddedListener {
-		void onEmailAdded(Email email);
+	public void setOnEmailAdicionadoListener(@Nullable OnEmailAdicionadoListener ouvinte) {
+		mOnEmailAdicionadoListener = ouvinte;
+	}
+
+	public interface OnEmailAdicionadoListener {
+
+		void onEmailAdicionado(@NonNull View view, @NonNull Email email);
 	}
 }

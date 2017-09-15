@@ -2,16 +2,14 @@ package com.kinlhp.steve.dto;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.io.Serializable;
-
 import lombok.Getter;
 
 /**
  * Created by kin on 9/9/17.
  */
 @Getter
-public class EnderecamentoDTO implements Serializable {
-	private static final long serialVersionUID = -1916334220912484281L;
+public class EnderecamentoDTO extends DTO {
+	private static final long serialVersionUID = 4589445497824448578L;
 
 	@SerializedName(value = "bairro")
 	private String bairro;
@@ -21,6 +19,9 @@ public class EnderecamentoDTO implements Serializable {
 
 	@SerializedName(value = "complemento")
 	private String complemento;
+
+	@SerializedName(value = "erro")
+	private boolean erro;
 
 	@SerializedName(value = "ibge")
 	private Integer ibge;
