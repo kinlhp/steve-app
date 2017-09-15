@@ -26,6 +26,7 @@
     <!-- e-mail -->
     <string name="email_cadastro_button_adicionar_hint">ADICIONAR</string>
     <string name="email_cadastro_button_alterar_hint">ALTERAR</string>
+    <string name="email_cadastro_button_salvar_hint">SALVAR ALTERAÇÕES</string>
     <string name="email_cadastro_label_endereco_eletronico_hint">Endereço eletrônico</string>
     <string name="email_cadastro_label_nome_contato_hint">Nome do contato</string>
     <string name="email_cadastro_label_tipo_hint">Tipo</string>
@@ -37,6 +38,7 @@
     <!-- endereco -->
     <string name="endereco_cadastro_button_adicionar_hint">ADICIONAR</string>
     <string name="endereco_cadastro_button_alterar_hint">ALTERAR</string>
+    <string name="endereco_cadastro_button_salvar_hint">SALVAR ALTERAÇÕES</string>
     <string name="endereco_cadastro_label_bairro_hint">Bairro</string>
     <string name="endereco_cadastro_label_cep_hint">CEP</string>
     <string name="endereco_cadastro_label_cidade_hint">Cidade</string>
@@ -110,6 +112,7 @@
     <!-- telefone -->
     <string name="telefone_cadastro_button_adicionar_hint">ADICIONAR</string>
     <string name="telefone_cadastro_button_alterar_hint">ALTERAR</string>
+    <string name="telefone_cadastro_button_salvar_hint">SALVAR ALTERAÇÕES</string>
     <string name="telefone_cadastro_label_nome_contato_hint">Nome do contato</string>
     <string name="telefone_cadastro_label_numero_hint">Número</string>
     <string name="telefone_cadastro_label_tipo_hint">Tipo</string>

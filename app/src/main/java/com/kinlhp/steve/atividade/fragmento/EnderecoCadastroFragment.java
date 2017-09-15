@@ -25,18 +25,23 @@ import com.kinlhp.steve.atividade.adaptador.AdaptadorSpinner;
 import com.kinlhp.steve.dominio.Endereco;
 import com.kinlhp.steve.dominio.Uf;
 import com.kinlhp.steve.dto.EnderecamentoDTO;
+import com.kinlhp.steve.dto.EnderecoDTO;
 import com.kinlhp.steve.dto.UfDTO;
 import com.kinlhp.steve.href.HRef;
+import com.kinlhp.steve.mapeamento.EnderecoMapeamento;
 import com.kinlhp.steve.mapeamento.UfMapeamento;
 import com.kinlhp.steve.requisicao.EnderecamentoRequisicao;
+import com.kinlhp.steve.requisicao.EnderecoRequisicao;
 import com.kinlhp.steve.requisicao.Falha;
 import com.kinlhp.steve.requisicao.UfRequisicao;
 import com.kinlhp.steve.resposta.ItemCallback;
+import com.kinlhp.steve.resposta.VazioCallback;
 import com.kinlhp.steve.util.Teclado;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Response;
@@ -45,11 +50,13 @@ public class EnderecoCadastroFragment extends Fragment
 		implements View.OnClickListener, TextView.OnEditorActionListener,
 		View.OnFocusChangeListener, AdapterView.OnItemSelectedListener,
 		Serializable {
-	private static final long serialVersionUID = -8925798097971534682L;
+	private static final long serialVersionUID = 7404705896480182367L;
 	private static final String ENDERECO = "endereco";
+	private static final String ENDERECO_AUXILIAR = "enderecoAuxiliar";
 	private AdaptadorSpinner<Endereco.Tipo> mAdaptadorTipos;
 	private AdaptadorSpinner<Uf.Sigla> mAdaptadorUfs;
 	private Endereco mEndereco;
+	private Endereco mEnderecoAuxiliar;
 	private OnEnderecoAdicionadoListener mOnEnderecoAdicionadoListener;
 	private int mTarefasPendentes;
 	private ArrayList<Endereco.Tipo> mTipos;
@@ -72,6 +79,7 @@ public class EnderecoCadastroFragment extends Fragment
 	private TextInputLayout mLabelNumero;
 	private ProgressBar mProgressBarConsumirPorCep;
 	private ProgressBar mProgressBarConsumirPorUf;
+	private ProgressBar mProgressBarSalvar;
 	private ScrollView mScrollEnderecoCadastro;
 	private AppCompatSpinner mSpinnerTipo;
 	private AppCompatSpinner mSpinnerUf;
@@ -96,11 +104,14 @@ public class EnderecoCadastroFragment extends Fragment
 			case R.id.button_adicionar:
 				if (isFormularioValido()) {
 					iterarFormulario();
-					if (mOnEnderecoAdicionadoListener != null) {
+					if (mEndereco.getId() != null) {
+						consumirEnderecoPUT();
+					} else if (mOnEnderecoAdicionadoListener != null) {
+						transcreverEnderecoAuxiliar();
 						mOnEnderecoAdicionadoListener
 								.onEnderecoAdicionado(view, mEndereco);
+						getActivity().onBackPressed();
 					}
-					getActivity().onBackPressed();
 				} else {
 					mScrollEnderecoCadastro.fullScroll(View.FOCUS_UP);
 				}
@@ -115,9 +126,15 @@ public class EnderecoCadastroFragment extends Fragment
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		if (savedInstanceState != null) {
-			mEndereco = (Endereco) savedInstanceState.getSerializable(ENDERECO);
-		} else if (getArguments() != null) {
+			mEnderecoAuxiliar = (Endereco) savedInstanceState
+					.getSerializable(ENDERECO_AUXILIAR);
+		}
+		if (getArguments() != null) {
 			mEndereco = (Endereco) getArguments().getSerializable(ENDERECO);
+		}
+		if (mEnderecoAuxiliar == null) {
+			mEnderecoAuxiliar = Endereco.builder().tipo(null).build();
+			transcreverEndereco();
 		}
 	}
 
@@ -146,6 +163,7 @@ public class EnderecoCadastroFragment extends Fragment
 				.findViewById(R.id.progress_bar_consumir_por_cep);
 		mProgressBarConsumirPorUf = view
 				.findViewById(R.id.progress_bar_consumir_por_uf);
+		mProgressBarSalvar = view.findViewById(R.id.progress_bar_salvar);
 		mSpinnerTipo = view.findViewById(R.id.spinner_tipo);
 		mSpinnerUf = view.findViewById(R.id.spinner_uf);
 
@@ -228,6 +246,12 @@ public class EnderecoCadastroFragment extends Fragment
 	}
 
 	@Override
+	public void onPause() {
+		super.onPause();
+		iterarFormulario();
+	}
+
+	@Override
 	public void onResume() {
 		super.onResume();
 		getActivity().setTitle(R.string.endereco_cadastro_titulo);
@@ -238,8 +262,27 @@ public class EnderecoCadastroFragment extends Fragment
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		iterarFormulario();
 		outState.putSerializable(ENDERECO, mEndereco);
+		outState.putSerializable(ENDERECO_AUXILIAR, mEnderecoAuxiliar);
+	}
+
+	private void alternarButtonAdicionar() {
+		/*
+		Método contains não se comparta corretamente
+		 */
+//		if (mEndereco.getPessoa().getEnderecos().contains(mEndereco)) {
+//			mButtonAdicionar.setHint(mEndereco.getId() == null
+//					? R.string.endereco_cadastro_button_alterar_hint
+//					: R.string.endereco_cadastro_button_salvar_hint);
+//		}
+		// TODO: 9/15/17 resolver de forma elegante a inconsistência acima (método contains não se comporta corretamente)
+		List<Endereco> enderecos =
+				new ArrayList<>(mEndereco.getPessoa().getEnderecos());
+		if (enderecos.contains(mEndereco)) {
+			mButtonAdicionar.setHint(mEndereco.getId() == null
+					? R.string.endereco_cadastro_button_alterar_hint
+					: R.string.endereco_cadastro_button_salvar_hint);
+		}
 	}
 
 	private ItemCallback<EnderecamentoDTO> callbackEnderecamentoGETPorCep() {
@@ -268,6 +311,32 @@ public class EnderecoCadastroFragment extends Fragment
 		};
 	}
 
+	private VazioCallback callbackEnderecoPUT() {
+		return new VazioCallback() {
+
+			@Override
+			public void onFailure(@NonNull Call<Void> chamada,
+			                      @NonNull Throwable causa) {
+				--mTarefasPendentes;
+				ocultarProgresso(mProgressBarSalvar, mButtonAdicionar);
+				Falha.tratar(mButtonAdicionar, causa);
+			}
+
+			@Override
+			public void onResponse(@NonNull Call<Void> chamada,
+			                       @NonNull Response<Void> resposta) {
+				--mTarefasPendentes;
+				if (!resposta.isSuccessful()) {
+					Falha.tratar(mButtonAdicionar, resposta);
+				} else {
+					transcreverEnderecoAuxiliar();
+				}
+				ocultarProgresso(mProgressBarSalvar, mButtonAdicionar);
+				getActivity().onBackPressed();
+			}
+		};
+	}
+
 	private ItemCallback<UfDTO> callbackUfGETPorSigla() {
 		return new ItemCallback<UfDTO>() {
 
@@ -288,9 +357,9 @@ public class EnderecoCadastroFragment extends Fragment
 				} else {
 					UfDTO dto = resposta.body();
 					Uf uf = UfMapeamento.paraDominio(dto);
-					mEndereco.setUf(uf);
+					mEnderecoAuxiliar.setUf(uf);
 					mSpinnerUf
-							.setSelection(mAdaptadorUfs.getPosition(mEndereco.getUf().getSigla()));
+							.setSelection(mAdaptadorUfs.getPosition(mEnderecoAuxiliar.getUf().getSigla()));
 				}
 				ocultarProgresso(mProgressBarConsumirPorUf, mSpinnerUf);
 			}
@@ -310,6 +379,15 @@ public class EnderecoCadastroFragment extends Fragment
 					.getPorCep(callbackEnderecamentoGETPorCep(), new HRef(href));
 		}
 		ocultarProgresso(mProgressBarConsumirPorCep, view);
+	}
+
+	private void consumirEnderecoPUT() {
+		mTarefasPendentes = 0;
+		exibirProgresso(mProgressBarSalvar, mButtonAdicionar);
+		Teclado.ocultar(getActivity(), mButtonAdicionar);
+		EnderecoDTO dto = EnderecoMapeamento.paraDTO(mEnderecoAuxiliar);
+		++mTarefasPendentes;
+		EnderecoRequisicao.put(callbackEnderecoPUT(), mEndereco.getId(), dto);
 	}
 
 	private void consumirUfGETPorSigla(@NonNull Uf.Sigla sigla) {
@@ -394,15 +472,19 @@ public class EnderecoCadastroFragment extends Fragment
 	}
 
 	private void iterarFormulario() {
-		mEndereco.setTipo((Endereco.Tipo) mSpinnerTipo.getSelectedItem());
-		mEndereco.setCep(mInputCep.getText().toString());
-		mEndereco.setLogradouro(mInputLogradouro.getText().toString());
-		mEndereco.setNumero(mInputNumero.getText().toString());
-		mEndereco.setComplemento(mInputComplemento.getText().toString());
-		mEndereco.setComplemento2(mInputComplemento2.getText().toString());
-		mEndereco.setBairro(mInputBairro.getText().toString());
-		mEndereco.setCidade(mInputCidade.getText().toString());
-		mEndereco.setNomeContato(mInputNomeContato.getText().toString());
+		mEnderecoAuxiliar
+				.setTipo((Endereco.Tipo) mSpinnerTipo.getSelectedItem());
+		mEnderecoAuxiliar.setCep(mInputCep.getText().toString());
+		mEnderecoAuxiliar.setLogradouro(mInputLogradouro.getText().toString());
+		mEnderecoAuxiliar.setNumero(mInputNumero.getText().toString());
+		mEnderecoAuxiliar
+				.setComplemento(mInputComplemento.getText().toString());
+		mEnderecoAuxiliar
+				.setComplemento2(mInputComplemento2.getText().toString());
+		mEnderecoAuxiliar.setBairro(mInputBairro.getText().toString());
+		mEnderecoAuxiliar.setCidade(mInputCidade.getText().toString());
+		mEnderecoAuxiliar
+				.setNomeContato(mInputNomeContato.getText().toString());
 	}
 
 	private void limitarTiposDisponiveis() {
@@ -413,6 +495,19 @@ public class EnderecoCadastroFragment extends Fragment
 			}
 		}
 		mAdaptadorTipos.notifyDataSetChanged();
+	}
+
+	private void limparErros() {
+		mLabelCep.setError(null);
+		mLabelCep.setErrorEnabled(false);
+		mLabelLogradouro.setError(null);
+		mLabelLogradouro.setErrorEnabled(false);
+		mLabelNumero.setError(null);
+		mLabelNumero.setErrorEnabled(false);
+		mLabelBairro.setError(null);
+		mLabelBairro.setErrorEnabled(false);
+		mLabelCidade.setError(null);
+		mLabelCidade.setErrorEnabled(false);
 	}
 
 	private void ocultarProgresso(@NonNull ProgressBar progresso,
@@ -443,32 +538,32 @@ public class EnderecoCadastroFragment extends Fragment
 		Uf.Sigla sigla = Uf.Sigla.valueOf(enderecamento.getUf().name());
 		mSpinnerUf.setSelection(enderecamento.getUf() == null
 				? 0 : mAdaptadorUfs.getPosition(sigla));
+		mInputNumero.requestFocus();
 	}
 
 	private void preencherFormulario() {
-		mSpinnerTipo.setSelection(mEndereco.getTipo() == null
-				? 0 : mAdaptadorTipos.getPosition(mEndereco.getTipo()));
-		mInputCep.setText(mEndereco.getCep() == null ? "" : mEndereco.getCep());
-		mInputLogradouro.setText(mEndereco.getLogradouro() == null
-				? "" : mEndereco.getLogradouro());
-		mInputNumero.setText(mEndereco.getNumero() == null
-				? "" : mEndereco.getNumero());
-		mInputComplemento.setText(mEndereco.getComplemento() == null
-				? "" : mEndereco.getComplemento());
-		mInputComplemento2.setText(mEndereco.getComplemento2() == null
-				? "" : mEndereco.getComplemento2());
-		mInputBairro.setText(mEndereco.getBairro() == null
-				? "" : mEndereco.getBairro());
-		mInputCidade.setText(mEndereco.getCidade() == null
-				? "" : mEndereco.getCidade());
-		mSpinnerUf.setSelection(mEndereco.getUf() == null
-				? 0 : mAdaptadorUfs.getPosition(mEndereco.getUf().getSigla()));
-		mInputNomeContato.setText(mEndereco.getNomeContato() == null
-				? "" : mEndereco.getNomeContato());
-		if (mEndereco.getPessoa().getEnderecos().contains(mEndereco)) {
-			mButtonAdicionar
-					.setHint(R.string.endereco_cadastro_button_alterar_hint);
-		}
+		limparErros();
+		mSpinnerTipo.setSelection(mEnderecoAuxiliar.getTipo() == null
+				? 0 : mAdaptadorTipos.getPosition(mEnderecoAuxiliar.getTipo()));
+		mInputCep.setText(mEnderecoAuxiliar.getCep() == null
+				? "" : mEnderecoAuxiliar.getCep());
+		mInputLogradouro.setText(mEnderecoAuxiliar.getLogradouro() == null
+				? "" : mEnderecoAuxiliar.getLogradouro());
+		mInputNumero.setText(mEnderecoAuxiliar.getNumero() == null
+				? "" : mEnderecoAuxiliar.getNumero());
+		mInputComplemento.setText(mEnderecoAuxiliar.getComplemento() == null
+				? "" : mEnderecoAuxiliar.getComplemento());
+		mInputComplemento2.setText(mEnderecoAuxiliar.getComplemento2() == null
+				? "" : mEnderecoAuxiliar.getComplemento2());
+		mInputBairro.setText(mEnderecoAuxiliar.getBairro() == null
+				? "" : mEnderecoAuxiliar.getBairro());
+		mInputCidade.setText(mEnderecoAuxiliar.getCidade() == null
+				? "" : mEnderecoAuxiliar.getCidade());
+		mSpinnerUf.setSelection(mEnderecoAuxiliar.getUf() == null
+				? 0 : mAdaptadorUfs.getPosition(mEnderecoAuxiliar.getUf().getSigla()));
+		mInputNomeContato.setText(mEnderecoAuxiliar.getNomeContato() == null
+				? "" : mEnderecoAuxiliar.getNomeContato());
+		alternarButtonAdicionar();
 		mInputCep.requestFocus();
 	}
 
@@ -477,10 +572,42 @@ public class EnderecoCadastroFragment extends Fragment
 		if (getArguments() != null) {
 			getArguments().putSerializable(ENDERECO, mEndereco);
 		}
+		if (mEnderecoAuxiliar != null) {
+			transcreverEndereco();
+		}
 	}
 
 	public void setOnEnderecoAdicionadoListener(@Nullable OnEnderecoAdicionadoListener ouvinte) {
 		mOnEnderecoAdicionadoListener = ouvinte;
+	}
+
+	private void transcreverEndereco() {
+		mEnderecoAuxiliar.setBairro(mEndereco.getBairro());
+		mEnderecoAuxiliar.setCep(mEndereco.getCep());
+		mEnderecoAuxiliar.setCidade(mEndereco.getCidade());
+		mEnderecoAuxiliar.setComplemento(mEndereco.getComplemento());
+		mEnderecoAuxiliar.setComplemento2(mEndereco.getComplemento2());
+		mEnderecoAuxiliar.setIbge(mEndereco.getIbge());
+		mEnderecoAuxiliar.setLogradouro(mEndereco.getLogradouro());
+		mEnderecoAuxiliar.setNomeContato(mEndereco.getNomeContato());
+		mEnderecoAuxiliar.setNumero(mEndereco.getNumero());
+		mEnderecoAuxiliar.setPessoa(mEndereco.getPessoa());
+		mEnderecoAuxiliar.setTipo(mEndereco.getTipo());
+		mEnderecoAuxiliar.setUf(mEndereco.getUf());
+	}
+
+	private void transcreverEnderecoAuxiliar() {
+		mEndereco.setBairro(mEnderecoAuxiliar.getBairro());
+		mEndereco.setCep(mEnderecoAuxiliar.getCep());
+		mEndereco.setCidade(mEnderecoAuxiliar.getCidade());
+		mEndereco.setComplemento(mEnderecoAuxiliar.getComplemento());
+		mEndereco.setComplemento2(mEnderecoAuxiliar.getComplemento2());
+		mEndereco.setIbge(mEnderecoAuxiliar.getIbge());
+		mEndereco.setLogradouro(mEnderecoAuxiliar.getLogradouro());
+		mEndereco.setNomeContato(mEnderecoAuxiliar.getNomeContato());
+		mEndereco.setNumero(mEnderecoAuxiliar.getNumero());
+		mEndereco.setTipo(mEnderecoAuxiliar.getTipo());
+		mEndereco.setUf(mEnderecoAuxiliar.getUf());
 	}
 
 	public interface OnEnderecoAdicionadoListener {

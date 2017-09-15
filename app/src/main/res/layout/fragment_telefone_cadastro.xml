@@ -12,6 +12,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <ProgressBar
+            android:id="@+id/progress_bar_salvar"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/button_adicionar"
+            app:layout_constraintEnd_toEndOf="@+id/button_adicionar"
+            app:layout_constraintLeft_toLeftOf="@+id/button_adicionar"
+            app:layout_constraintRight_toRightOf="@+id/button_adicionar"
+            app:layout_constraintStart_toStartOf="@+id/button_adicionar"
+            app:layout_constraintTop_toTopOf="@+id/button_adicionar" />
+
         <android.support.v7.widget.AppCompatTextView
             android:id="@+id/label_tipo"
             android:layout_width="0dp"
