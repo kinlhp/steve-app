@@ -31,6 +31,7 @@
     <string name="email_cadastro_label_nome_contato_hint">Nome do contato</string>
     <string name="email_cadastro_label_tipo_hint">Tipo</string>
     <string name="email_cadastro_titulo">E-mail</string>
+    <string name="emails_pesquisa_label_0_registros">0 registros</string>
     <string name="emails_pesquisa_label_endereco_eletronico_hint">@string/email_cadastro_label_endereco_eletronico_hint</string>
     <string name="emails_pesquisa_label_nome_contato_hint">@string/email_cadastro_label_nome_contato_hint</string>
     <string name="emails_pesquisa_label_tipo_hint">@string/email_cadastro_label_tipo_hint</string>
@@ -50,6 +51,7 @@
     <string name="endereco_cadastro_label_tipo_hint">Tipo</string>
     <string name="endereco_cadastro_label_uf_hint">Estado</string>
     <string name="endereco_cadastro_titulo">Endereço</string>
+    <string name="enderecos_pesquisa_label_0_registros">0 registros</string>
     <string name="enderecos_pesquisa_label_logradouro_hint">@string/endereco_cadastro_label_logradouro_hint</string>
     <string name="enderecos_pesquisa_label_nome_contato_hint">@string/endereco_cadastro_label_nome_contato_hint</string>
     <string name="enderecos_pesquisa_label_tipo_hint">@string/endereco_cadastro_label_tipo_hint</string>
@@ -65,8 +67,9 @@
     <string name="login_mensagem_usuario_inativo">%s, seu usuário está inativo</string>
     <string name="login_titulo">Login</string>
     <!-- pessoa -->
-    <string name="pessoa_cadastro_button_alterar_hint">SALVAR ALTERAÇÕES</string>
-    <string name="pessoa_cadastro_button_salvar_hint">SALVAR</string>
+    <string name="pessoa_cadastro_button_adicionar_hint">ADICIONAR</string>
+    <string name="pessoa_cadastro_button_alterar_hint">ALTERAR</string>
+    <string name="pessoa_cadastro_button_salvar_hint">SALVAR ALTERAÇÕES</string>
     <string name="pessoa_cadastro_input_emails_text">Visualizar e-mails</string>
     <string name="pessoa_cadastro_input_enderecos_text">Visualizar endereços</string>
     <string name="pessoa_cadastro_input_telefones_text">Visualizar telefones</string>
@@ -95,6 +98,7 @@
     <string name="pessoa_cadastro_switch_perfil_usuario_hint">Perfil usuário</string>
     <string name="pessoa_cadastro_switch_situacao_hint">Ativo</string>
     <string name="pessoa_cadastro_titulo">Pessoa</string>
+    <string name="pessoas_pesquisa_label_0_registros">0 registros</string>
     <string name="pessoas_pesquisa_label_abertura_nascimento_hint">Data de abertura/nascimento</string>
     <string name="pessoas_pesquisa_label_cnpj_cpf_hint">CNPJ/CPF</string>
     <string name="pessoas_pesquisa_label_nome_razao_hint">Nome/Razão social</string>
@@ -117,6 +121,7 @@
     <string name="telefone_cadastro_label_numero_hint">Número</string>
     <string name="telefone_cadastro_label_tipo_hint">Tipo</string>
     <string name="telefone_cadastro_titulo">Telefone</string>
+    <string name="telefones_pesquisa_label_0_registros">0 registros</string>
     <string name="telefones_pesquisa_label_nome_contato_hint">Nome do contato</string>
     <string name="telefones_pesquisa_label_numero_hint">Número</string>
     <string name="telefones_pesquisa_label_tipo_hint">Tipo</string>

@@ -2,12 +2,10 @@ package com.kinlhp.steve.atividade;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.kinlhp.steve.R;
 import com.kinlhp.steve.atividade.fragmento.EmailCadastroFragment;
@@ -37,16 +35,16 @@ public class PessoaCadastroActivity extends AppCompatActivity
 		EnderecosPesquisaFragment.OnLongoEnderecoSelecionadoListener,
 		PessoaCadastroFragment.OnEmailsSelecionadosListener,
 		PessoaCadastroFragment.OnEnderecosSelecionadosListener,
+		PessoaCadastroFragment.OnPessoaAdicionadoListener,
 		PessoaCadastroFragment.OnPessoasPesquisaListener,
 		PessoaCadastroFragment.OnReferenciaPessoaAlteradaListener,
 		PessoaCadastroFragment.OnTelefonesSelecionadosListener,
-		PessoasPesquisaFragment.OnLongoPessoaSelecionadaListener,
 		PessoasPesquisaFragment.OnPessoaSelecionadaListener,
 		TelefoneCadastroFragment.OnTelefoneAdicionadoListener,
 		TelefonesPesquisaFragment.OnTelefoneSelecionadoListener,
 		TelefonesPesquisaFragment.OnLongoTelefoneSelecionadoListener,
 		Serializable {
-	private static final long serialVersionUID = 8444981203026770685L;
+	private static final long serialVersionUID = -4899921056805295890L;
 	private EmailCadastroFragment mFragmentoEmailCadastro;
 	private EmailsPesquisaFragment mFragmentoEmailsPesquisa;
 	private EnderecoCadastroFragment mFragmentoEnderecoCadastro;
@@ -56,6 +54,7 @@ public class PessoaCadastroActivity extends AppCompatActivity
 	private TelefoneCadastroFragment mFragmentoTelefoneCadastro;
 	private TelefonesPesquisaFragment mFragmentoTelefonesPesquisa;
 	private Pessoa mPessoa = Pessoa.builder().build();
+	private Bundle mSavedInstanceState;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +65,8 @@ public class PessoaCadastroActivity extends AppCompatActivity
 		setSupportActionBar(toolbar);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-		inflarPessoaCadastro(savedInstanceState);
+		mSavedInstanceState = savedInstanceState;
+		inflarPessoaCadastro();
 	}
 
 	@Override
@@ -172,7 +172,8 @@ public class PessoaCadastroActivity extends AppCompatActivity
 		/*
 		Método contains não se comparta corretamente
 		 */
-//		if (mPessoa.getEnderecos().contains(endereco) && endereco.getId() == null) {
+//		if (mPessoa.getEnderecos().contains(endereco)
+//				&& endereco.getId() == null) {
 //			mPessoa.getEnderecos().remove(endereco);
 //		}
 		// TODO: 9/13/17 resolver de forma elegante a inconsistência acima (método contains não se comporta corretamente)
@@ -189,20 +190,13 @@ public class PessoaCadastroActivity extends AppCompatActivity
 	}
 
 	@Override
-	public void onLongoPessoaSelecionada(@NonNull View view,
-	                                     @NonNull Pessoa pessoa) {
-		mPessoa = pessoa;
-		// TODO: 9/14/17 inflar cadastro de pessoa
-		Toast.makeText(this, "Inflar cadastro de pessoa com a pessoa selecionada", Toast.LENGTH_SHORT).show();
-	}
-
-	@Override
 	public void onLongoTelefoneSelecionado(@NonNull View view,
 	                                       @NonNull Telefone telefone) {
 		/*
 		Método contains não se comparta corretamente
 		 */
-//		if (mPessoa.getTelefones().contains(telefone) && telefone.getId() == null) {
+//		if (mPessoa.getTelefones().contains(telefone)
+//				&& telefone.getId() == null) {
 //			mPessoa.getTelefones().remove(telefone);
 //		}
 		// TODO: 9/13/17 resolver de forma elegante a inconsistência acima (método contains não se comporta corretamente)
@@ -230,21 +224,28 @@ public class PessoaCadastroActivity extends AppCompatActivity
 	}
 
 	@Override
-	public void onPessoaSelecionada(@NonNull View view,
-	                                @NonNull Pessoa pessoa) {
+	public void onPessoaAdicionado(@NonNull View view, @NonNull Pessoa pessoa) {
 		mPessoa = pessoa;
-		// TODO: 9/14/17 inflar cadastro de pessoa
-		Toast.makeText(this, "Inflar cadastro de pessoa com a pessoa selecionada", Toast.LENGTH_SHORT).show();
+		finish();
 	}
 
 	@Override
-	public void onReferenciaPessoaAlterada(@NonNull Pessoa novaReferencia) {
-		mPessoa = novaReferencia;
+	public void onPessoaSelecionada(@NonNull View view,
+	                                @NonNull Pessoa pessoa) {
+		mPessoa = pessoa;
+		if (mFragmentoPessoaCadastro != null) {
+			mFragmentoPessoaCadastro.setPessoa(mPessoa);
+		}
 	}
 
 	@Override
 	public void onPessoasPesquisa() {
 		inflarPessoasPesquisa();
+	}
+
+	@Override
+	public void onReferenciaPessoaAlterada(@NonNull Pessoa novaReferencia) {
+		mPessoa = novaReferencia;
 	}
 
 	@Override
@@ -356,7 +357,7 @@ public class PessoaCadastroActivity extends AppCompatActivity
 				.addToBackStack(tag).commit();
 	}
 
-	private void inflarPessoaCadastro(@Nullable Bundle savedInstanceState) {
+	private void inflarPessoaCadastro() {
 		if (mFragmentoPessoaCadastro == null) {
 			mFragmentoPessoaCadastro = PessoaCadastroFragment
 					.newInstance(mPessoa);
@@ -365,12 +366,13 @@ public class PessoaCadastroActivity extends AppCompatActivity
 		}
 		mFragmentoPessoaCadastro.setOnEmailsSelecionadosListener(this);
 		mFragmentoPessoaCadastro.setOnEnderecosSelecionadosListener(this);
+		mFragmentoPessoaCadastro.setOnPessoaAdicionadoListener(this);
 		mFragmentoPessoaCadastro.setOnPessoasPesquisaListener(this);
 		mFragmentoPessoaCadastro.setOnReferenciaPessoaAlteradaListener(this);
 		mFragmentoPessoaCadastro.setOnTelefonesSelecionadosListener(this);
 		String tag = getString(R.string.pessoa_cadastro_titulo);
 
-		if (savedInstanceState == null) {
+		if (mSavedInstanceState == null) {
 			getSupportFragmentManager().beginTransaction()
 					.replace(R.id.content_pessoa_cadastro, mFragmentoPessoaCadastro, tag)
 					.commit();
@@ -382,8 +384,6 @@ public class PessoaCadastroActivity extends AppCompatActivity
 			mFragmentoPessoasPesquisa = PessoasPesquisaFragment.newInstance();
 		}
 		mFragmentoPessoasPesquisa.setOnPessoaSelecionadaListener(this);
-		mFragmentoPessoasPesquisa.setOnLongoPessoaSelecionadaListener(this);
-
 		String tag = getString(R.string.pessoas_pesquisa_titulo);
 
 		getSupportFragmentManager().beginTransaction()

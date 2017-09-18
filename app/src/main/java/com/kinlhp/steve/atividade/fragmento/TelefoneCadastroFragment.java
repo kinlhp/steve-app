@@ -17,12 +17,14 @@ import android.widget.ScrollView;
 
 import com.kinlhp.steve.R;
 import com.kinlhp.steve.atividade.adaptador.AdaptadorSpinner;
+import com.kinlhp.steve.dominio.Credencial;
 import com.kinlhp.steve.dominio.Telefone;
 import com.kinlhp.steve.dto.TelefoneDTO;
 import com.kinlhp.steve.mapeamento.TelefoneMapeamento;
 import com.kinlhp.steve.requisicao.Falha;
 import com.kinlhp.steve.requisicao.TelefoneRequisicao;
 import com.kinlhp.steve.resposta.VazioCallback;
+import com.kinlhp.steve.util.Parametro;
 import com.kinlhp.steve.util.Teclado;
 
 import java.io.Serializable;
@@ -36,7 +38,7 @@ import retrofit2.Response;
 public class TelefoneCadastroFragment extends Fragment
 		implements View.OnClickListener, View.OnFocusChangeListener,
 		Serializable {
-	private static final long serialVersionUID = -1488925049012606065L;
+	private static final long serialVersionUID = -5340911769514830158L;
 	private static final String TELEFONE = "telefone";
 	private static final String TELEFONE_AUXILIAR = "telefoneAuxiliar";
 	private AdaptadorSpinner<Telefone.Tipo> mAdaptadorTipos;
@@ -50,7 +52,7 @@ public class TelefoneCadastroFragment extends Fragment
 	private TextInputEditText mInputNomeContato;
 	private TextInputEditText mInputNumero;
 	private TextInputLayout mLabelNumero;
-	private ProgressBar mProgressBarSalvar;
+	private ProgressBar mProgressBarAdicionar;
 	private ScrollView mScrollTelefoneCadastro;
 	private AppCompatSpinner mSpinnerTipo;
 
@@ -73,15 +75,7 @@ public class TelefoneCadastroFragment extends Fragment
 		switch (view.getId()) {
 			case R.id.button_adicionar:
 				if (isFormularioValido()) {
-					iterarFormulario();
-					if (mTelefone.getId() != null) {
-						consumirTelefonePUT();
-					} else if (mOnTelefoneAdicionadoListener != null) {
-						transcreverTelefoneAuxiliar();
-						mOnTelefoneAdicionadoListener
-								.onTelefoneAdicionado(view, mTelefone);
-						getActivity().onBackPressed();
-					}
+					submeterFormulario();
 				} else {
 					mScrollTelefoneCadastro.fullScroll(View.FOCUS_UP);
 				}
@@ -115,7 +109,7 @@ public class TelefoneCadastroFragment extends Fragment
 		mInputNomeContato = view.findViewById(R.id.input_nome_contato);
 		mInputNumero = view.findViewById(R.id.input_numero);
 		mLabelNumero = view.findViewById(R.id.label_numero);
-		mProgressBarSalvar = view.findViewById(R.id.progress_bar_salvar);
+		mProgressBarAdicionar = view.findViewById(R.id.progress_bar_adicionar);
 		mSpinnerTipo = view.findViewById(R.id.spinner_tipo);
 
 		mTipos = new ArrayList<>(Arrays.asList(Telefone.Tipo.values()));
@@ -124,6 +118,9 @@ public class TelefoneCadastroFragment extends Fragment
 
 		mButtonAdicionar.setOnClickListener(this);
 		mInputNumero.setOnFocusChangeListener(this);
+
+		mInputNumero.requestFocus();
+		mScrollTelefoneCadastro.fullScroll(View.FOCUS_UP);
 
 		return view;
 	}
@@ -177,6 +174,14 @@ public class TelefoneCadastroFragment extends Fragment
 					? R.string.telefone_cadastro_button_alterar_hint
 					: R.string.telefone_cadastro_button_salvar_hint);
 		}
+		Credencial credencialLogado = (Credencial)
+				Parametro.get(Parametro.Chave.CREDENCIAL);
+		if (mTelefone.getPessoa().isPerfilUsuario()
+				&& !credencialLogado.isPerfilAdministrador()) {
+			mButtonAdicionar.setEnabled(false);
+		} else {
+			mButtonAdicionar.setEnabled(true);
+		}
 	}
 
 	private VazioCallback callbackTelefonePUT() {
@@ -186,7 +191,7 @@ public class TelefoneCadastroFragment extends Fragment
 			public void onFailure(@NonNull Call<Void> chamada,
 			                      @NonNull Throwable causa) {
 				--mTarefasPendentes;
-				ocultarProgresso(mProgressBarSalvar, mButtonAdicionar);
+				ocultarProgresso(mProgressBarAdicionar, mButtonAdicionar);
 				Falha.tratar(mButtonAdicionar, causa);
 			}
 
@@ -198,16 +203,20 @@ public class TelefoneCadastroFragment extends Fragment
 					Falha.tratar(mButtonAdicionar, resposta);
 				} else {
 					transcreverTelefoneAuxiliar();
+					if (mOnTelefoneAdicionadoListener != null) {
+						mOnTelefoneAdicionadoListener
+								.onTelefoneAdicionado(mButtonAdicionar, mTelefone);
+					}
+					getActivity().onBackPressed();
 				}
-				ocultarProgresso(mProgressBarSalvar, mButtonAdicionar);
-				getActivity().onBackPressed();
+				ocultarProgresso(mProgressBarAdicionar, mButtonAdicionar);
 			}
 		};
 	}
 
 	private void consumirTelefonePUT() {
 		mTarefasPendentes = 0;
-		exibirProgresso(mProgressBarSalvar, mButtonAdicionar);
+		exibirProgresso(mProgressBarAdicionar, mButtonAdicionar);
 		Teclado.ocultar(getActivity(), mButtonAdicionar);
 		TelefoneDTO dto = TelefoneMapeamento.paraDTO(mTelefoneAuxiliar);
 		++mTarefasPendentes;
@@ -283,7 +292,6 @@ public class TelefoneCadastroFragment extends Fragment
 		mInputNomeContato.setText(mTelefoneAuxiliar.getNomeContato() == null
 				? "" : mTelefoneAuxiliar.getNomeContato());
 		alternarButtonAdicionar();
-		mInputNumero.requestFocus();
 	}
 
 	public void setOnTelefoneAdicionadoListener(@Nullable OnTelefoneAdicionadoListener ouvinte) {
@@ -305,7 +313,22 @@ public class TelefoneCadastroFragment extends Fragment
 		}
 	}
 
+	private void submeterFormulario() {
+		iterarFormulario();
+		if (mTelefone.getId() != null) {
+			consumirTelefonePUT();
+		} else {
+			transcreverTelefoneAuxiliar();
+			if (mOnTelefoneAdicionadoListener != null) {
+				mOnTelefoneAdicionadoListener
+						.onTelefoneAdicionado(mButtonAdicionar, mTelefone);
+			}
+			getActivity().onBackPressed();
+		}
+	}
+
 	private void transcreverTelefone() {
+		mTelefoneAuxiliar.setId(mTelefone.getId());
 		mTelefoneAuxiliar.setNumero(mTelefone.getNumero());
 		mTelefoneAuxiliar.setNomeContato(mTelefone.getNomeContato());
 		mTelefoneAuxiliar.setPessoa(mTelefone.getPessoa());

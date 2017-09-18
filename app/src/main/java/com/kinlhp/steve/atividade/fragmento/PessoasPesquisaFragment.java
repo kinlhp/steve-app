@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -19,18 +20,34 @@ import android.widget.Toast;
 
 import com.kinlhp.steve.R;
 import com.kinlhp.steve.atividade.adaptador.AdaptadorRecyclerPessoas;
+import com.kinlhp.steve.dominio.Email;
+import com.kinlhp.steve.dominio.Endereco;
 import com.kinlhp.steve.dominio.Pessoa;
+import com.kinlhp.steve.dominio.Telefone;
+import com.kinlhp.steve.dominio.Uf;
+import com.kinlhp.steve.dto.EmailDTO;
+import com.kinlhp.steve.dto.EnderecoDTO;
 import com.kinlhp.steve.dto.PessoaDTO;
+import com.kinlhp.steve.dto.TelefoneDTO;
+import com.kinlhp.steve.dto.UfDTO;
 import com.kinlhp.steve.href.HRef;
+import com.kinlhp.steve.mapeamento.EmailMapeamento;
+import com.kinlhp.steve.mapeamento.EnderecoMapeamento;
 import com.kinlhp.steve.mapeamento.PessoaMapeamento;
+import com.kinlhp.steve.mapeamento.TelefoneMapeamento;
+import com.kinlhp.steve.mapeamento.UfMapeamento;
+import com.kinlhp.steve.requisicao.EnderecoRequisicao;
 import com.kinlhp.steve.requisicao.Falha;
 import com.kinlhp.steve.requisicao.PessoaRequisicao;
 import com.kinlhp.steve.resposta.Colecao;
 import com.kinlhp.steve.resposta.ColecaoCallback;
+import com.kinlhp.steve.resposta.ItemCallback;
 import com.kinlhp.steve.resposta.Links;
+import com.kinlhp.steve.util.Parametro;
 import com.kinlhp.steve.util.Teclado;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -43,17 +60,19 @@ public class PessoasPesquisaFragment extends Fragment
 		AdaptadorRecyclerPessoas.OnItemLongClickListener,
 		MenuItem.OnActionExpandListener,
 		SearchView.OnQueryTextListener, Serializable {
-	private static final long serialVersionUID = 8596121901536938807L;
+	private static final long serialVersionUID = 1099236966940158792L;
 	private static final String LINKS = "_links";
 	private static final String PAGINA_0 = "pessoas?page=0&size=20";
 	private static final String PESSOAS = "pessoas";
 	private AdaptadorRecyclerPessoas mAdaptadorPessoas;
 	private ArrayList<Pessoa> mPessoas = new ArrayList<>();
+	private Pessoa mPessoaSelecionada;
 	private Links mLinks;
 	private OnPessoaSelecionadaListener mOnPessoaSelecionadaListener;
-	private OnLongoPessoaSelecionadaListener mOnLongoPessoaSelecionadaListener;
 	private int mTarefasPendentes;
+	private View mViewSelecionada;
 
+	private AppCompatTextView mLabel0Registros;
 	private ProgressBar mProgressBarConsumirPessoasPaginado;
 	private RecyclerView mRecyclerPessoas;
 
@@ -73,17 +92,6 @@ public class PessoasPesquisaFragment extends Fragment
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-//		if (savedInstanceState != null) {
-		//noinspection unchecked
-//			mPessoas = (ArrayList<Pessoa>) savedInstanceState
-//					.getSerializable(PESSOAS);
-//			mLinks = (Links) savedInstanceState.getSerializable(LINKS);
-//		} else if (getArguments() != null) {
-		//noinspection unchecked
-//			mPessoas = (ArrayList<Pessoa>) getArguments()
-//					.getSerializable(PESSOAS);
-//			mLinks = (Links) getArguments().getSerializable(LINKS);
-//		}
 	}
 
 	@Override
@@ -101,6 +109,7 @@ public class PessoasPesquisaFragment extends Fragment
 	                         Bundle savedInstanceState) {
 		View view = inflater
 				.inflate(R.layout.fragment_pessoas_pesquisa, container, false);
+		mLabel0Registros = view.findViewById(R.id.label_0_registros);
 		mProgressBarConsumirPessoasPaginado = view
 				.findViewById(R.id.progress_bar_consumir_pessoas_paginado);
 		mRecyclerPessoas = view.findViewById(R.id.recycler_pessoas);
@@ -114,27 +123,29 @@ public class PessoasPesquisaFragment extends Fragment
 				new LinearLayoutManager(getActivity());
 		mRecyclerPessoas.setLayoutManager(gerenciador);
 
-		mRecyclerPessoas
-				.addOnScrollListener(recyclerPessoasAddOnScrollListener());
+		mRecyclerPessoas.addOnScrollListener(new OnPessoaScrollListener());
+
+		setHasOptionsMenu(true);
 
 		return view;
 	}
 
 	@Override
 	public void onItemClick(View view, int posicao) {
-		Pessoa pessoa = mPessoas.get(posicao);
-		if (mOnPessoaSelecionadaListener != null) {
-			mOnPessoaSelecionadaListener.onPessoaSelecionada(view, pessoa);
-		}
+		mPessoaSelecionada = mPessoas.get(posicao);
+		mViewSelecionada = view;
+		consumirPessoaGETEmails();
+		consumirPessoaGETEnderecos();
+		consumirPessoaGETTelefones();
 	}
 
 	@Override
 	public void onItemLongClickListener(View view, int posicao) {
-		Pessoa pessoa = mPessoas.get(posicao);
-		if (mOnLongoPessoaSelecionadaListener != null) {
-			mOnLongoPessoaSelecionadaListener
-					.onLongoPessoaSelecionada(view, pessoa);
-		}
+		mPessoaSelecionada = mPessoas.get(posicao);
+		mViewSelecionada = view;
+		consumirPessoaGETEmails();
+		consumirPessoaGETEnderecos();
+		consumirPessoaGETTelefones();
 	}
 
 	@Override
@@ -155,10 +166,12 @@ public class PessoasPesquisaFragment extends Fragment
 	@Override
 	public boolean onQueryTextSubmit(String query) {
 		if (TextUtils.isEmpty(query)) {
-			Toast.makeText(getActivity(), "Cancelar/Limpar pesquisa", Toast.LENGTH_SHORT).show();
+			Toast.makeText(getActivity(), "Cancelar/Limpar pesquisa", Toast.LENGTH_SHORT)
+					.show();
 			return true;
 		}
-		Toast.makeText(getActivity(), "Consumir pessoas GET", Toast.LENGTH_SHORT).show();
+		Toast.makeText(getActivity(), "Consumir pessoas GET", Toast.LENGTH_SHORT)
+				.show();
 		return true;
 	}
 
@@ -171,6 +184,7 @@ public class PessoasPesquisaFragment extends Fragment
 			HRef pagina0 = new HRef(url);
 			consumirPessoasGETPaginado(pagina0);
 		}
+		alternarLabel0Registros();
 	}
 
 	@Override
@@ -180,26 +194,118 @@ public class PessoasPesquisaFragment extends Fragment
 		outState.putSerializable(PESSOAS, mPessoas);
 	}
 
-	private void addPessoas(@NonNull ArrayList<Pessoa> pessoas,
-	                        @Nullable Links links) {
-		for (Pessoa pessoa : pessoas) {
+	private void addPessoa(@NonNull Pessoa pessoa) {
+		if (pessoa.getId().compareTo(BigInteger.ZERO) > 0) {
 			mPessoas.add(pessoa);
 			int indice = mPessoas.indexOf(pessoa);
 			mAdaptadorPessoas.notifyItemInserted(indice);
 		}
-		mLinks = links;
-		if (getArguments() != null) {
-			getArguments().putSerializable(LINKS, mLinks);
-		}
+	}
+
+	private void alternarLabel0Registros() {
+		mLabel0Registros.setVisibility(mPessoas.isEmpty()
+				? View.VISIBLE : View.GONE);
+	}
+
+	private ItemCallback<UfDTO> callbackEnderecoGETUf(@NonNull final Endereco endereco) {
+		return new ItemCallback<UfDTO>() {
+
+			@Override
+			public void onFailure(@NonNull Call<UfDTO> chamada,
+			                      @NonNull Throwable causa) {
+				--mTarefasPendentes;
+				ocultarProgresso(mProgressBarConsumirPessoasPaginado, false);
+				Falha.tratar(mProgressBarConsumirPessoasPaginado, causa);
+			}
+
+			@Override
+			public void onResponse(@NonNull Call<UfDTO> chamada,
+			                       @NonNull Response<UfDTO> resposta) {
+				--mTarefasPendentes;
+				if (!resposta.isSuccessful()) {
+					ocultarProgresso(mProgressBarConsumirPessoasPaginado, false);
+					Falha.tratar(mProgressBarConsumirPessoasPaginado, resposta);
+				} else {
+					UfDTO dto = resposta.body();
+					Uf uf = UfMapeamento.paraDominio(dto);
+					endereco.setUf(uf);
+					ocultarProgresso(mProgressBarConsumirPessoasPaginado, true);
+				}
+			}
+		};
+	}
+
+	private ColecaoCallback<Colecao<EmailDTO>> callbackPessoaGETEmails() {
+		return new ColecaoCallback<Colecao<EmailDTO>>() {
+
+			@Override
+			public void onFailure(@NonNull Call<Colecao<EmailDTO>> chamada,
+			                      @NonNull Throwable causa) {
+				--mTarefasPendentes;
+				ocultarProgresso(mProgressBarConsumirPessoasPaginado, false);
+				Falha.tratar(mProgressBarConsumirPessoasPaginado, causa);
+			}
+
+			@Override
+			public void onResponse(@NonNull Call<Colecao<EmailDTO>> chamada,
+			                       @NonNull Response<Colecao<EmailDTO>> resposta) {
+				--mTarefasPendentes;
+				if (!resposta.isSuccessful()) {
+					ocultarProgresso(mProgressBarConsumirPessoasPaginado, false);
+					Falha.tratar(mProgressBarConsumirPessoasPaginado, resposta);
+				} else {
+					Set<EmailDTO> dtos = resposta.body().getEmbedded()
+							.getDtos();
+					Set<Email> emails = EmailMapeamento
+							.paraDominios(dtos, mPessoaSelecionada);
+					mPessoaSelecionada.getEmails().addAll(emails);
+					ocultarProgresso(mProgressBarConsumirPessoasPaginado, true);
+				}
+			}
+		};
+	}
+
+	private ColecaoCallback<Colecao<EnderecoDTO>> callbackPessoaGETEnderecos() {
+		return new ColecaoCallback<Colecao<EnderecoDTO>>() {
+
+			@Override
+			public void onFailure(@NonNull Call<Colecao<EnderecoDTO>> chamada,
+			                      @NonNull Throwable causa) {
+				--mTarefasPendentes;
+				ocultarProgresso(mProgressBarConsumirPessoasPaginado, false);
+				Falha.tratar(mProgressBarConsumirPessoasPaginado, causa);
+			}
+
+			@Override
+			public void onResponse(@NonNull Call<Colecao<EnderecoDTO>> chamada,
+			                       @NonNull Response<Colecao<EnderecoDTO>> resposta) {
+				--mTarefasPendentes;
+				if (!resposta.isSuccessful()) {
+					ocultarProgresso(mProgressBarConsumirPessoasPaginado, false);
+					Falha.tratar(mProgressBarConsumirPessoasPaginado, resposta);
+				} else {
+					Set<EnderecoDTO> dtos = resposta.body().getEmbedded()
+							.getDtos();
+					Set<Endereco> enderecos = EnderecoMapeamento
+							.paraDominios(dtos, mPessoaSelecionada);
+					mPessoaSelecionada.getEnderecos().addAll(enderecos);
+					for (Endereco endereco : enderecos) {
+						consumirEnderecoGETUf(endereco);
+					}
+					ocultarProgresso(mProgressBarConsumirPessoasPaginado, true);
+				}
+			}
+		};
 	}
 
 	private ColecaoCallback<Colecao<PessoaDTO>> callbackPessoasGETPaginado() {
 		return new ColecaoCallback<Colecao<PessoaDTO>>() {
+
 			@Override
 			public void onFailure(@NonNull Call<Colecao<PessoaDTO>> chamada,
 			                      @NonNull Throwable causa) {
 				--mTarefasPendentes;
-				ocultarProgresso(mProgressBarConsumirPessoasPaginado, null);
+				ocultarProgresso(mProgressBarConsumirPessoasPaginado, false);
 				Falha.tratar(mProgressBarConsumirPessoasPaginado, causa);
 			}
 
@@ -213,78 +319,131 @@ public class PessoasPesquisaFragment extends Fragment
 					Colecao<PessoaDTO> colecao = resposta.body();
 					Set<PessoaDTO> dtos = colecao.getEmbedded().getDtos();
 					Set<Pessoa> pessoas = PessoaMapeamento.paraDominios(dtos);
-					addPessoas(new ArrayList<>(pessoas), colecao.getLinks());
+					for (Pessoa pessoa : pessoas) {
+						addPessoa(pessoa);
+					}
+					alternarLabel0Registros();
+					mLinks = colecao.getLinks();
 				}
-				ocultarProgresso(mProgressBarConsumirPessoasPaginado, null);
+				ocultarProgresso(mProgressBarConsumirPessoasPaginado, false);
 			}
 		};
+	}
+
+	private ColecaoCallback<Colecao<TelefoneDTO>> callbackPessoaGETTelefones() {
+		return new ColecaoCallback<Colecao<TelefoneDTO>>() {
+
+			@Override
+			public void onFailure(@NonNull Call<Colecao<TelefoneDTO>> chamada,
+			                      @NonNull Throwable causa) {
+				--mTarefasPendentes;
+				ocultarProgresso(mProgressBarConsumirPessoasPaginado, false);
+				Falha.tratar(mProgressBarConsumirPessoasPaginado, causa);
+			}
+
+			@Override
+			public void onResponse(@NonNull Call<Colecao<TelefoneDTO>> chamada,
+			                       @NonNull Response<Colecao<TelefoneDTO>> resposta) {
+				--mTarefasPendentes;
+				if (!resposta.isSuccessful()) {
+					ocultarProgresso(mProgressBarConsumirPessoasPaginado, false);
+					Falha.tratar(mProgressBarConsumirPessoasPaginado, resposta);
+				} else {
+					Set<TelefoneDTO> dtos = resposta.body().getEmbedded()
+							.getDtos();
+					Set<Telefone> telefones = TelefoneMapeamento
+							.paraDominios(dtos, mPessoaSelecionada);
+					mPessoaSelecionada.getTelefones().addAll(telefones);
+					ocultarProgresso(mProgressBarConsumirPessoasPaginado, true);
+				}
+			}
+		};
+	}
+
+	private void consumirEnderecoGETUf(@NonNull Endereco endereco) {
+		// TODO: 9/11/17 corrigir hard-coded
+		String url = Parametro.get(Parametro.Chave.URL_BASE).toString()
+				.concat("enderecos/%d/uf");
+		HRef href = new HRef(String.format(url, endereco.getId()));
+		++mTarefasPendentes;
+		EnderecoRequisicao.getUf(callbackEnderecoGETUf(endereco), href);
+	}
+
+	private void consumirPessoaGETEmails() {
+		exibirProgresso(mProgressBarConsumirPessoasPaginado);
+		String url = Parametro.get(Parametro.Chave.URL_BASE).toString()
+				.concat("pessoas/%d/emails");
+		HRef href = new HRef(String.format(url, mPessoaSelecionada.getId()));
+		++mTarefasPendentes;
+		PessoaRequisicao.getEmails(callbackPessoaGETEmails(), href);
+	}
+
+	private void consumirPessoaGETEnderecos() {
+		exibirProgresso(mProgressBarConsumirPessoasPaginado);
+		String url = Parametro.get(Parametro.Chave.URL_BASE).toString()
+				.concat("pessoas/%d/enderecos");
+		HRef href = new HRef(String.format(url, mPessoaSelecionada.getId()));
+		++mTarefasPendentes;
+		PessoaRequisicao.getEnderecos(callbackPessoaGETEnderecos(), href);
 	}
 
 	private void consumirPessoasGETPaginado(@NonNull HRef href) {
 		mTarefasPendentes = 0;
 		Teclado.ocultar(getActivity(), mProgressBarConsumirPessoasPaginado);
-		exibirProgresso(mProgressBarConsumirPessoasPaginado, null);
+		exibirProgresso(mProgressBarConsumirPessoasPaginado);
 		++mTarefasPendentes;
 		PessoaRequisicao.getPaginado(callbackPessoasGETPaginado(), href);
 	}
 
-	private void exibirProgresso(@NonNull ProgressBar progresso,
-	                             @Nullable View view) {
+	private void consumirPessoaGETTelefones() {
+		exibirProgresso(mProgressBarConsumirPessoasPaginado);
+		String url = Parametro.get(Parametro.Chave.URL_BASE).toString()
+				.concat("pessoas/%d/telefones");
+		HRef href = new HRef(String.format(url, mPessoaSelecionada.getId()));
+		++mTarefasPendentes;
+		PessoaRequisicao.getTelefones(callbackPessoaGETTelefones(), href);
+	}
+
+	private void exibirProgresso(@NonNull ProgressBar progresso) {
 		progresso.setVisibility(View.VISIBLE);
-		if (view != null) {
-			view.setVisibility(View.GONE);
-		}
 	}
 
 	private void ocultarProgresso(@NonNull ProgressBar progresso,
-	                              @Nullable View view) {
+	                              boolean chamarOuvinte) {
 		if (mTarefasPendentes <= 0) {
-			if (view != null) {
-				view.setVisibility(View.VISIBLE);
-			}
 			progresso.setVisibility(View.GONE);
-		}
-	}
-
-	private RecyclerView.OnScrollListener recyclerPessoasAddOnScrollListener() {
-		return new RecyclerView.OnScrollListener() {
-
-			@Override
-			public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-				super.onScrolled(recyclerView, dx, dy);
-				LinearLayoutManager gerenciador =
-						(LinearLayoutManager) mRecyclerPessoas.getLayoutManager();
-				if (mPessoas.size() == (gerenciador.findLastCompletelyVisibleItemPosition() + 1)) {
-					if (mLinks != null && mLinks.getNext() != null) {
-						consumirPessoasGETPaginado(mLinks.getNext());
-					}
+			if (chamarOuvinte) {
+				if (mOnPessoaSelecionadaListener != null) {
+					mOnPessoaSelecionadaListener
+							.onPessoaSelecionada(mViewSelecionada, mPessoaSelecionada);
 				}
+				getActivity().onBackPressed();
 			}
-
-			@Override
-			public void onScrollStateChanged(RecyclerView recyclerView,
-			                                 int newState) {
-				super.onScrollStateChanged(recyclerView, newState);
-			}
-		};
+		}
 	}
 
 	public void setOnPessoaSelecionadaListener(@Nullable OnPessoaSelecionadaListener ouvinte) {
 		mOnPessoaSelecionadaListener = ouvinte;
 	}
 
-	public void setOnLongoPessoaSelecionadaListener(@Nullable OnLongoPessoaSelecionadaListener ouvinte) {
-		mOnLongoPessoaSelecionadaListener = ouvinte;
-	}
-
 	public interface OnPessoaSelecionadaListener {
-
 		void onPessoaSelecionada(@NonNull View view, @NonNull Pessoa pessoa);
 	}
 
-	public interface OnLongoPessoaSelecionadaListener {
+	private final class OnPessoaScrollListener
+			extends RecyclerView.OnScrollListener implements Serializable {
+		private static final long serialVersionUID = -8804582747472868549L;
 
-		void onLongoPessoaSelecionada(@NonNull View view,
-		                              @NonNull Pessoa pessoa);
+		@Override
+		public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+			super.onScrolled(recyclerView, dx, dy);
+			LinearLayoutManager gerenciador =
+					(LinearLayoutManager) mRecyclerPessoas.getLayoutManager();
+			if (mPessoas.size() == (gerenciador.findLastCompletelyVisibleItemPosition() + 1)) {
+				if (mLinks != null && mLinks.getNext() != null) {
+					consumirPessoasGETPaginado(mLinks.getNext());
+				}
+			}
+		}
 	}
 }

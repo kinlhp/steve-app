@@ -18,12 +18,14 @@ import android.widget.ScrollView;
 
 import com.kinlhp.steve.R;
 import com.kinlhp.steve.atividade.adaptador.AdaptadorSpinner;
+import com.kinlhp.steve.dominio.Credencial;
 import com.kinlhp.steve.dominio.Email;
 import com.kinlhp.steve.dto.EmailDTO;
 import com.kinlhp.steve.mapeamento.EmailMapeamento;
 import com.kinlhp.steve.requisicao.EmailRequisicao;
 import com.kinlhp.steve.requisicao.Falha;
 import com.kinlhp.steve.resposta.VazioCallback;
+import com.kinlhp.steve.util.Parametro;
 import com.kinlhp.steve.util.Teclado;
 
 import java.io.Serializable;
@@ -37,7 +39,7 @@ import retrofit2.Response;
 public class EmailCadastroFragment extends Fragment
 		implements View.OnClickListener, View.OnFocusChangeListener,
 		Serializable {
-	private static final long serialVersionUID = 9122825343480055111L;
+	private static final long serialVersionUID = -7069977812418503931L;
 	private static final String EMAIL = "email";
 	private static final String EMAIL_AUXILIAR = "emailAuxiliar";
 	private AdaptadorSpinner<Email.Tipo> mAdaptadorTipos;
@@ -51,7 +53,7 @@ public class EmailCadastroFragment extends Fragment
 	private TextInputEditText mInputEnderecoEletronico;
 	private TextInputEditText mInputNomeContato;
 	private TextInputLayout mLabelEnderecoEletronico;
-	private ProgressBar mProgressBarSalvar;
+	private ProgressBar mProgressBarAdicionar;
 	private ScrollView mScrollEmailCadastro;
 	private AppCompatSpinner mSpinnerTipo;
 
@@ -74,15 +76,7 @@ public class EmailCadastroFragment extends Fragment
 		switch (view.getId()) {
 			case R.id.button_adicionar:
 				if (isFormularioValido()) {
-					iterarFormulario();
-					if (mEmail.getId() != null) {
-						consumirEmailPUT();
-					} else if (mOnEmailAdicionadoListener != null) {
-						transcreverEmailAuxiliar();
-						mOnEmailAdicionadoListener
-								.onEmailAdicionado(view, mEmail);
-						getActivity().onBackPressed();
-					}
+					submeterFormulario();
 				} else {
 					mScrollEmailCadastro.fullScroll(View.FOCUS_UP);
 				}
@@ -118,7 +112,7 @@ public class EmailCadastroFragment extends Fragment
 		mInputNomeContato = view.findViewById(R.id.input_nome_contato);
 		mLabelEnderecoEletronico = view
 				.findViewById(R.id.label_endereco_eletronico);
-		mProgressBarSalvar = view.findViewById(R.id.progress_bar_salvar);
+		mProgressBarAdicionar = view.findViewById(R.id.progress_bar_adicionar);
 		mSpinnerTipo = view.findViewById(R.id.spinner_tipo);
 
 		mTipos = new ArrayList<>(Arrays.asList(Email.Tipo.values()));
@@ -127,6 +121,9 @@ public class EmailCadastroFragment extends Fragment
 
 		mButtonAdicionar.setOnClickListener(this);
 		mInputEnderecoEletronico.setOnFocusChangeListener(this);
+
+		mInputEnderecoEletronico.requestFocus();
+		mScrollEmailCadastro.fullScroll(View.FOCUS_UP);
 
 		return view;
 	}
@@ -179,6 +176,14 @@ public class EmailCadastroFragment extends Fragment
 					? R.string.email_cadastro_button_alterar_hint
 					: R.string.email_cadastro_button_salvar_hint);
 		}
+		Credencial credencialLogado = (Credencial)
+				Parametro.get(Parametro.Chave.CREDENCIAL);
+		if (mEmail.getPessoa().isPerfilUsuario()
+				&& !credencialLogado.isPerfilAdministrador()) {
+			mButtonAdicionar.setEnabled(false);
+		} else {
+			mButtonAdicionar.setEnabled(true);
+		}
 	}
 
 	private VazioCallback callbackEmailPUT() {
@@ -188,7 +193,7 @@ public class EmailCadastroFragment extends Fragment
 			public void onFailure(@NonNull Call<Void> chamada,
 			                      @NonNull Throwable causa) {
 				--mTarefasPendentes;
-				ocultarProgresso(mProgressBarSalvar, mButtonAdicionar);
+				ocultarProgresso(mProgressBarAdicionar, mButtonAdicionar);
 				Falha.tratar(mButtonAdicionar, causa);
 			}
 
@@ -200,16 +205,20 @@ public class EmailCadastroFragment extends Fragment
 					Falha.tratar(mButtonAdicionar, resposta);
 				} else {
 					transcreverEmailAuxiliar();
+					if (mOnEmailAdicionadoListener != null) {
+						mOnEmailAdicionadoListener
+								.onEmailAdicionado(mButtonAdicionar, mEmail);
+					}
+					getActivity().onBackPressed();
 				}
-				ocultarProgresso(mProgressBarSalvar, mButtonAdicionar);
-				getActivity().onBackPressed();
+				ocultarProgresso(mProgressBarAdicionar, mButtonAdicionar);
 			}
 		};
 	}
 
 	private void consumirEmailPUT() {
 		mTarefasPendentes = 0;
-		exibirProgresso(mProgressBarSalvar, mButtonAdicionar);
+		exibirProgresso(mProgressBarAdicionar, mButtonAdicionar);
 		Teclado.ocultar(getActivity(), mButtonAdicionar);
 		EmailDTO dto = EmailMapeamento.paraDTO(mEmailAuxiliar);
 		++mTarefasPendentes;
@@ -285,7 +294,6 @@ public class EmailCadastroFragment extends Fragment
 		mInputNomeContato.setText(mEmailAuxiliar.getNomeContato() == null
 				? "" : mEmailAuxiliar.getNomeContato());
 		alternarButtonAdicionar();
-		mInputEnderecoEletronico.requestFocus();
 	}
 
 	public void setEmail(@NonNull Email email) {
@@ -302,8 +310,23 @@ public class EmailCadastroFragment extends Fragment
 		mOnEmailAdicionadoListener = ouvinte;
 	}
 
+	private void submeterFormulario() {
+		iterarFormulario();
+		if (mEmail.getId() != null) {
+			consumirEmailPUT();
+		} else {
+			transcreverEmailAuxiliar();
+			if (mOnEmailAdicionadoListener != null) {
+				mOnEmailAdicionadoListener
+						.onEmailAdicionado(mButtonAdicionar, mEmail);
+			}
+			getActivity().onBackPressed();
+		}
+	}
+
 	private void transcreverEmail() {
 		mEmailAuxiliar.setEnderecoEletronico(mEmail.getEnderecoEletronico());
+		mEmailAuxiliar.setId(mEmail.getId());
 		mEmailAuxiliar.setNomeContato(mEmail.getNomeContato());
 		mEmailAuxiliar.setPessoa(mEmail.getPessoa());
 		mEmailAuxiliar.setTipo(mEmail.getTipo());

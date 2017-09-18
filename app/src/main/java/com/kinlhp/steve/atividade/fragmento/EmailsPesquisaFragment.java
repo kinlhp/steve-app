@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatImageButton;
+import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -22,7 +23,7 @@ public class EmailsPesquisaFragment extends Fragment
 		implements View.OnClickListener,
 		AdaptadorRecyclerEmails.OnItemClickListener,
 		AdaptadorRecyclerEmails.OnItemLongClickListener, Serializable {
-	private static final long serialVersionUID = 2587003421554623755L;
+	private static final long serialVersionUID = 7438539558079383916L;
 	private static final String EMAILS = "emails";
 	private AdaptadorRecyclerEmails mAdaptadorEmails;
 	private ArrayList<Email> mEmails;
@@ -30,6 +31,7 @@ public class EmailsPesquisaFragment extends Fragment
 	private OnLongoEmailSelecionadoListener mOnLongoEmailSelecionadoListener;
 
 	private AppCompatImageButton mButtonNovoEmail;
+	private AppCompatTextView mLabel0Registros;
 	private RecyclerView mRecyclerEmails;
 
 	/**
@@ -77,6 +79,7 @@ public class EmailsPesquisaFragment extends Fragment
 		View view = inflater
 				.inflate(R.layout.fragment_emails_pesquisa, container, false);
 		mButtonNovoEmail = view.findViewById(R.id.button_novo_email);
+		mLabel0Registros = view.findViewById(R.id.label_0_registros);
 		mRecyclerEmails = view.findViewById(R.id.recycler_emails);
 
 		mRecyclerEmails.setHasFixedSize(true);
@@ -133,6 +136,8 @@ public class EmailsPesquisaFragment extends Fragment
 		mButtonNovoEmail
 				.setVisibility(mEmails.size() < Email.Tipo.values().length
 						? View.VISIBLE : View.GONE);
+		mLabel0Registros.setVisibility(mEmails.isEmpty()
+				? View.VISIBLE : View.GONE);
 	}
 
 	public void removeEmail(@NonNull Email email) {

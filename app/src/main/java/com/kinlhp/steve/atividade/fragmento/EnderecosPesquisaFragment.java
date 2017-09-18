@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatImageButton;
+import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -22,7 +23,7 @@ public class EnderecosPesquisaFragment extends Fragment
 		implements View.OnClickListener,
 		AdaptadorRecyclerEnderecos.OnItemClickListener,
 		AdaptadorRecyclerEnderecos.OnItemLongClickListener, Serializable {
-	private static final long serialVersionUID = 7493108215483289366L;
+	private static final long serialVersionUID = 1441713298823334641L;
 	private static final String ENDERECOS = "enderecos";
 	private AdaptadorRecyclerEnderecos mAdaptadorEnderecos;
 	private ArrayList<Endereco> mEnderecos;
@@ -30,6 +31,7 @@ public class EnderecosPesquisaFragment extends Fragment
 	private OnLongoEnderecoSelecionadoListener mOnLongoEnderecoSelecionadoListener;
 
 	private AppCompatImageButton mButtonNovoEndereco;
+	private AppCompatTextView mLabel0Registros;
 	private RecyclerView mRecyclerEnderecos;
 
 	/**
@@ -79,6 +81,7 @@ public class EnderecosPesquisaFragment extends Fragment
 		View view = inflater
 				.inflate(R.layout.fragment_enderecos_pesquisa, container, false);
 		mButtonNovoEndereco = view.findViewById(R.id.button_novo_endereco);
+		mLabel0Registros = view.findViewById(R.id.label_0_registros);
 		mRecyclerEnderecos = view.findViewById(R.id.recycler_enderecos);
 
 		mRecyclerEnderecos.setHasFixedSize(true);
@@ -136,6 +139,8 @@ public class EnderecosPesquisaFragment extends Fragment
 		mButtonNovoEndereco
 				.setVisibility(mEnderecos.size() < Endereco.Tipo.values().length
 						? View.VISIBLE : View.GONE);
+		mLabel0Registros.setVisibility(mEnderecos.isEmpty()
+				? View.VISIBLE : View.GONE);
 	}
 
 	public void removeEndereco(@NonNull Endereco endereco) {
@@ -164,7 +169,8 @@ public class EnderecosPesquisaFragment extends Fragment
 
 	public interface OnEnderecoSelecionadoListener {
 
-		void onEnderecoSelecionado(@NonNull View view, @NonNull Endereco endereco);
+		void onEnderecoSelecionado(@NonNull View view,
+		                           @NonNull Endereco endereco);
 	}
 
 	public interface OnLongoEnderecoSelecionadoListener {

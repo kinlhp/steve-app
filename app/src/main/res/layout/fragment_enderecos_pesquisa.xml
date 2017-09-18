@@ -31,4 +31,18 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/ic_novo_endereco_accent_24dp" />
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/label_0_registros"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:hint="@string/enderecos_pesquisa_label_0_registros"
+        android:textStyle="bold|italic"
+        app:layout_constraintBottom_toBottomOf="@+id/recycler_enderecos"
+        app:layout_constraintEnd_toEndOf="@+id/recycler_enderecos"
+        app:layout_constraintLeft_toLeftOf="@+id/recycler_enderecos"
+        app:layout_constraintRight_toRightOf="@+id/recycler_enderecos"
+        app:layout_constraintStart_toStartOf="@+id/recycler_enderecos"
+        app:layout_constraintTop_toTopOf="@+id/recycler_enderecos" />
 </android.support.constraint.ConstraintLayout>

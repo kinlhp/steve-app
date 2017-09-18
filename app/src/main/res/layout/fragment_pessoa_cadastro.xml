@@ -42,17 +42,17 @@
                 app:layout_constraintTop_toTopOf="@+id/button_consumir_por_id" />
 
             <ProgressBar
-                android:id="@+id/progress_bar_salvar"
+                android:id="@+id/progress_bar_adicionar"
                 style="?android:attr/progressBarStyleLarge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="@+id/button_salvar"
-                app:layout_constraintEnd_toEndOf="@+id/button_salvar"
-                app:layout_constraintLeft_toLeftOf="@+id/button_salvar"
-                app:layout_constraintRight_toRightOf="@+id/button_salvar"
-                app:layout_constraintStart_toStartOf="@+id/button_salvar"
-                app:layout_constraintTop_toTopOf="@+id/button_salvar" />
+                app:layout_constraintBottom_toBottomOf="@+id/button_adicionar"
+                app:layout_constraintEnd_toEndOf="@+id/button_adicionar"
+                app:layout_constraintLeft_toLeftOf="@+id/button_adicionar"
+                app:layout_constraintRight_toRightOf="@+id/button_adicionar"
+                app:layout_constraintStart_toStartOf="@+id/button_adicionar"
+                app:layout_constraintTop_toTopOf="@+id/button_adicionar" />
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/label_id"
@@ -340,13 +340,13 @@
                 app:layout_constraintTop_toBottomOf="@+id/switch_perfil_usuario" />
 
             <android.support.v7.widget.AppCompatButton
-                android:id="@+id/button_salvar"
+                android:id="@+id/button_adicionar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/last_view_marginBottom"
                 android:layout_marginTop="@dimen/button_margin"
                 android:background="@drawable/layout_componente_arredondado_accent"
-                android:hint="@string/pessoa_cadastro_button_salvar_hint"
+                android:hint="@string/pessoa_cadastro_button_adicionar_hint"
                 android:paddingEnd="@dimen/round_button_padding"
                 android:paddingLeft="@dimen/round_button_padding"
                 android:paddingRight="@dimen/round_button_padding"
