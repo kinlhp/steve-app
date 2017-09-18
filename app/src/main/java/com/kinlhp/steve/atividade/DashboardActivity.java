@@ -95,7 +95,7 @@ public class DashboardActivity extends AppCompatActivity
 
 	private void iniciarPessoa() {
 		Intent intentDashboard =
-				new Intent(this, PessoaCadastroActivity.class);
+				new Intent(this, PessoaActivity.class);
 		startActivityForResult(intentDashboard, 0);
 	}
 

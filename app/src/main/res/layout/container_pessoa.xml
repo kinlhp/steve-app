@@ -1,16 +1,16 @@
-<?xml version="1.0" encoding="utf-8"?><!-- @layout/container_pessoa_cadastro.xml -->
+<?xml version="1.0" encoding="utf-8"?><!-- @layout/container_pessoa.xml -->
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/container_pessoa_cadastro"
+    android:id="@+id/container_pessoa"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".atividade.PessoaCadastroActivity"
-    tools:showIn="@layout/activity_pessoa_cadastro">
+    tools:context=".atividade.PessoaActivity"
+    tools:showIn="@layout/activity_pessoa">
 
     <FrameLayout
-        android:id="@+id/content_pessoa_cadastro"
+        android:id="@+id/content_pessoa"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"

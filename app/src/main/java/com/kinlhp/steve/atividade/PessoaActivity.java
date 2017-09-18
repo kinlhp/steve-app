@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class PessoaCadastroActivity extends AppCompatActivity
+public class PessoaActivity extends AppCompatActivity
 		implements EmailCadastroFragment.OnEmailAdicionadoListener,
 		EmailsPesquisaFragment.OnEmailSelecionadoListener,
 		EmailsPesquisaFragment.OnLongoEmailSelecionadoListener,
@@ -44,7 +44,7 @@ public class PessoaCadastroActivity extends AppCompatActivity
 		TelefonesPesquisaFragment.OnTelefoneSelecionadoListener,
 		TelefonesPesquisaFragment.OnLongoTelefoneSelecionadoListener,
 		Serializable {
-	private static final long serialVersionUID = -4899921056805295890L;
+	private static final long serialVersionUID = -7034265815648653534L;
 	private EmailCadastroFragment mFragmentoEmailCadastro;
 	private EmailsPesquisaFragment mFragmentoEmailsPesquisa;
 	private EnderecoCadastroFragment mFragmentoEnderecoCadastro;
@@ -59,9 +59,9 @@ public class PessoaCadastroActivity extends AppCompatActivity
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_pessoa_cadastro);
+		setContentView(R.layout.activity_pessoa);
 
-		Toolbar toolbar = findViewById(R.id.toolbar_pessoa_cadastro);
+		Toolbar toolbar = findViewById(R.id.toolbar_pessoa);
 		setSupportActionBar(toolbar);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -302,7 +302,7 @@ public class PessoaCadastroActivity extends AppCompatActivity
 		String tag = getString(R.string.email_cadastro_titulo);
 
 		getSupportFragmentManager().beginTransaction()
-				.replace(R.id.content_pessoa_cadastro, mFragmentoEmailCadastro, tag)
+				.replace(R.id.content_pessoa, mFragmentoEmailCadastro, tag)
 				.addToBackStack(tag).commit();
 	}
 
@@ -318,7 +318,7 @@ public class PessoaCadastroActivity extends AppCompatActivity
 		String tag = getString(R.string.emails_pesquisa_titulo);
 
 		getSupportFragmentManager().beginTransaction()
-				.replace(R.id.content_pessoa_cadastro, mFragmentoEmailsPesquisa, tag)
+				.replace(R.id.content_pessoa, mFragmentoEmailsPesquisa, tag)
 				.addToBackStack(tag).commit();
 	}
 
@@ -336,7 +336,7 @@ public class PessoaCadastroActivity extends AppCompatActivity
 		String tag = getString(R.string.endereco_cadastro_titulo);
 
 		getSupportFragmentManager().beginTransaction()
-				.replace(R.id.content_pessoa_cadastro, mFragmentoEnderecoCadastro, tag)
+				.replace(R.id.content_pessoa, mFragmentoEnderecoCadastro, tag)
 				.addToBackStack(tag).commit();
 	}
 
@@ -353,7 +353,7 @@ public class PessoaCadastroActivity extends AppCompatActivity
 		String tag = getString(R.string.enderecos_pesquisa_titulo);
 
 		getSupportFragmentManager().beginTransaction()
-				.replace(R.id.content_pessoa_cadastro, mFragmentoEnderecosPesquisa, tag)
+				.replace(R.id.content_pessoa, mFragmentoEnderecosPesquisa, tag)
 				.addToBackStack(tag).commit();
 	}
 
@@ -374,7 +374,7 @@ public class PessoaCadastroActivity extends AppCompatActivity
 
 		if (mSavedInstanceState == null) {
 			getSupportFragmentManager().beginTransaction()
-					.replace(R.id.content_pessoa_cadastro, mFragmentoPessoaCadastro, tag)
+					.replace(R.id.content_pessoa, mFragmentoPessoaCadastro, tag)
 					.commit();
 		}
 	}
@@ -387,7 +387,7 @@ public class PessoaCadastroActivity extends AppCompatActivity
 		String tag = getString(R.string.pessoas_pesquisa_titulo);
 
 		getSupportFragmentManager().beginTransaction()
-				.replace(R.id.content_pessoa_cadastro, mFragmentoPessoasPesquisa, tag)
+				.replace(R.id.content_pessoa, mFragmentoPessoasPesquisa, tag)
 				.addToBackStack(tag).commit();
 	}
 
@@ -405,7 +405,7 @@ public class PessoaCadastroActivity extends AppCompatActivity
 		String tag = getString(R.string.telefone_cadastro_titulo);
 
 		getSupportFragmentManager().beginTransaction()
-				.replace(R.id.content_pessoa_cadastro, mFragmentoTelefoneCadastro, tag)
+				.replace(R.id.content_pessoa, mFragmentoTelefoneCadastro, tag)
 				.addToBackStack(tag).commit();
 	}
 
@@ -422,7 +422,7 @@ public class PessoaCadastroActivity extends AppCompatActivity
 		String tag = getString(R.string.telefones_pesquisa_titulo);
 
 		getSupportFragmentManager().beginTransaction()
-				.replace(R.id.content_pessoa_cadastro, mFragmentoTelefonesPesquisa, tag)
+				.replace(R.id.content_pessoa, mFragmentoTelefonesPesquisa, tag)
 				.addToBackStack(tag).commit();
 	}
 }

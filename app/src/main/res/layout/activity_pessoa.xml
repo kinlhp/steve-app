@@ -1,20 +1,20 @@
-<?xml version="1.0" encoding="utf-8"?><!-- @layout/activity_pessao_cadastro.xml -->
+<?xml version="1.0" encoding="utf-8"?><!-- @layout/activity_pessoa.xml -->
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_pessoa_cadastro"
+    android:id="@+id/activity_pessoa"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".atividade.PessoaCadastroActivity">
+    tools:context=".atividade.PessoaActivity">
 
     <android.support.design.widget.AppBarLayout
-        android:id="@+id/app_bar_pessoa_cadastro"
+        android:id="@+id/app_bar_pessoa"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar_pessoa_cadastro"
+            android:id="@+id/toolbar_pessoa"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
@@ -22,6 +22,6 @@
     </android.support.design.widget.AppBarLayout>
 
     <include
-        android:id="@+id/include_container_pessoa_cadastro"
-        layout="@layout/container_pessoa_cadastro" />
+        android:id="@+id/include_container_pessoa"
+        layout="@layout/container_pessoa" />
 </android.support.design.widget.CoordinatorLayout>
