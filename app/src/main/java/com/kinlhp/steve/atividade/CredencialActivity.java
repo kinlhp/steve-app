@@ -6,9 +6,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.kinlhp.steve.R;
+import com.kinlhp.steve.atividade.fragmento.CredenciaisPesquisaFragment;
 import com.kinlhp.steve.atividade.fragmento.CredencialCadastroFragment;
 import com.kinlhp.steve.atividade.fragmento.PessoasPesquisaFragment;
 import com.kinlhp.steve.dominio.Credencial;
@@ -17,13 +17,16 @@ import com.kinlhp.steve.dominio.Pessoa;
 import java.io.Serializable;
 
 public class CredencialActivity extends AppCompatActivity
-		implements CredencialCadastroFragment.OnCredenciaisPesquisaListener,
+		implements CredenciaisPesquisaFragment.OnCredencialSelecionadoListener,
+		CredenciaisPesquisaFragment.OnLongoCredencialSelecionadoListener,
+		CredencialCadastroFragment.OnCredenciaisPesquisaListener,
 		CredencialCadastroFragment.OnCredencialAdicionadoListener,
 		CredencialCadastroFragment.OnFuncionariosPesquisaListener,
 		CredencialCadastroFragment.OnReferenciaCredencialAlteradoListener,
 		PessoasPesquisaFragment.OnLongoPessoaSelecionadoListener,
 		PessoasPesquisaFragment.OnPessoaSelecionadoListener, Serializable {
-	private static final long serialVersionUID = -7758224979963289230L;
+	private static final long serialVersionUID = -8162028426561768712L;
+	private CredenciaisPesquisaFragment mFragmentoCredenciaisPesquisa;
 	private Credencial mCredencial = Credencial.builder().build();
 	private CredencialCadastroFragment mFragmentoCredencialCadastro;
 	private PessoasPesquisaFragment mFragmentoPessoasPesquisa;
@@ -55,8 +58,26 @@ public class CredencialActivity extends AppCompatActivity
 	}
 
 	@Override
+	public void onCredencialSelecionado(@NonNull View view,
+	                                    @NonNull Credencial credencial) {
+		mCredencial = credencial;
+		if (mFragmentoCredencialCadastro != null) {
+			mFragmentoCredencialCadastro.setCredencial(mCredencial);
+		}
+	}
+
+	@Override
 	public void onFuncionariosPesquisa(@NonNull View view) {
 		inflarPessoasPesquisa();
+	}
+
+	@Override
+	public void onLongoCredencialSelecionado(@NonNull View view,
+	                                         @NonNull Credencial credencial) {
+		mCredencial = credencial;
+		if (mFragmentoCredencialCadastro != null) {
+			mFragmentoCredencialCadastro.setCredencial(mCredencial);
+		}
 	}
 
 	@Override
@@ -94,18 +115,18 @@ public class CredencialActivity extends AppCompatActivity
 	}
 
 	private void inflarCredenciaisPesquisa() {
-//		if (mFragmentoPessoasPesquisa == null) {
-//			mFragmentoPessoasPesquisa = PessoasPesquisaFragment.newInstance();
-//		}
-//		mFragmentoPessoasPesquisa.setOnLongoPessoaSelecionadoListener(this);
-//		mFragmentoPessoasPesquisa.setOnPessoaSelecionadoListener(this);
-//		String tag = getString(R.string.pessoas_pesquisa_titulo);
-//
-//		getSupportFragmentManager().beginTransaction()
-//				.replace(R.id.content_pessoa, mFragmentoPessoasPesquisa, tag)
-//				.addToBackStack(tag).commit();
-		Toast.makeText(this, "Inflar pesquisa de credenciais", Toast.LENGTH_SHORT)
-				.show();
+		if (mFragmentoCredenciaisPesquisa == null) {
+			mFragmentoCredenciaisPesquisa = CredenciaisPesquisaFragment
+					.newInstance();
+		}
+		mFragmentoCredenciaisPesquisa
+				.setOnLongoCredencialSelecionadoListener(this);
+		mFragmentoCredenciaisPesquisa.setOnCredencialSelecionadoListener(this);
+		String tag = getString(R.string.credenciais_pesquisa_titulo);
+
+		getSupportFragmentManager().beginTransaction()
+				.replace(R.id.content_credencial, mFragmentoCredenciaisPesquisa, tag)
+				.addToBackStack(tag).commit();
 	}
 
 	private void inflarCredencialCadastro() {

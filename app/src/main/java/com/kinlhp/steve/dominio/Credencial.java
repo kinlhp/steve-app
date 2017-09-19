@@ -19,7 +19,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Setter
 public class Credencial extends Dominio<BigInteger> {
-	private static final long serialVersionUID = 5955384050527593134L;
+	private static final long serialVersionUID = -8704164196482710770L;
 	private Pessoa funcionario;
 	private boolean perfilAdministrador;
 	@Builder.Default
@@ -29,6 +29,22 @@ public class Credencial extends Dominio<BigInteger> {
 	@Builder.Default
 	private Situacao situacao = Situacao.ATIVO;
 	private String usuario;
+
+	public String perfisToString() {
+		StringBuilder perfis = new StringBuilder(isPerfilPadrao()
+				? "Padrão" : "");
+		perfis.append(isPerfilAdministrador()
+				? perfis.length() > 0
+				? " | Administrador"
+				: ""
+				: "");
+		perfis.append(isPerfilSistema()
+				? perfis.length() > 0
+				? " | Sistema"
+				: ""
+				: "");
+		return perfis.toString();
+	}
 
 	@AllArgsConstructor
 	@Getter

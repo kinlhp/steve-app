@@ -37,7 +37,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:gravity="center"
-        android:hint="@string/enderecos_pesquisa_label_0_registros"
+        android:hint="@string/enderecos_pesquisa_label_0_registros_hint"
         android:textStyle="bold|italic"
         app:layout_constraintBottom_toBottomOf="@+id/recycler_enderecos"
         app:layout_constraintEnd_toEndOf="@+id/recycler_enderecos"

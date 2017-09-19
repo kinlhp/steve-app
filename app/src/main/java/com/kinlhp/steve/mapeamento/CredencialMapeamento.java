@@ -9,12 +9,14 @@ import com.kinlhp.steve.util.Parametro;
 
 import java.io.Serializable;
 import java.math.BigInteger;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * Created by kin on 8/14/17.
  */
 public final class CredencialMapeamento implements Serializable {
-	private static final long serialVersionUID = 4236791603049862289L;
+	private static final long serialVersionUID = 4969524799319610450L;
 	private static final String URL_BASE = Parametro
 			.get(Parametro.Chave.URL_BASE).toString();
 
@@ -35,6 +37,15 @@ public final class CredencialMapeamento implements Serializable {
 		dominio.setDataCriacao(dto.getDataCriacao());
 		dominio.setId(obterId(dto.getLinks().getSelf()));
 		return dominio;
+	}
+
+	@NonNull
+	public static Set<Credencial> paraDominios(@NonNull Set<CredencialDTO> dtos) {
+		Set<Credencial> dominios = new LinkedHashSet<>();
+		for (CredencialDTO dto : dtos) {
+			dominios.add(paraDominio(dto));
+		}
+		return dominios;
 	}
 
 	public static CredencialDTO paraDTO(@NonNull Credencial dominio) {

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?><!-- @layout/view_lista_credenciais.xml -->
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/view_lista_credenciais"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/label_usuario"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/list_margin"
+        android:layout_marginLeft="@dimen/list_margin"
+        android:layout_marginRight="@dimen/list_margin"
+        android:layout_marginStart="@dimen/list_margin"
+        android:layout_marginTop="@dimen/list_margin"
+        android:hint="@string/credenciais_pesquisa_label_usuario_hint"
+        android:textSize="@dimen/list_title_textSize"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/label_funcionario"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/list_margin"
+        android:layout_marginLeft="@dimen/list_margin"
+        android:layout_marginRight="@dimen/list_margin"
+        android:layout_marginStart="@dimen/list_margin"
+        android:hint="@string/credenciais_pesquisa_label_funcionario_hint"
+        android:textSize="@dimen/list_content_textSize"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/label_usuario" />
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/label_perfis"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/list_margin"
+        android:layout_marginLeft="@dimen/list_margin"
+        android:layout_marginRight="@dimen/list_margin"
+        android:layout_marginStart="@dimen/list_margin"
+        android:hint="@string/credenciais_pesquisa_label_perfis_hint"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/label_funcionario" />
+
+    <android.support.v7.widget.AppCompatImageButton
+        android:id="@+id/button_remover_credencial"
+        android:layout_width="@dimen/round_button_small_width"
+        android:layout_height="@dimen/round_button_small_height"
+        android:layout_marginEnd="@dimen/button_margin"
+        android:layout_marginRight="@dimen/button_margin"
+        android:background="@drawable/layout_componente_arredondado_transparente"
+        app:layout_constraintBottom_toBottomOf="@id/label_perfis"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/label_perfis"
+        app:srcCompat="@drawable/ic_lixeira_tomato_24dp" />
+
+    <View
+        android:id="@+id/divider_credencial"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/list_divider_height"
+        android:layout_marginTop="@dimen/list_margin"
+        android:background="@color/accent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/label_perfis" />
+</android.support.constraint.ConstraintLayout>

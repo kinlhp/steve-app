@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.kinlhp.steve.dto.CredencialDTO;
 import com.kinlhp.steve.dto.PessoaDTO;
+import com.kinlhp.steve.resposta.Colecao;
 
 import java.math.BigInteger;
 
@@ -24,6 +25,9 @@ public interface CredencialRecurso {
 
 	@GET
 	Call<PessoaDTO> getFuncionario(@NonNull @Url String href);
+
+	@GET
+	Call<Colecao<CredencialDTO>> getPaginado(@NonNull @Url String href);
 
 	@GET(value = "credenciais/{id}")
 	Call<CredencialDTO> getPorId(@NonNull @Path(value = "id") BigInteger id);
