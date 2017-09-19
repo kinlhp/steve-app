@@ -1,7 +1,6 @@
 package com.kinlhp.steve.requisicao;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -16,7 +15,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
- * Created by luis on 8/10/17.
+ * Created by kin on 8/10/17.
  */
 public abstract class Requisicao implements Serializable {
 	public static final String AUTHORIZATION_HEADER = "Authorization";
@@ -39,13 +38,8 @@ public abstract class Requisicao implements Serializable {
 
 	static <T> T criar(@NonNull Class<T> requisicao) {
 		String token = (String) Parametro.get(Parametro.Chave.TOKEN);
-		return criar(requisicao, token);
-	}
-
-	private static <T> T criar(@NonNull Class<T> requisicao,
-	                           @Nullable String token) {
 		if (token != null && autorizacao == null) {
-			autorizacao = new Interceptador(token);
+			autorizacao = new Interceptador();
 			if (!httpClientBuilder.interceptors().contains(autorizacao)) {
 				httpClientBuilder.addInterceptor(autorizacao);
 				retrofitBuilder.client(httpClientBuilder.build());
