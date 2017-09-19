@@ -4,6 +4,20 @@
     <string name="action_settings">Configurações</string>
     <string name="app_name">Steve App</string>
     <string name="app_search">Pesquisa</string>
+    <!-- credencial -->
+    <string name="credencial_cadastro_button_adicionar_hint">ADICIONAR</string>
+    <string name="credencial_cadastro_button_alterar_hint">ALTERAR</string>
+    <string name="credencial_cadastro_button_salvar_hint">SALVAR ALTERAÇÕES</string>
+    <string name="credencial_cadastro_label_confirmacao_senha_hint">Confirmação de senha</string>
+    <string name="credencial_cadastro_label_funcionario_hint">Funcionário</string>
+    <string name="credencial_cadastro_label_id_hint">Código</string>
+    <string name="credencial_cadastro_input_funcionario_nao_usuario">Sem perfil de usuário</string>
+    <string name="credencial_cadastro_label_nenhum_funcionario_hint">Pesquisar funcionários</string>
+    <string name="credencial_cadastro_label_senha_hint">Senha</string>
+    <string name="credencial_cadastro_label_usuario_hint">Usuário</string>
+    <string name="credencial_cadastro_switch_perfil_administrador_hint">Perfil administrador</string>
+    <string name="credencial_cadastro_switch_situacao_hint">Ativo</string>
+    <string name="credencial_cadastro_titulo">Credecial</string>
     <!-- dashboard -->
     <string name="dashboard_abrir">Abrir dashboard</string>
     <string name="dashboard_fechar">Fechar dashboard</string>
@@ -80,7 +94,7 @@
     <string name="pessoa_cadastro_label_emails_hint">@string/emails_pesquisa_titulo</string>
     <string name="pessoa_cadastro_label_enderecos_hint">@string/enderecos_pesquisa_titulo</string>
     <string name="pessoa_cadastro_label_fantasia_hint">Nome fantasia</string>
-    <string name="pessoa_cadastro_label_id_hint">ID</string>
+    <string name="pessoa_cadastro_label_id_hint">Código</string>
     <string name="pessoa_cadastro_label_ie_hint">Inscrição estadual</string>
     <string name="pessoa_cadastro_label_nascimento_hint">Data de nascimento</string>
     <string name="pessoa_cadastro_label_nenhum_email_hint">Nenhum e-mail</string>

@@ -76,21 +76,20 @@ import retrofit2.Call;
 import retrofit2.Response;
 
 public class PessoaCadastroFragment extends Fragment
-		implements CompoundButton.OnCheckedChangeListener,
-		View.OnClickListener, TextView.OnEditorActionListener,
-		View.OnFocusChangeListener,
+		implements CompoundButton.OnCheckedChangeListener, View.OnClickListener,
+		TextView.OnEditorActionListener, View.OnFocusChangeListener,
 		AdapterView.OnItemSelectedListener, View.OnLongClickListener,
 		Serializable {
-	private static final long serialVersionUID = -9102897525058276869L;
+	private static final long serialVersionUID = -1206106100539236949L;
 	private static final String PESSOA = "pessoa";
 	private static final String PESSOA_AUXILIAR = "pessoaAuxiliar";
 	private AdaptadorSpinner<Pessoa.Tipo> mAdaptadorTipos;
 	private OnPessoaAdicionadoListener mOnPessoaAdicionadoListener;
-	private OnEmailsSelecionadosListener mOnEmailsSelecionadosListener;
-	private OnEnderecosSelecionadosListener mOnEnderecosSelecionadosListener;
+	private OnEmailsPesquisaListener mOnEmailsPesquisaListener;
+	private OnEnderecosPesquisaListener mOnEnderecosPesquisaListener;
 	private OnPessoasPesquisaListener mOnPessoasPesquisaListener;
-	private OnReferenciaPessoaAlteradaListener mOnReferenciaPessoaAlteradaListener;
-	private OnTelefonesSelecionadosListener mOnTelefonesSelecionadosListener;
+	private OnReferenciaPessoaAlteradoListener mOnReferenciaPessoaAlteradoListener;
+	private OnTelefonesPesquisaListener mOnTelefonesPesquisaListener;
 	private Pessoa mPessoa;
 	private Pessoa mPessoaAuxiliar;
 	private boolean mPressionarVoltar;
@@ -173,28 +172,25 @@ public class PessoaCadastroFragment extends Fragment
 				break;
 			case R.id.button_pessoas_pesquisa:
 				if (mOnPessoasPesquisaListener != null) {
-					mOnPessoasPesquisaListener.onPessoasPesquisa();
+					mOnPessoasPesquisaListener.onPessoasPesquisa(view);
 				}
 				break;
 			case R.id.input_abertura_nascimento:
 				exibirCalendario();
 				break;
 			case R.id.input_emails:
-				if (mOnEmailsSelecionadosListener != null) {
-					mOnEmailsSelecionadosListener
-							.onEmailsSelecionados(view, mPessoa.getEmails());
+				if (mOnEmailsPesquisaListener != null) {
+					mOnEmailsPesquisaListener.onEmailsPesquisa(view);
 				}
 				break;
 			case R.id.input_enderecos:
-				if (mOnEnderecosSelecionadosListener != null) {
-					mOnEnderecosSelecionadosListener
-							.onEnderecosSelecionados(view, mPessoa.getEnderecos());
+				if (mOnEnderecosPesquisaListener != null) {
+					mOnEnderecosPesquisaListener.onEnderecosPesquisa(view);
 				}
 				break;
 			case R.id.input_telefones:
-				if (mOnTelefonesSelecionadosListener != null) {
-					mOnTelefonesSelecionadosListener
-							.onTelefonesSelecionados(view, mPessoa.getTelefones());
+				if (mOnTelefonesPesquisaListener != null) {
+					mOnTelefonesPesquisaListener.onTelefonesPesquisa(view);
 				}
 				break;
 		}
@@ -266,9 +262,9 @@ public class PessoaCadastroFragment extends Fragment
 		mAdaptadorTipos = new AdaptadorSpinner<>(getActivity(), mTipos);
 		mSpinnerTipo.setAdapter(mAdaptadorTipos);
 
+		mButtonAdicionar.setOnClickListener(this);
 		mButtonConsumirPorId.setOnClickListener(this);
 		mButtonPessoasPesquisa.setOnClickListener(this);
-		mButtonAdicionar.setOnClickListener(this);
 		mInputAberturaNascimento.setOnClickListener(this);
 		mInputAberturaNascimento.setOnLongClickListener(this);
 		mInputCnpjCpf.setOnFocusChangeListener(this);
@@ -371,14 +367,12 @@ public class PessoaCadastroFragment extends Fragment
 		mButtonAdicionar.setHint(mPessoa.getId() == null
 				? R.string.pessoa_cadastro_button_adicionar_hint
 				: R.string.pessoa_cadastro_button_salvar_hint);
-		Credencial credencialLogado = (Credencial)
-				Parametro.get(Parametro.Chave.CREDENCIAL);
-		if (mPessoa.isPerfilUsuario()
-				&& !credencialLogado.isPerfilAdministrador()) {
-			mButtonAdicionar.setEnabled(false);
-		} else {
-			mButtonAdicionar.setEnabled(true);
-		}
+		Credencial credencialLogado = (Credencial) Parametro
+				.get(Parametro.Chave.CREDENCIAL);
+		mButtonAdicionar.setVisibility(!mPessoa.isPerfilUsuario()
+				|| credencialLogado.isPerfilAdministrador()
+				|| credencialLogado.getFuncionario().getId().equals(mPessoa.getId())
+				? View.VISIBLE : View.INVISIBLE);
 	}
 
 	private void alternarFormulario(@NonNull Pessoa.Tipo tipo) {
@@ -394,7 +388,13 @@ public class PessoaCadastroFragment extends Fragment
 		mButtonConsumirPorId.setImageResource(mPessoa.getId() == null
 				? R.drawable.ic_consumir_por_id_accent_24dp
 				: R.drawable.ic_borracha_accent_24dp);
-		alternarButtonAdicionar();
+	}
+
+	private void alternarPerfilUsuario() {
+		Credencial credencialLogado = (Credencial) Parametro
+				.get(Parametro.Chave.CREDENCIAL);
+		mSwitchPerfilUsuario
+				.setEnabled(credencialLogado.isPerfilAdministrador());
 	}
 
 	private void alternarSituacao() {
@@ -402,7 +402,7 @@ public class PessoaCadastroFragment extends Fragment
 				.setChecked(mPessoaAuxiliar.getSituacao().equals(Pessoa.Situacao.ATIVO));
 	}
 
-	private ItemCallback<UfDTO> callbackEnderecoGETUf(@NonNull final Endereco endereco) {
+	private ItemCallback<UfDTO> callbackEnderecoGETUf(@NonNull Endereco endereco) {
 		return new ItemCallback<UfDTO>() {
 
 			@Override
@@ -525,9 +525,9 @@ public class PessoaCadastroFragment extends Fragment
 					PessoaDTO dto = resposta.body();
 					Pessoa pessoa = PessoaMapeamento.paraDominio(dto);
 					setPessoa(pessoa);
-					if (mOnReferenciaPessoaAlteradaListener != null) {
-						mOnReferenciaPessoaAlteradaListener
-								.onReferenciaPessoaAlterada(mPessoa);
+					if (mOnReferenciaPessoaAlteradoListener != null) {
+						mOnReferenciaPessoaAlteradoListener
+								.onReferenciaPessoaAlterado(mPessoa);
 					}
 					preencherFormulario();
 					mInputCnpjCpf.requestFocus();
@@ -562,8 +562,7 @@ public class PessoaCadastroFragment extends Fragment
 					mPressionarVoltar = false;
 					Falha.tratar(mButtonPessoasPesquisa, resposta);
 				} else {
-					Set<TelefoneDTO> dtos = resposta.body().getEmbedded()
-							.getDtos();
+					Set<TelefoneDTO> dtos = resposta.body().getEmbedded().getDtos();
 					Set<Telefone> telefones = TelefoneMapeamento
 							.paraDominios(dtos, mPessoa);
 					mPessoa.getTelefones().addAll(telefones);
@@ -994,9 +993,9 @@ public class PessoaCadastroFragment extends Fragment
 
 	private void limparFormulario() {
 		setPessoa(Pessoa.builder().build());
-		if (mOnReferenciaPessoaAlteradaListener != null) {
-			mOnReferenciaPessoaAlteradaListener
-					.onReferenciaPessoaAlterada(mPessoa);
+		if (mOnReferenciaPessoaAlteradoListener != null) {
+			mOnReferenciaPessoaAlteradoListener
+					.onReferenciaPessoaAlterado(mPessoa);
 		}
 		preencherFormulario();
 	}
@@ -1045,7 +1044,9 @@ public class PessoaCadastroFragment extends Fragment
 		mSwitchPerfilTransportador
 				.setChecked(mPessoaAuxiliar.isPerfilTransportador());
 		mSwitchPerfilUsuario.setChecked(mPessoaAuxiliar.isPerfilUsuario());
+		alternarPerfilUsuario();
 		alternarSituacao();
+		alternarButtonAdicionar();
 	}
 
 	private void preencherViewsDeLista() {
@@ -1053,12 +1054,14 @@ public class PessoaCadastroFragment extends Fragment
 				? getString(R.string.pessoa_cadastro_label_nenhum_endereco_hint)
 				: getString(R.string.pessoa_cadastro_label_enderecos_hint));
 		mInputEnderecos.setText(mPessoa.getEnderecos().isEmpty()
-				? "" : getString(R.string.pessoa_cadastro_input_enderecos_text));
+				? ""
+				: getString(R.string.pessoa_cadastro_input_enderecos_text));
 		mLabelTelefones.setHint(mPessoa.getTelefones().isEmpty()
 				? getString(R.string.pessoa_cadastro_label_nenhum_telefone_hint)
 				: getString(R.string.pessoa_cadastro_label_telefones_hint));
 		mInputTelefones.setText(mPessoa.getTelefones().isEmpty()
-				? "" : getString(R.string.pessoa_cadastro_input_telefones_text));
+				? ""
+				: getString(R.string.pessoa_cadastro_input_telefones_text));
 		mLabelEmails.setHint(mPessoa.getEmails().isEmpty()
 				? getString(R.string.pessoa_cadastro_label_nenhum_email_hint)
 				: getString(R.string.pessoa_cadastro_label_emails_hint));
@@ -1066,12 +1069,12 @@ public class PessoaCadastroFragment extends Fragment
 				? "" : getString(R.string.pessoa_cadastro_input_emails_text));
 	}
 
-	public void setOnEmailsSelecionadosListener(@Nullable OnEmailsSelecionadosListener ouvinte) {
-		mOnEmailsSelecionadosListener = ouvinte;
+	public void setOnEmailsPesquisaListener(@Nullable OnEmailsPesquisaListener ouvinte) {
+		mOnEmailsPesquisaListener = ouvinte;
 	}
 
-	public void setOnEnderecosSelecionadosListener(@Nullable OnEnderecosSelecionadosListener ouvinte) {
-		mOnEnderecosSelecionadosListener = ouvinte;
+	public void setOnEnderecosPesquisaListener(@Nullable OnEnderecosPesquisaListener ouvinte) {
+		mOnEnderecosPesquisaListener = ouvinte;
 	}
 
 	public void setOnPessoaAdicionadoListener(@Nullable OnPessoaAdicionadoListener ouvinte) {
@@ -1082,12 +1085,12 @@ public class PessoaCadastroFragment extends Fragment
 		mOnPessoasPesquisaListener = ouvinte;
 	}
 
-	public void setOnReferenciaPessoaAlteradaListener(@Nullable OnReferenciaPessoaAlteradaListener ouvinte) {
-		mOnReferenciaPessoaAlteradaListener = ouvinte;
+	public void setOnReferenciaPessoaAlteradoListener(@Nullable OnReferenciaPessoaAlteradoListener ouvinte) {
+		mOnReferenciaPessoaAlteradoListener = ouvinte;
 	}
 
-	public void setOnTelefonesSelecionadosListener(@Nullable OnTelefonesSelecionadosListener ouvinte) {
-		mOnTelefonesSelecionadosListener = ouvinte;
+	public void setOnTelefonesPesquisaListener(@Nullable OnTelefonesPesquisaListener ouvinte) {
+		mOnTelefonesPesquisaListener = ouvinte;
 	}
 
 	public void setPessoa(@NonNull Pessoa pessoa) {
@@ -1156,16 +1159,14 @@ public class PessoaCadastroFragment extends Fragment
 		mPessoaAuxiliar.getTelefones().addAll(mPessoa.getTelefones());
 	}
 
-	public interface OnEmailsSelecionadosListener {
+	public interface OnEmailsPesquisaListener {
 
-		void onEmailsSelecionados(@NonNull View view,
-		                          @NonNull Set<Email> emails);
+		void onEmailsPesquisa(@NonNull View view);
 	}
 
-	public interface OnEnderecosSelecionadosListener {
+	public interface OnEnderecosPesquisaListener {
 
-		void onEnderecosSelecionados(@NonNull View view,
-		                             @NonNull Set<Endereco> enderecos);
+		void onEnderecosPesquisa(@NonNull View view);
 	}
 
 	public interface OnPessoaAdicionadoListener {
@@ -1175,17 +1176,16 @@ public class PessoaCadastroFragment extends Fragment
 
 	public interface OnPessoasPesquisaListener {
 
-		void onPessoasPesquisa();
+		void onPessoasPesquisa(@NonNull View view);
 	}
 
-	public interface OnReferenciaPessoaAlteradaListener {
+	public interface OnReferenciaPessoaAlteradoListener {
 
-		void onReferenciaPessoaAlterada(@NonNull Pessoa novaReferencia);
+		void onReferenciaPessoaAlterado(@NonNull Pessoa novaReferencia);
 	}
 
-	public interface OnTelefonesSelecionadosListener {
+	public interface OnTelefonesPesquisaListener {
 
-		void onTelefonesSelecionados(@NonNull View view,
-		                             @NonNull Set<Telefone> telefones);
+		void onTelefonesPesquisa(@NonNull View view);
 	}
 }

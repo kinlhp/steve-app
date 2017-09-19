@@ -33,18 +33,19 @@ public class PessoaActivity extends AppCompatActivity
 		EnderecoCadastroFragment.OnEnderecoAdicionadoListener,
 		EnderecosPesquisaFragment.OnEnderecoSelecionadoListener,
 		EnderecosPesquisaFragment.OnLongoEnderecoSelecionadoListener,
-		PessoaCadastroFragment.OnEmailsSelecionadosListener,
-		PessoaCadastroFragment.OnEnderecosSelecionadosListener,
+		PessoaCadastroFragment.OnEmailsPesquisaListener,
+		PessoaCadastroFragment.OnEnderecosPesquisaListener,
 		PessoaCadastroFragment.OnPessoaAdicionadoListener,
 		PessoaCadastroFragment.OnPessoasPesquisaListener,
-		PessoaCadastroFragment.OnReferenciaPessoaAlteradaListener,
-		PessoaCadastroFragment.OnTelefonesSelecionadosListener,
-		PessoasPesquisaFragment.OnPessoaSelecionadaListener,
+		PessoaCadastroFragment.OnReferenciaPessoaAlteradoListener,
+		PessoaCadastroFragment.OnTelefonesPesquisaListener,
+		PessoasPesquisaFragment.OnLongoPessoaSelecionadoListener,
+		PessoasPesquisaFragment.OnPessoaSelecionadoListener,
 		TelefoneCadastroFragment.OnTelefoneAdicionadoListener,
 		TelefonesPesquisaFragment.OnTelefoneSelecionadoListener,
 		TelefonesPesquisaFragment.OnLongoTelefoneSelecionadoListener,
 		Serializable {
-	private static final long serialVersionUID = -7034265815648653534L;
+	private static final long serialVersionUID = -6868838298003488212L;
 	private EmailCadastroFragment mFragmentoEmailCadastro;
 	private EmailsPesquisaFragment mFragmentoEmailsPesquisa;
 	private EnderecoCadastroFragment mFragmentoEnderecoCadastro;
@@ -95,13 +96,12 @@ public class PessoaActivity extends AppCompatActivity
 	}
 
 	@Override
-	public void onEmailsSelecionados(@NonNull View view,
-	                                 @NonNull Set<Email> emails) {
-		if (emails.isEmpty()) {
+	public void onEmailsPesquisa(@NonNull View view) {
+		if (mPessoa.getEmails().isEmpty()) {
 			Email email = Email.builder().pessoa(mPessoa).tipo(null).build();
 			inflarEmailCadastro(email);
 		} else {
-			inflarEmailsPesquisa(emails);
+			inflarEmailsPesquisa(mPessoa.getEmails());
 		}
 	}
 
@@ -134,14 +134,13 @@ public class PessoaActivity extends AppCompatActivity
 	}
 
 	@Override
-	public void onEnderecosSelecionados(@NonNull View view,
-	                                    @NonNull Set<Endereco> enderecos) {
-		if (enderecos.isEmpty()) {
+	public void onEnderecosPesquisa(@NonNull View view) {
+		if (mPessoa.getEnderecos().isEmpty()) {
 			Endereco endereco = Endereco.builder().pessoa(mPessoa).tipo(null)
 					.build();
 			inflarEnderecoCadastro(endereco);
 		} else {
-			inflarEnderecosPesquisa(enderecos);
+			inflarEnderecosPesquisa(mPessoa.getEnderecos());
 		}
 	}
 
@@ -177,8 +176,8 @@ public class PessoaActivity extends AppCompatActivity
 //			mPessoa.getEnderecos().remove(endereco);
 //		}
 		// TODO: 9/13/17 resolver de forma elegante a inconsistência acima (método contains não se comporta corretamente)
-		List<Endereco> enderecos = new ArrayList<>(endereco.getPessoa()
-				.getEnderecos());
+		List<Endereco> enderecos =
+				new ArrayList<>(endereco.getPessoa().getEnderecos());
 		if (enderecos.contains(endereco) && endereco.getId() == null) {
 			enderecos.remove(endereco);
 			if (mFragmentoEnderecosPesquisa != null) {
@@ -187,6 +186,16 @@ public class PessoaActivity extends AppCompatActivity
 		}
 		mPessoa.getEnderecos().clear();
 		mPessoa.getEnderecos().addAll(enderecos);
+	}
+
+	@Override
+	public void onLongoPessoaSelecionado(@NonNull View view,
+	                                     @NonNull Pessoa pessoa) {
+		// TODO: 9/18/17 definir implementações diferentes para clique curto e longo
+		mPessoa = pessoa;
+		if (mFragmentoPessoaCadastro != null) {
+			mFragmentoPessoaCadastro.setPessoa(mPessoa);
+		}
 	}
 
 	@Override
@@ -200,8 +209,8 @@ public class PessoaActivity extends AppCompatActivity
 //			mPessoa.getTelefones().remove(telefone);
 //		}
 		// TODO: 9/13/17 resolver de forma elegante a inconsistência acima (método contains não se comporta corretamente)
-		List<Telefone> telefones = new ArrayList<>(telefone.getPessoa()
-				.getTelefones());
+		List<Telefone> telefones =
+				new ArrayList<>(telefone.getPessoa().getTelefones());
 		if (telefones.contains(telefone) && telefone.getId() == null) {
 			telefones.remove(telefone);
 			if (mFragmentoTelefonesPesquisa != null) {
@@ -230,8 +239,9 @@ public class PessoaActivity extends AppCompatActivity
 	}
 
 	@Override
-	public void onPessoaSelecionada(@NonNull View view,
+	public void onPessoaSelecionado(@NonNull View view,
 	                                @NonNull Pessoa pessoa) {
+		// TODO: 9/18/17 definir implementações diferentes para clique curto e longo
 		mPessoa = pessoa;
 		if (mFragmentoPessoaCadastro != null) {
 			mFragmentoPessoaCadastro.setPessoa(mPessoa);
@@ -239,12 +249,12 @@ public class PessoaActivity extends AppCompatActivity
 	}
 
 	@Override
-	public void onPessoasPesquisa() {
+	public void onPessoasPesquisa(@NonNull View view) {
 		inflarPessoasPesquisa();
 	}
 
 	@Override
-	public void onReferenciaPessoaAlterada(@NonNull Pessoa novaReferencia) {
+	public void onReferenciaPessoaAlterado(@NonNull Pessoa novaReferencia) {
 		mPessoa = novaReferencia;
 	}
 
@@ -258,8 +268,8 @@ public class PessoaActivity extends AppCompatActivity
 //			mPessoa.getTelefones().add(telefone);
 //		}
 		// TODO: 9/13/17 resolver de forma elegante a inconsistência acima (método contains não se comporta corretamente)
-		List<Telefone> telefones = new ArrayList<>(telefone.getPessoa()
-				.getTelefones());
+		List<Telefone> telefones =
+				new ArrayList<>(telefone.getPessoa().getTelefones());
 		if (!telefones.contains(telefone)) {
 			telefones.add(telefone);
 			if (mFragmentoTelefonesPesquisa != null) {
@@ -277,14 +287,13 @@ public class PessoaActivity extends AppCompatActivity
 	}
 
 	@Override
-	public void onTelefonesSelecionados(@NonNull View view,
-	                                    @NonNull Set<Telefone> telefones) {
-		if (telefones.isEmpty()) {
+	public void onTelefonesPesquisa(@NonNull View view) {
+		if (mPessoa.getTelefones().isEmpty()) {
 			Telefone telefone = Telefone.builder().pessoa(mPessoa).tipo(null)
 					.build();
 			inflarTelefoneCadastro(telefone);
 		} else {
-			inflarTelefonesPesquisa(telefones);
+			inflarTelefonesPesquisa(mPessoa.getTelefones());
 		}
 	}
 
@@ -293,8 +302,7 @@ public class PessoaActivity extends AppCompatActivity
 			email.setPessoa(mPessoa);
 		}
 		if (mFragmentoEmailCadastro == null) {
-			mFragmentoEmailCadastro = EmailCadastroFragment
-					.newInstance(email);
+			mFragmentoEmailCadastro = EmailCadastroFragment.newInstance(email);
 		} else {
 			mFragmentoEmailCadastro.setEmail(email);
 		}
@@ -364,12 +372,12 @@ public class PessoaActivity extends AppCompatActivity
 		} else {
 			mFragmentoPessoaCadastro.setPessoa(mPessoa);
 		}
-		mFragmentoPessoaCadastro.setOnEmailsSelecionadosListener(this);
-		mFragmentoPessoaCadastro.setOnEnderecosSelecionadosListener(this);
+		mFragmentoPessoaCadastro.setOnEmailsPesquisaListener(this);
+		mFragmentoPessoaCadastro.setOnEnderecosPesquisaListener(this);
 		mFragmentoPessoaCadastro.setOnPessoaAdicionadoListener(this);
 		mFragmentoPessoaCadastro.setOnPessoasPesquisaListener(this);
-		mFragmentoPessoaCadastro.setOnReferenciaPessoaAlteradaListener(this);
-		mFragmentoPessoaCadastro.setOnTelefonesSelecionadosListener(this);
+		mFragmentoPessoaCadastro.setOnReferenciaPessoaAlteradoListener(this);
+		mFragmentoPessoaCadastro.setOnTelefonesPesquisaListener(this);
 		String tag = getString(R.string.pessoa_cadastro_titulo);
 
 		if (mSavedInstanceState == null) {
@@ -383,7 +391,8 @@ public class PessoaActivity extends AppCompatActivity
 		if (mFragmentoPessoasPesquisa == null) {
 			mFragmentoPessoasPesquisa = PessoasPesquisaFragment.newInstance();
 		}
-		mFragmentoPessoasPesquisa.setOnPessoaSelecionadaListener(this);
+		mFragmentoPessoasPesquisa.setOnLongoPessoaSelecionadoListener(this);
+		mFragmentoPessoasPesquisa.setOnPessoaSelecionadoListener(this);
 		String tag = getString(R.string.pessoas_pesquisa_titulo);
 
 		getSupportFragmentManager().beginTransaction()

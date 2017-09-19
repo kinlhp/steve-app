@@ -176,14 +176,12 @@ public class EmailCadastroFragment extends Fragment
 					? R.string.email_cadastro_button_alterar_hint
 					: R.string.email_cadastro_button_salvar_hint);
 		}
-		Credencial credencialLogado = (Credencial)
-				Parametro.get(Parametro.Chave.CREDENCIAL);
-		if (mEmail.getPessoa().isPerfilUsuario()
-				&& !credencialLogado.isPerfilAdministrador()) {
-			mButtonAdicionar.setEnabled(false);
-		} else {
-			mButtonAdicionar.setEnabled(true);
-		}
+		Credencial credencialLogado = (Credencial) Parametro
+				.get(Parametro.Chave.CREDENCIAL);
+		mButtonAdicionar.setVisibility(!mEmail.getPessoa().isPerfilUsuario()
+				|| credencialLogado.isPerfilAdministrador()
+				|| credencialLogado.getFuncionario().getId().equals(mEmail.getPessoa().getId())
+				? View.VISIBLE : View.INVISIBLE);
 	}
 
 	private VazioCallback callbackEmailPUT() {
@@ -289,8 +287,9 @@ public class EmailCadastroFragment extends Fragment
 		limparErros();
 		mSpinnerTipo.setSelection(mEmailAuxiliar.getTipo() == null
 				? 0 : mAdaptadorTipos.getPosition(mEmailAuxiliar.getTipo()));
-		mInputEnderecoEletronico.setText(mEmailAuxiliar.getEnderecoEletronico() == null
-				? "" : mEmailAuxiliar.getEnderecoEletronico());
+		mInputEnderecoEletronico
+				.setText(mEmailAuxiliar.getEnderecoEletronico() == null
+						? "" : mEmailAuxiliar.getEnderecoEletronico());
 		mInputNomeContato.setText(mEmailAuxiliar.getNomeContato() == null
 				? "" : mEmailAuxiliar.getNomeContato());
 		alternarButtonAdicionar();

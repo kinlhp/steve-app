@@ -174,14 +174,12 @@ public class TelefoneCadastroFragment extends Fragment
 					? R.string.telefone_cadastro_button_alterar_hint
 					: R.string.telefone_cadastro_button_salvar_hint);
 		}
-		Credencial credencialLogado = (Credencial)
-				Parametro.get(Parametro.Chave.CREDENCIAL);
-		if (mTelefone.getPessoa().isPerfilUsuario()
-				&& !credencialLogado.isPerfilAdministrador()) {
-			mButtonAdicionar.setEnabled(false);
-		} else {
-			mButtonAdicionar.setEnabled(true);
-		}
+		Credencial credencialLogado = (Credencial) Parametro
+				.get(Parametro.Chave.CREDENCIAL);
+		mButtonAdicionar.setVisibility(!mTelefone.getPessoa().isPerfilUsuario()
+				|| credencialLogado.isPerfilAdministrador()
+				|| credencialLogado.getFuncionario().getId().equals(mTelefone.getPessoa().getId())
+				? View.VISIBLE : View.INVISIBLE);
 	}
 
 	private VazioCallback callbackTelefonePUT() {

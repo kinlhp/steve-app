@@ -283,14 +283,12 @@ public class EnderecoCadastroFragment extends Fragment
 					? R.string.endereco_cadastro_button_alterar_hint
 					: R.string.endereco_cadastro_button_salvar_hint);
 		}
-		Credencial credencialLogado = (Credencial)
-				Parametro.get(Parametro.Chave.CREDENCIAL);
-		if (mEndereco.getPessoa().isPerfilUsuario()
-				&& !credencialLogado.isPerfilAdministrador()) {
-			mButtonAdicionar.setEnabled(false);
-		} else {
-			mButtonAdicionar.setEnabled(true);
-		}
+		Credencial credencialLogado = (Credencial) Parametro
+				.get(Parametro.Chave.CREDENCIAL);
+		mButtonAdicionar.setVisibility(!mEndereco.getPessoa().isPerfilUsuario()
+				|| credencialLogado.isPerfilAdministrador()
+				|| credencialLogado.getFuncionario().getId().equals(mEndereco.getPessoa().getId())
+				? View.VISIBLE : View.INVISIBLE);
 	}
 
 	private ItemCallback<EnderecamentoDTO> callbackEnderecamentoGETPorCep() {
@@ -398,8 +396,6 @@ public class EnderecoCadastroFragment extends Fragment
 					UfDTO dto = resposta.body();
 					Uf uf = UfMapeamento.paraDominio(dto);
 					mEnderecoAuxiliar.setUf(uf);
-//					mSpinnerUf
-//							.setSelection(mAdaptadorUfs.getPosition(mEnderecoAuxiliar.getUf().getSigla()));
 				}
 				mPressionarVoltar = false;
 				ocultarProgresso(mProgressBarConsumirPorUf, mSpinnerUf);
@@ -586,7 +582,8 @@ public class EnderecoCadastroFragment extends Fragment
 		mEnderecoAuxiliar.setIbge(enderecamento.getIbge());
 		mInputCep.requestFocus();
 		mInputCep.setText(enderecamento.getCep() == null
-				? "" : enderecamento.getCep().replace("-", ""));
+				? ""
+				: enderecamento.getCep().replace("-", ""));
 		mInputLogradouro.requestFocus();
 		mInputLogradouro.setText(enderecamento.getLogradouro() == null
 				? "" : enderecamento.getLogradouro());
@@ -624,7 +621,8 @@ public class EnderecoCadastroFragment extends Fragment
 		mInputCidade.setText(mEnderecoAuxiliar.getCidade() == null
 				? "" : mEnderecoAuxiliar.getCidade());
 		mSpinnerUf.setSelection(mEnderecoAuxiliar.getUf() == null
-				? 0 : mAdaptadorUfs.getPosition(mEnderecoAuxiliar.getUf().getSigla()));
+				? 0
+				: mAdaptadorUfs.getPosition(mEnderecoAuxiliar.getUf().getSigla()));
 		mInputNomeContato.setText(mEnderecoAuxiliar.getNomeContato() == null
 				? "" : mEnderecoAuxiliar.getNomeContato());
 		alternarButtonAdicionar();

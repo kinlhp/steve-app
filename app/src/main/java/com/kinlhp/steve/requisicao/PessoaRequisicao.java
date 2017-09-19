@@ -19,7 +19,7 @@ import retrofit2.Callback;
  * Created by kin on 8/16/17.
  */
 public final class PessoaRequisicao implements Serializable {
-	private static final long serialVersionUID = 8991395590581464620L;
+	private static final long serialVersionUID = -7289537153080362313L;
 	private static final PessoaRecurso RECURSO = Requisicao
 			.criar(PessoaRecurso.class);
 
@@ -53,12 +53,6 @@ public final class PessoaRequisicao implements Serializable {
 	public static void getTelefones(@NonNull Callback<Colecao<TelefoneDTO>> callback,
 	                                @NonNull HRef telefones) {
 		RECURSO.getTelefones(telefones.getHref()).enqueue(callback);
-	}
-
-	public static void patch(@NonNull Callback<Void> callback,
-	                         @NonNull BigInteger id, @NonNull PessoaDTO dto) {
-		// TODO: 8/25/17 mapear aqui e não na activity
-		RECURSO.patch(id, dto).enqueue(callback);
 	}
 
 	public static void post(@NonNull Callback<Void> callback,

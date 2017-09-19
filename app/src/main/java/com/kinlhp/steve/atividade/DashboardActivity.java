@@ -64,6 +64,9 @@ public class DashboardActivity extends AppCompatActivity
 			case R.id.subitem_pessoa:
 				iniciarPessoa();
 				break;
+			case R.id.subitem_credencial:
+				iniciarCredencial();
+				break;
 		}
 		ocultarDashboard();
 		return true;
@@ -76,7 +79,8 @@ public class DashboardActivity extends AppCompatActivity
 		// as you specify a parent activity in AndroidManifest.xml.
 		switch (item.getItemId()) {
 			case R.id.action_configuracao:
-				Toast.makeText(this, "Implementar", Toast.LENGTH_SHORT).show();
+				Toast.makeText(this, "Implementar", Toast.LENGTH_SHORT)
+						.show();
 				return true;
 			default:
 				return super.onOptionsItemSelected(item);
@@ -93,10 +97,16 @@ public class DashboardActivity extends AppCompatActivity
 		mDrawerLayout.openDrawer(GravityCompat.START);
 	}
 
+	private void iniciarCredencial() {
+		Intent intentCredencial =
+				new Intent(this, CredencialActivity.class);
+		startActivityForResult(intentCredencial, 0);
+	}
+
 	private void iniciarPessoa() {
-		Intent intentDashboard =
+		Intent intentPessoa =
 				new Intent(this, PessoaActivity.class);
-		startActivityForResult(intentDashboard, 0);
+		startActivityForResult(intentPessoa, 0);
 	}
 
 	private void ocultarDashboard() {

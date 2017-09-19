@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import com.kinlhp.steve.dominio.Credencial;
 import com.kinlhp.steve.dto.CredencialDTO;
 import com.kinlhp.steve.href.HRef;
+import com.kinlhp.steve.util.Parametro;
 
 import java.io.Serializable;
 import java.math.BigInteger;
@@ -13,7 +14,9 @@ import java.math.BigInteger;
  * Created by kin on 8/14/17.
  */
 public final class CredencialMapeamento implements Serializable {
-	private static final long serialVersionUID = 216067991557361739L;
+	private static final long serialVersionUID = 4236791603049862289L;
+	private static final String URL_BASE = Parametro
+			.get(Parametro.Chave.URL_BASE).toString();
 
 	private CredencialMapeamento() {
 	}
@@ -32,6 +35,18 @@ public final class CredencialMapeamento implements Serializable {
 		dominio.setDataCriacao(dto.getDataCriacao());
 		dominio.setId(obterId(dto.getLinks().getSelf()));
 		return dominio;
+	}
+
+	public static CredencialDTO paraDTO(@NonNull Credencial dominio) {
+		return CredencialDTO.builder()
+				.perfilAdministrador(dominio.isPerfilAdministrador())
+				.perfilPadrao(dominio.isPerfilPadrao())
+				.perfilSistema(dominio.isPerfilSistema())
+				.senha(dominio.getSenha())
+				.situacao(CredencialDTO.SituacaoDTO.valueOf(dominio.getSituacao().name()))
+				.usuario(dominio.getUsuario())
+				.funcionario(URL_BASE + "pessoas/" + dominio.getFuncionario().getId().intValue())
+				.build();
 	}
 
 	private static BigInteger obterId(@NonNull HRef self) {

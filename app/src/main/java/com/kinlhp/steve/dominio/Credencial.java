@@ -37,5 +37,10 @@ public class Credencial extends Dominio<BigInteger> {
 		INATIVO("Inativo");
 
 		private final String descricao;
+
+		@Override
+		public String toString() {
+			return descricao;
+		}
 	}
 }

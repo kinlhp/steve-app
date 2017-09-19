@@ -4,14 +4,19 @@ import com.google.gson.annotations.SerializedName;
 import com.kinlhp.steve.links.CredencialDTOLinks;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 /**
  * Created by kin on 8/14/17.
  */
+@Builder
 @Getter
 public class CredencialDTO extends DTO {
-	private static final long serialVersionUID = -2659480090149114943L;
+	private static final long serialVersionUID = -5621024289666202530L;
+
+	@SerializedName(value = "funcionario")
+	private String funcionario;
 
 	@SerializedName(value = "_links")
 	private CredencialDTOLinks links;

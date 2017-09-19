@@ -55,12 +55,11 @@ import retrofit2.Call;
 import retrofit2.Response;
 
 public class PessoasPesquisaFragment extends Fragment
-		implements
-		AdaptadorRecyclerPessoas.OnItemClickListener,
+		implements AdaptadorRecyclerPessoas.OnItemClickListener,
 		AdaptadorRecyclerPessoas.OnItemLongClickListener,
-		MenuItem.OnActionExpandListener,
-		SearchView.OnQueryTextListener, Serializable {
-	private static final long serialVersionUID = 1099236966940158792L;
+		MenuItem.OnActionExpandListener, SearchView.OnQueryTextListener,
+		Serializable {
+	private static final long serialVersionUID = -1785827452172055892L;
 	private static final String LINKS = "_links";
 	private static final String PAGINA_0 = "pessoas?page=0&size=20";
 	private static final String PESSOAS = "pessoas";
@@ -68,7 +67,8 @@ public class PessoasPesquisaFragment extends Fragment
 	private ArrayList<Pessoa> mPessoas = new ArrayList<>();
 	private Pessoa mPessoaSelecionada;
 	private Links mLinks;
-	private OnPessoaSelecionadaListener mOnPessoaSelecionadaListener;
+	private OnLongoPessoaSelecionadoListener mOnLongoPessoaSelecionadoListener;
+	private OnPessoaSelecionadoListener mOnPessoaSelecionadoListener;
 	private int mTarefasPendentes;
 	private View mViewSelecionada;
 
@@ -207,7 +207,7 @@ public class PessoasPesquisaFragment extends Fragment
 				? View.VISIBLE : View.GONE);
 	}
 
-	private ItemCallback<UfDTO> callbackEnderecoGETUf(@NonNull final Endereco endereco) {
+	private ItemCallback<UfDTO> callbackEnderecoGETUf(@NonNull Endereco endereco) {
 		return new ItemCallback<UfDTO>() {
 
 			@Override
@@ -413,21 +413,36 @@ public class PessoasPesquisaFragment extends Fragment
 		if (mTarefasPendentes <= 0) {
 			progresso.setVisibility(View.GONE);
 			if (chamarOuvinte) {
-				if (mOnPessoaSelecionadaListener != null) {
-					mOnPessoaSelecionadaListener
-							.onPessoaSelecionada(mViewSelecionada, mPessoaSelecionada);
+				// TODO: 9/18/17 definir implementações diferentes para clique curto e longo
+				if (mOnLongoPessoaSelecionadoListener != null) {
+					mOnLongoPessoaSelecionadoListener
+							.onLongoPessoaSelecionado(mViewSelecionada, mPessoaSelecionada);
+				}
+				if (mOnPessoaSelecionadoListener != null) {
+					mOnPessoaSelecionadoListener
+							.onPessoaSelecionado(mViewSelecionada, mPessoaSelecionada);
 				}
 				getActivity().onBackPressed();
 			}
 		}
 	}
 
-	public void setOnPessoaSelecionadaListener(@Nullable OnPessoaSelecionadaListener ouvinte) {
-		mOnPessoaSelecionadaListener = ouvinte;
+	public void setOnLongoPessoaSelecionadoListener(@Nullable OnLongoPessoaSelecionadoListener ouvinte) {
+		mOnLongoPessoaSelecionadoListener = ouvinte;
 	}
 
-	public interface OnPessoaSelecionadaListener {
-		void onPessoaSelecionada(@NonNull View view, @NonNull Pessoa pessoa);
+	public void setOnPessoaSelecionadoListener(@Nullable OnPessoaSelecionadoListener ouvinte) {
+		mOnPessoaSelecionadoListener = ouvinte;
+	}
+
+	public interface OnLongoPessoaSelecionadoListener {
+
+		void onLongoPessoaSelecionado(@NonNull View view, @NonNull Pessoa pessoa);
+	}
+
+	public interface OnPessoaSelecionadoListener {
+
+		void onPessoaSelecionado(@NonNull View view, @NonNull Pessoa pessoa);
 	}
 
 	private final class OnPessoaScrollListener
