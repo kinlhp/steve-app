@@ -18,9 +18,7 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 @Setter
-public class FormaPagamento extends Dominio<BigInteger> {
-	private static final long serialVersionUID = -6636990457235789054L;
+public class Servico extends Dominio<BigInteger> {
+	private static final long serialVersionUID = -484275206792008743L;
 	private String descricao;
-
-	// TODO: 9/20/17 implementar condições de pagamento (Set<CondicaoPagamento>)
 }

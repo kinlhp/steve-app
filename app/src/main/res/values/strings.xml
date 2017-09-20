@@ -142,6 +142,18 @@
     <string name="resposta_mensagem_not_found">Registro inexistente</string>
     <string name="resposta_mensagem_timeout">Tempo limite de conexão com servidor excedido</string>
     <string name="resposta_mensagem_unauthorized">Não autorizado</string>
+    <!-- servico -->
+    <string name="servico_cadastro_button_adicionar_hint">ADICIONAR</string>
+    <string name="servico_cadastro_button_alterar_hint">ALTERAR</string>
+    <string name="servico_cadastro_button_salvar_hint">SALVAR ALTERAÇÕES</string>
+    <string name="servico_cadastro_label_descricao_hint">Descrição</string>
+    <string name="servico_cadastro_label_id_hint">Código</string>
+    <string name="servico_cadastro_titulo">Serviço</string>
+    <string name="servicos_pesquisa_label_0_registros_hint">0 registros</string>
+    <string name="servicos_pesquisa_label_descricao_hint">@string/servico_cadastro_label_descricao_hint</string>
+    <string name="servicos_pesquisa_label_observacao_hint">Observação</string>
+    <string name="servicos_pesquisa_label_titulo_hint">Título</string>
+    <string name="servicos_pesquisa_titulo">Serviços</string>
     <!-- telefone -->
     <string name="telefone_cadastro_button_adicionar_hint">ADICIONAR</string>
     <string name="telefone_cadastro_button_alterar_hint">ALTERAR</string>

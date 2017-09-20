@@ -1,7 +1,7 @@
 package com.kinlhp.steve.dto;
 
 import com.google.gson.annotations.SerializedName;
-import com.kinlhp.steve.links.FormaPagamentoDTOLinks;
+import com.kinlhp.steve.links.ServicoDTOLinks;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -11,14 +11,12 @@ import lombok.Getter;
  */
 @Builder
 @Getter
-public class FormaPagamentoDTO extends DTO {
-	private static final long serialVersionUID = -8098569758490795603L;
+public class ServicoDTO extends DTO {
+	private static final long serialVersionUID = 1370747626106910614L;
 
 	@SerializedName(value = "_links")
-	private FormaPagamentoDTOLinks links;
+	private ServicoDTOLinks links;
 
 	@SerializedName(value = "descricao")
 	private String descricao;
-
-	// TODO: 9/20/17 implementar condições de pagamento (Set<CondicaoPagamento>)
 }

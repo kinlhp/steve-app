@@ -70,6 +70,9 @@ public class DashboardActivity extends AppCompatActivity
 			case R.id.subitem_pessoa:
 				iniciarPessoa();
 				break;
+			case R.id.subitem_servico:
+				iniciarServico();
+				break;
 		}
 		ocultarDashboard();
 		return true;
@@ -114,6 +117,11 @@ public class DashboardActivity extends AppCompatActivity
 	private void iniciarPessoa() {
 		Intent intentPessoa = new Intent(this, PessoaActivity.class);
 		startActivityForResult(intentPessoa, 0);
+	}
+
+	private void iniciarServico() {
+		Intent intentServico = new Intent(this, ServicoActivity.class);
+		startActivityForResult(intentServico, 0);
 	}
 
 	private void ocultarDashboard() {
