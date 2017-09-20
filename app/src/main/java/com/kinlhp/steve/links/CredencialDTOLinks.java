@@ -10,7 +10,10 @@ import lombok.Getter;
  */
 @Getter
 public class CredencialDTOLinks extends DTOLinks {
-	private static final long serialVersionUID = 1475013743792297073L;
+	private static final long serialVersionUID = 7100404389330472423L;
+
+	@SerializedName(value = "credencial")
+	private HRef credencial;
 
 	@SerializedName(value = "funcionario")
 	private HRef funcionario;

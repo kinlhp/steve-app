@@ -10,13 +10,16 @@ import lombok.Getter;
  */
 @Getter
 public class PessoaDTOLinks extends DTOLinks {
-	private static final long serialVersionUID = -8162830198865319761L;
+	private static final long serialVersionUID = 7603911971955248894L;
 
 	@SerializedName(value = "emails")
 	private HRef emails;
 
 	@SerializedName(value = "enderecos")
 	private HRef enderecos;
+
+	@SerializedName(value = "pessoa")
+	private HRef pessoa;
 
 	@SerializedName(value = "telefones")
 	private HRef telefones;

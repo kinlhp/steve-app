@@ -59,7 +59,7 @@ public class PessoasPesquisaFragment extends Fragment
 		AdaptadorRecyclerPessoas.OnItemLongClickListener,
 		MenuItem.OnActionExpandListener, SearchView.OnQueryTextListener,
 		Serializable {
-	private static final long serialVersionUID = -1785827452172055892L;
+	private static final long serialVersionUID = 7719005372445071516L;
 	private static final String LINKS = "_links";
 	private static final String PAGINA_0 = "pessoas?page=0&size=20";
 	private static final String PESSOAS = "pessoas";
@@ -200,6 +200,7 @@ public class PessoasPesquisaFragment extends Fragment
 			int indice = mPessoas.indexOf(pessoa);
 			mAdaptadorPessoas.notifyItemInserted(indice);
 		}
+		alternarLabel0Registros();
 	}
 
 	private void alternarLabel0Registros() {
@@ -322,7 +323,6 @@ public class PessoasPesquisaFragment extends Fragment
 					for (Pessoa pessoa : pessoas) {
 						addPessoa(pessoa);
 					}
-					alternarLabel0Registros();
 					mLinks = colecao.getLinks();
 				}
 				ocultarProgresso(mProgressBarConsumirPessoasPaginado, false);

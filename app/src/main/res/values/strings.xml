@@ -6,9 +6,9 @@
     <string name="app_search">Pesquisa</string>
     <!-- credencial -->
     <string name="credenciais_pesquisa_label_0_registros_hint">0 registros</string>
-    <string name="credenciais_pesquisa_label_funcionario_hint">Funcionário</string>
+    <string name="credenciais_pesquisa_label_funcionario_hint">@string/credencial_cadastro_label_funcionario_hint</string>
     <string name="credenciais_pesquisa_label_perfis_hint">Perfis</string>
-    <string name="credenciais_pesquisa_label_usuario_hint">Usuário</string>
+    <string name="credenciais_pesquisa_label_usuario_hint">@string/credencial_cadastro_label_usuario_hint</string>
     <string name="credenciais_pesquisa_titulo">Credenciais</string>
     <string name="credencial_cadastro_button_adicionar_hint">ADICIONAR</string>
     <string name="credencial_cadastro_button_alterar_hint">ALTERAR</string>
@@ -75,8 +75,18 @@
     <string name="enderecos_pesquisa_label_nome_contato_hint">@string/endereco_cadastro_label_nome_contato_hint</string>
     <string name="enderecos_pesquisa_label_tipo_hint">@string/endereco_cadastro_label_tipo_hint</string>
     <string name="enderecos_pesquisa_titulo">Endereços</string>
-    <!-- form -->
-    <string name="form_mensagem_invalido">Formulário inválido</string>
+    <!-- forma de pagamento -->
+    <string name="forma_pagamento_cadastro_button_adicionar_hint">ADICIONAR</string>
+    <string name="forma_pagamento_cadastro_button_alterar_hint">ALTERAR</string>
+    <string name="forma_pagamento_cadastro_button_salvar_hint">SALVAR ALTERAÇÕES</string>
+    <string name="forma_pagamento_cadastro_label_descricao_hint">Descrição</string>
+    <string name="forma_pagamento_cadastro_label_id_hint">Código</string>
+    <string name="forma_pagamento_cadastro_titulo">Forma de Pagamento</string>
+    <string name="formas_pagamento_pesquisa_label_0_registros_hint">0 registros</string>
+    <string name="formas_pagamento_pesquisa_label_descricao_hint">@string/forma_pagamento_cadastro_label_descricao_hint</string>
+    <string name="formas_pagamento_pesquisa_label_observacao_hint">Observação</string>
+    <string name="formas_pagamento_pesquisa_label_titulo_hint">Título</string>
+    <string name="formas_pagamento_pesquisa_titulo">Formas de Pagamento</string>
     <!-- input -->
     <string name="input_invalido">Campo inválido</string>
     <string name="input_obrigatorio">Campo obrigatório</string>

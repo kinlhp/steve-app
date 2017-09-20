@@ -18,8 +18,8 @@ public class Embedded<T extends DTO> implements Serializable {
 
 	@SerializedName(
 			alternate = {
-					"credenciais", "emails", "enderecos", "pessoas",
-					"telefones", "ufs"
+					"credenciais", "emails", "enderecos", "formaspagamento",
+					"pessoas", "telefones", "ufs"
 			},
 			value = "dtos"
 	)

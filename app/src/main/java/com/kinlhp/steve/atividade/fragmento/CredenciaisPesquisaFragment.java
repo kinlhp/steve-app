@@ -49,10 +49,10 @@ public class CredenciaisPesquisaFragment extends Fragment
 		AdaptadorRecyclerCredenciais.OnItemLongClickListener,
 		MenuItem.OnActionExpandListener, SearchView.OnQueryTextListener,
 		Serializable {
-	private static final long serialVersionUID = 2480043693410326387L;
+	private static final long serialVersionUID = -8376353501525687443L;
+	private static final String CREDENCIAIS = "credenciais";
 	private static final String LINKS = "_links";
 	private static final String PAGINA_0 = "credenciais?page=0&size=20";
-	private static final String CREDENCIAIS = "credenciais";
 	private AdaptadorRecyclerCredenciais mAdaptadorCredenciais;
 	private ArrayList<Credencial> mCredenciais = new ArrayList<>();
 	private Links mLinks;
@@ -192,6 +192,7 @@ public class CredenciaisPesquisaFragment extends Fragment
 			int indice = mCredenciais.indexOf(credencial);
 			mAdaptadorCredenciais.notifyItemInserted(indice);
 		}
+		alternarLabel0Registros();
 	}
 
 	private void alternarLabel0Registros() {
@@ -253,7 +254,6 @@ public class CredenciaisPesquisaFragment extends Fragment
 					for (Credencial credencial : credenciais) {
 						consumirCredencialGETFuncionario(credencial);
 					}
-					alternarLabel0Registros();
 					mLinks = colecao.getLinks();
 				}
 				ocultarProgresso(mProgressBarConsumirCredenciaisPaginado);
@@ -290,24 +290,24 @@ public class CredenciaisPesquisaFragment extends Fragment
 		}
 	}
 
-	public void setOnLongoCredencialSelecionadoListener(@Nullable OnLongoCredencialSelecionadoListener ouvinte) {
-		mOnLongoCredencialSelecionadoListener = ouvinte;
-	}
-
 	public void setOnCredencialSelecionadoListener(@Nullable OnCredencialSelecionadoListener ouvinte) {
 		mOnCredencialSelecionadoListener = ouvinte;
 	}
 
-	public interface OnLongoCredencialSelecionadoListener {
-
-		void onLongoCredencialSelecionado(@NonNull View view,
-		                                  @NonNull Credencial credencial);
+	public void setOnLongoCredencialSelecionadoListener(@Nullable OnLongoCredencialSelecionadoListener ouvinte) {
+		mOnLongoCredencialSelecionadoListener = ouvinte;
 	}
 
 	public interface OnCredencialSelecionadoListener {
 
 		void onCredencialSelecionado(@NonNull View view,
 		                             @NonNull Credencial credencial);
+	}
+
+	public interface OnLongoCredencialSelecionadoListener {
+
+		void onLongoCredencialSelecionado(@NonNull View view,
+		                                  @NonNull Credencial credencial);
 	}
 
 	private final class OnCredencialScrollListener

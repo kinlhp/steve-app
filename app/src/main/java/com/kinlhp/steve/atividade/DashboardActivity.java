@@ -61,11 +61,14 @@ public class DashboardActivity extends AppCompatActivity
 	@Override
 	public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 		switch (item.getItemId()) {
-			case R.id.subitem_pessoa:
-				iniciarPessoa();
-				break;
 			case R.id.subitem_credencial:
 				iniciarCredencial();
+				break;
+			case R.id.subitem_forma_pagamento:
+				iniciarFormaPagamento();
+				break;
+			case R.id.subitem_pessoa:
+				iniciarPessoa();
 				break;
 		}
 		ocultarDashboard();
@@ -98,14 +101,18 @@ public class DashboardActivity extends AppCompatActivity
 	}
 
 	private void iniciarCredencial() {
-		Intent intentCredencial =
-				new Intent(this, CredencialActivity.class);
+		Intent intentCredencial = new Intent(this, CredencialActivity.class);
 		startActivityForResult(intentCredencial, 0);
 	}
 
+	private void iniciarFormaPagamento() {
+		Intent intentFormaPagamento =
+				new Intent(this, FormaPagamentoActivity.class);
+		startActivityForResult(intentFormaPagamento, 0);
+	}
+
 	private void iniciarPessoa() {
-		Intent intentPessoa =
-				new Intent(this, PessoaActivity.class);
+		Intent intentPessoa = new Intent(this, PessoaActivity.class);
 		startActivityForResult(intentPessoa, 0);
 	}
 
