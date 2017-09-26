@@ -1,18 +1,28 @@
 package com.kinlhp.steve.atividade.fragmento;
 
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatImageButton;
 import android.support.v7.widget.AppCompatSpinner;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
@@ -21,14 +31,21 @@ import android.widget.ProgressBar;
 import android.widget.RadioGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.tool.xml.XMLWorkerHelper;
 import com.kinlhp.steve.R;
 import com.kinlhp.steve.atividade.adaptador.AdaptadorSpinner;
 import com.kinlhp.steve.dominio.Credencial;
+import com.kinlhp.steve.dominio.Endereco;
 import com.kinlhp.steve.dominio.ItemOrdemServico;
 import com.kinlhp.steve.dominio.Ordem;
 import com.kinlhp.steve.dominio.Pessoa;
 import com.kinlhp.steve.dominio.Servico;
+import com.kinlhp.steve.dominio.Uf;
 import com.kinlhp.steve.dto.ItemOrdemServicoDTO;
 import com.kinlhp.steve.dto.OrdemDTO;
 import com.kinlhp.steve.dto.PessoaDTO;
@@ -49,7 +66,14 @@ import com.kinlhp.steve.resposta.VazioCallback;
 import com.kinlhp.steve.util.Parametro;
 import com.kinlhp.steve.util.Teclado;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -63,7 +87,7 @@ public class OrdemCadastroFragment extends Fragment
 		RadioGroup.OnCheckedChangeListener, Serializable,
 		TextView.OnEditorActionListener, View.OnClickListener,
 		View.OnFocusChangeListener {
-	private static final long serialVersionUID = 3558973459537884536L;
+	private static final int CODIGO_REQUISICAO_PERMISSAO = 200;
 	private static final String ORDEM = "ordem";
 	private static final String ORDEM_AUXILIAR = "ordemAuxiliar";
 	private AdaptadorSpinner<Ordem.Situacao> mAdaptadorSituacoes;
@@ -74,6 +98,7 @@ public class OrdemCadastroFragment extends Fragment
 	private OnReferenciaOrdemAlteradoListener mOnReferenciaOrdemAlteradoListener;
 	private Ordem mOrdem;
 	private Ordem mOrdemAuxiliar;
+	private File mPDFFile;
 	private boolean mPressionarVoltar;
 	private ArrayList<Ordem.Situacao> mSituacoes;
 	private int mTarefasPendentes;
@@ -175,6 +200,14 @@ public class OrdemCadastroFragment extends Fragment
 		}
 	}
 
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		if (mOrdem.getId() != null) {
+			inflater.inflate(R.menu.print_menu, menu);
+		}
+		super.onCreateOptionsMenu(menu, inflater);
+	}
+
 	@Nullable
 	@Override
 	public View onCreateView(LayoutInflater inflater,
@@ -218,6 +251,7 @@ public class OrdemCadastroFragment extends Fragment
 
 		mScrollOrdemCadastro.fullScroll(View.FOCUS_UP);
 
+		setHasOptionsMenu(true);
 		return view;
 	}
 
@@ -265,9 +299,49 @@ public class OrdemCadastroFragment extends Fragment
 	}
 
 	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case R.id.action_imprimir:
+				verificarPermissão();
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
+		}
+	}
+
+	@Override
 	public void onPause() {
 		super.onPause();
 		iterarFormulario();
+	}
+
+	@Override
+	public void onRequestPermissionsResult(int requestCode,
+	                                       @NonNull String[] permissions,
+	                                       @NonNull int[] grantResults) {
+		switch (requestCode) {
+			case CODIGO_REQUISICAO_PERMISSAO:
+				if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+					try {
+						gerarPDF();
+					} catch (Exception e) {
+						String mensagem =
+								getString(R.string.suporte_mensagem_pdf_escrever);
+						Falha.tratar(mButtonOrdensPesquisa, new Exception(mensagem));
+					}
+				} else {
+					Toast.makeText(getActivity(), "Permissão negada!", Toast.LENGTH_SHORT)
+							.show();
+					if (mOnOrdemAdicionadoListener != null) {
+						mOnOrdemAdicionadoListener
+								.onOrdemAdicionado(mButtonAdicionar, mOrdem);
+					}
+					getActivity().onBackPressed();
+				}
+				break;
+			default:
+				super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+		}
 	}
 
 	@Override
@@ -283,6 +357,24 @@ public class OrdemCadastroFragment extends Fragment
 		super.onSaveInstanceState(outState);
 		outState.putSerializable(ORDEM, mOrdem);
 		outState.putSerializable(ORDEM_AUXILIAR, mOrdemAuxiliar);
+	}
+
+	public void abrirDialogoImpressao() {
+		AlertDialog.Builder alerta = new AlertDialog.Builder(getActivity());
+		alerta.setTitle("Impressão")
+				.setMessage("Deseja imprimir a ordem de serviço?")
+				.setCancelable(false)
+				.setPositiveButton("Sim", (dialogInterface, i) -> verificarPermissão())
+				.setNegativeButton("Não", (dialogInterface, i) -> {
+					if (mOnOrdemAdicionadoListener != null) {
+						mOnOrdemAdicionadoListener
+								.onOrdemAdicionado(mButtonAdicionar, mOrdem);
+					}
+					getActivity().onBackPressed();
+				});
+		AlertDialog alertDialog = alerta.create();
+		alertDialog.show();
+
 	}
 
 	private void alternarButtonAdicionar() {
@@ -310,6 +402,11 @@ public class OrdemCadastroFragment extends Fragment
 		mButtonConsumirPorId.setImageResource(mOrdem.getId() == null
 				? R.drawable.ic_consumir_por_id_accent_24dp
 				: R.drawable.ic_borracha_accent_24dp);
+		alternarMenuImpressao();
+	}
+
+	private void alternarMenuImpressao() {
+		getActivity().invalidateOptionsMenu();
 	}
 
 	private void alternarRadioTipo() {
@@ -638,6 +735,125 @@ public class OrdemCadastroFragment extends Fragment
 		}
 	}
 
+	private String gerarHTML() {
+		StringBuilder sb = new StringBuilder();
+		BigDecimal valorTotalOrcao = BigDecimal.ZERO;
+		BigDecimal valorTotalAplicado = BigDecimal.ZERO;
+
+		// TODO: 9/26/17 obter endereço pelo cliente da ordem
+		Endereco endereco = Endereco.builder().logradouro("Rua Regente Feijo")
+				.numero("336")
+				.bairro("Zona 6")
+				.cep("87205-012")
+				.cidade("Cianorte")
+				.uf(Uf.builder().sigla(Uf.Sigla.PR).build()).build();
+
+		sb.append("<table style=\"width:100%;border:1px solid #000;border-collapse:collapse border=1 cellpadding=6\">\n")
+				.append("    <tbody>\n")
+				.append("        <tr>\n")
+				.append("            <td colspan=\"4\" style=\"text-align:center;font-size:1.2em\"><strong>Ordem de serviço: ").append(mOrdem.getId()).append(" </strong></td>\n")
+				.append("        </tr>\n")
+				.append("        <tr>\n")
+				.append("            <td colspan=\"4\" style=\"text-align:center\"><strong>" + getString(R.string.app_name) + "</strong></td>\n")
+				.append("        </tr>\n")
+				.append("        <tr>\n")
+				.append("            <td colspan=\"4\" style=\"text-align:center\"><strong>Razão Social do Sistema</strong></td>\n")
+				.append("        </tr>\n")
+				.append("        <tr>\n")
+				.append("            <td colspan=\"4\" style=\"text-align:center\"><strong>CNPJ do sistema</strong></td>\n")
+				.append("        </tr>\n")
+				.append("        <tr>\n")
+				.append("            <td colspan=\"4\" style=\"text-align:center\"><strong>Endereço do sistema</strong></td>\n")
+				.append("        </tr>\n")
+				.append("        <tr>\n")
+				.append("            <td colspan=\"4\" style=\"text-align:center\"><strong>Telefone do sistema</strong></td>\n")
+				.append("        </tr>\n")
+				.append("    </tbody>\n")
+				.append("</table>\n")
+				.append("<table style=\"width:100%;border-collapse:collapse border=0 cellpadding=6\">\n")
+				.append("    <tbody>\n")
+				.append("        <tr colspan=\"6\" style=\"font-size:1.2em\">\n")
+				.append("            <td>Dados do cliente</td>\n")
+				.append("        </tr>\n")
+				.append("        <tr>\n")
+				.append("            <td>Nome: " + mOrdem.getCliente().getNomeRazao() + "</td>\n")
+				.append("            <td>CNPJ/CPF: " + mOrdem.getCliente().getCnpjCpf() + "</td>\n")
+				.append("        </tr>\n")
+				.append("        <tr>\n")
+				.append("            <td>Endereço: " + endereco.getLogradouro() + "</td>\n")
+				.append("            <td>Bairro: " + endereco.getBairro() + "</td>\n")
+				.append("        </tr>\n")
+				.append("        <tr>\n")
+				.append("            <td>Cidade: " + endereco.getCidade() + "</td>\n")
+				.append("            <td>UF: " + endereco.getUf().getSigla().name() + "</td>\n")
+				.append("        </tr>\n")
+				.append("        <tr>\n")
+				.append("            <td>CEP: " + endereco.getCep() + "</td>\n")
+				.append("        </tr>\n")
+				.append("        <tr>\n")
+				.append("            <td>Telefone: 44 3322-8855</td>\n")
+				.append("        </tr>\n")
+				.append("    </tbody>\n")
+				.append("</table>\n")
+				.append("<br></br>\n")
+				.append("<table style=\"width:100%;border:1px solid #cccccc;border-collapse:collapse;border:none\">\n")
+				.append("    <thead>\n")
+				.append("        <tr>\n")
+				.append("            <th style=\"width:60%;border:1px solid #cccccc\">Serviço</th>\n")
+				.append("            <th style=\"width:12%;border:1px solid #cccccc\">Situação</th>")
+				.append("            <th style=\"width:14%;border:1px solid #cccccc\">Valor orçado</th>\n")
+				.append("            <th style=\"width:14%;border:1px solid #cccccc\">Valor aplicado</th>\n")
+				.append("        </tr>\n")
+				.append("    </thead>\n")
+				.append("    <tbody>\n");
+		for (ItemOrdemServico itemOrdemServico : mOrdem.getItensOrdemServico()) {
+			sb.append("        <tr>\n")
+					.append("            <td style=\"border:1px solid #cccccc\">" + itemOrdemServico.getServico().toString() + "</td>\n")
+					.append("            <td style=\"border:1px solid #cccccc\">" + itemOrdemServico.getSituacao() + "</td>\n")
+					.append("            <td style=\"border:1px solid #cccccc;text-align:right\">" + itemOrdemServico.getValorOrcamento().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString().replace(".", ",") + "</td>\n")
+					.append("            <td style=\"border:1px solid #cccccc;text-align:right\">" + itemOrdemServico.getValorServico().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString().replace(".", ",") + "</td>\n")
+					.append("        </tr>\n");
+			valorTotalOrcao = valorTotalOrcao.add(itemOrdemServico.getValorOrcamento());
+			valorTotalAplicado = valorTotalAplicado.add(itemOrdemServico.getValorServico());
+		}
+		sb.append("    </tbody>\n")
+				.append("    <tfoot>\n")
+				.append("        <tr>\n")
+				.append("            <th colspan=\"3\" style=\"text-align:right\">Total orçado :</th>\n")
+				.append("            <td style=\"text-align:right\">" + valorTotalOrcao.setScale(2, BigDecimal.ROUND_HALF_EVEN).toString().replace(".", ",") + "</td>\n")
+				.append("        </tr>\n")
+				.append("        <tr>\n")
+				.append("            <th colspan=\"3\" style=\"text-align:right\">Total aplicado :</th>\n")
+				.append("            <td style=\"text-align:right\">" + valorTotalAplicado.setScale(2, BigDecimal.ROUND_HALF_EVEN).toString().replace(".", ",") + "</td>\n")
+				.append("        </tr>\n")
+				.append("    </tfoot>\n")
+				.append("</table>");
+		return sb.toString();
+	}
+
+	private void gerarPDF() throws IOException, DocumentException {
+
+		File docsFolder =
+				new File(Environment.getExternalStorageDirectory() + "/Documents");
+		if (!docsFolder.exists()) {
+			docsFolder.mkdir();
+		}
+
+		mPDFFile =
+				new File(docsFolder.getAbsolutePath(), mOrdem.getId() + ".pdf");
+		OutputStream output = new FileOutputStream(mPDFFile);
+		Document document = new Document();
+		PdfWriter writer = PdfWriter.getInstance(document, output);
+		document.open();
+
+		InputStream is = new ByteArrayInputStream(gerarHTML().getBytes());
+		XMLWorkerHelper.getInstance().parseXHtml(writer, document, is);
+
+		document.close();
+		previewPdf();
+
+	}
+
 	private boolean isClienteValido() {
 		if (mOrdem.getCliente() == null
 				|| mOrdem.getCliente().getId() == null) {
@@ -725,19 +941,8 @@ public class OrdemCadastroFragment extends Fragment
 				view.setVisibility(View.VISIBLE);
 			}
 			progresso.setVisibility(View.GONE);
-		}
-
-		if (mTarefasPendentes <= 0) {
-			if (view != null) {
-				view.setVisibility(View.VISIBLE);
-			}
-			progresso.setVisibility(View.GONE);
 			if (mPressionarVoltar) {
-				if (mOnOrdemAdicionadoListener != null) {
-					mOnOrdemAdicionadoListener
-							.onOrdemAdicionado(mButtonAdicionar, mOrdem);
-				}
-				getActivity().onBackPressed();
+				abrirDialogoImpressao();
 			}
 		}
 	}
@@ -777,6 +982,20 @@ public class OrdemCadastroFragment extends Fragment
 				.setText(mOrdemAuxiliar.getItensOrdemServico().isEmpty()
 						? ""
 						: getString(R.string.ordem_cadastro_input_itens_ordem_servico_text));
+	}
+
+	private void previewPdf() {
+		try {
+			Intent intent = new Intent(Intent.ACTION_VIEW);
+			Uri uri = Uri.fromFile(mPDFFile);
+			intent.setDataAndType(uri, "application/pdf");
+			intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			startActivity(intent);
+			getActivity().onBackPressed();
+		} catch (Exception e) {
+			String mensagem = getString(R.string.suporte_mensagem_pdf_ler);
+			Falha.tratar(mButtonOrdensPesquisa, new Exception(mensagem));
+		}
 	}
 
 	public void setOnClientesPesquisaListener(@Nullable OnClientesPesquisaListener ouvinte) {
@@ -836,6 +1055,20 @@ public class OrdemCadastroFragment extends Fragment
 		mOrdem.setObservacao(mOrdemAuxiliar.getObservacao());
 		mOrdem.setSituacao(mOrdemAuxiliar.getSituacao());
 		mOrdem.setTipo(mOrdemAuxiliar.getTipo());
+	}
+
+	private void verificarPermissão() {
+		if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+			requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, CODIGO_REQUISICAO_PERMISSAO);
+		} else {
+			try {
+				gerarPDF();
+			} catch (Exception e) {
+				String mensagem =
+						getString(R.string.suporte_mensagem_pdf_escrever);
+				Falha.tratar(mButtonOrdensPesquisa, new Exception(mensagem));
+			}
+		}
 	}
 
 	public interface OnClientesPesquisaListener {

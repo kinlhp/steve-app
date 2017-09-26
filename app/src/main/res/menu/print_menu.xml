@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?><!-- @menu/print_menu.xml -->
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/print_menu">
+
+    <item
+        android:id="@+id/action_imprimir"
+        android:icon="@drawable/ic_impressora_white_24dp"
+        android:title="@string/action_print"
+        app:showAsAction="always" />
+</menu>

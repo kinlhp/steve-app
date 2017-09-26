@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?><!-- @values/strings.xml -->
 <resources>
     <!-- app wide -->
+    <string name="action_print">Imprimir</string>
     <string name="action_settings">Configurações</string>
     <string name="app_name">Steve App</string>
     <string name="app_search">Pesquisa</string>
@@ -231,4 +232,6 @@
     <string name="suporte_mensagem_criptografia_senha">[suporte] Não foi possível criptografar senha</string>
     <string name="suporte_mensagem_desserializacao">[suporte] Não foi possível desserializar dados</string>
     <string name="suporte_mensagem_nao_identificado">[suporte] Não foi possível identificar inconsistência</string>
+    <string name="suporte_mensagem_pdf_escrever">[suporte] Não foi possível gerar PDF</string>
+    <string name="suporte_mensagem_pdf_ler">[suporte] Não foi possível ler PDF</string>
 </resources>

@@ -106,6 +106,8 @@ public final class Falha implements Serializable {
 			} else if (causa instanceof JsonParseException) {
 				mensagem = contexto
 						.getString(R.string.suporte_mensagem_desserializacao);
+			} else {
+				mensagem = causa.getMessage();
 			}
 		}
 		exibirMensagem(view, mensagem, null);
