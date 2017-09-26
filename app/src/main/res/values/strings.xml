@@ -4,6 +4,19 @@
     <string name="action_settings">Configurações</string>
     <string name="app_name">Steve App</string>
     <string name="app_search">Pesquisa</string>
+    <!-- condicao pagamento-->
+    <string name="condicao_pagamento_cadastro_button_adicionar_hint">ADICIONAR</string>
+    <string name="condicao_pagamento_cadastro_button_alterar_hint">ALTERAR</string>
+    <string name="condicao_pagamento_cadastro_button_salvar_hint">SALVAR ALTERAÇÕES</string>
+    <string name="condicao_pagamento_cadastro_label_descricao_hint">Descrição</string>
+    <string name="condicao_pagamento_cadastro_label_periodo_entre_parcelas_hint">Período entre parcelas</string>
+    <string name="condicao_pagamento_cadastro_label_quantidade_parcelas_hint">Quantidade de parcelas</string>
+    <string name="condicao_pagamento_cadastro_titulo">Condição de Pagamento</string>
+    <string name="condicoes_pagamento_pesquisa_label_0_registros_hint">0 registros</string>
+    <string name="condicoes_pagamento_pesquisa_label_descricao_hint">@string/condicao_pagamento_cadastro_label_descricao_hint</string>
+    <string name="condicoes_pagamento_pesquisa_label_periodo_entre_parcelas_hint">@string/condicao_pagamento_cadastro_label_periodo_entre_parcelas_hint</string>
+    <string name="condicoes_pagamento_pesquisa_label_quantidade_parcelas_hint">@string/condicao_pagamento_cadastro_label_quantidade_parcelas_hint</string>
+    <string name="condicoes_pagamento_pesquisa_titulo">Condições de Pagamento</string>
     <!-- credencial -->
     <string name="credenciais_pesquisa_label_0_registros_hint">0 registros</string>
     <string name="credenciais_pesquisa_label_funcionario_hint">@string/credencial_cadastro_label_funcionario_hint</string>
@@ -16,10 +29,10 @@
     <string name="credencial_cadastro_label_confirmacao_senha_hint">Confirmação de senha</string>
     <string name="credencial_cadastro_label_funcionario_hint">Funcionário</string>
     <string name="credencial_cadastro_label_id_hint">Código</string>
-    <string name="credencial_cadastro_input_funcionario_nao_usuario">Sem perfil de usuário</string>
     <string name="credencial_cadastro_label_nenhum_funcionario_hint">Pesquisar funcionários</string>
     <string name="credencial_cadastro_label_senha_hint">Senha</string>
     <string name="credencial_cadastro_label_usuario_hint">Usuário</string>
+    <string name="credencial_cadastro_mensagem_funcionario_nao_usuario">Sem perfil de usuário</string>
     <string name="credencial_cadastro_switch_perfil_administrador_hint">Perfil administrador</string>
     <string name="credencial_cadastro_switch_situacao_hint">Ativo</string>
     <string name="credencial_cadastro_titulo">Credecial</string>
@@ -79,8 +92,11 @@
     <string name="forma_pagamento_cadastro_button_adicionar_hint">ADICIONAR</string>
     <string name="forma_pagamento_cadastro_button_alterar_hint">ALTERAR</string>
     <string name="forma_pagamento_cadastro_button_salvar_hint">SALVAR ALTERAÇÕES</string>
+    <string name="forma_pagamento_cadastro_input_condicoes_pagamento_text">Visualizar condições de pagamento</string>
+    <string name="forma_pagamento_cadastro_label_condicoes_pagamento_hint">@string/condicoes_pagamento_pesquisa_titulo</string>
     <string name="forma_pagamento_cadastro_label_descricao_hint">Descrição</string>
     <string name="forma_pagamento_cadastro_label_id_hint">Código</string>
+    <string name="forma_pagamento_cadastro_label_nenhum_condicao_pagamento_hint">Nenhuma condição de pagamento</string>
     <string name="forma_pagamento_cadastro_titulo">Forma de Pagamento</string>
     <string name="formas_pagamento_pesquisa_label_0_registros_hint">0 registros</string>
     <string name="formas_pagamento_pesquisa_label_descricao_hint">@string/forma_pagamento_cadastro_label_descricao_hint</string>
@@ -90,11 +106,52 @@
     <!-- input -->
     <string name="input_invalido">Campo inválido</string>
     <string name="input_obrigatorio">Campo obrigatório</string>
+    <!-- item ordem servico -->
+    <string name="item_ordem_servico_cadastro_button_adicionar_hint">ADICIONAR</string>
+    <string name="item_ordem_servico_cadastro_button_alterar_hint">ALTERAR</string>
+    <string name="item_ordem_servico_cadastro_button_salvar_hint">SALVAR ALTERAÇÕES</string>
+    <string name="item_ordem_servico_cadastro_label_data_finalizacao_prevista_hint">Data prevista</string>
+    <string name="item_ordem_servico_cadastro_label_descricao_hint">Descrição</string>
+    <string name="item_ordem_servico_cadastro_label_servico_hint">Serviço</string>
+    <string name="item_ordem_servico_cadastro_label_situacao_hint">Situação</string>
+    <string name="item_ordem_servico_cadastro_label_valor_orcamento_hint">Valor orçado</string>
+    <string name="item_ordem_servico_cadastro_label_valor_servico_hint">Valor aplicado</string>
+    <string name="item_ordem_servico_cadastro_titulo">Item da Ordem de Serviço</string>
+    <string name="itens_ordem_servico_pesquisa_label_0_registros_hint">0 registros</string>
+    <string name="itens_ordem_servico_pesquisa_label_descricao_hint">@string/item_ordem_servico_cadastro_label_descricao_hint</string>
+    <string name="itens_ordem_servico_pesquisa_label_servico_hint">@string/item_ordem_servico_cadastro_label_servico_hint</string>
+    <string name="itens_ordem_servico_pesquisa_label_situacao_hint">@string/item_ordem_servico_cadastro_label_situacao_hint</string>
+    <string name="itens_ordem_servico_pesquisa_label_valor_orcamento_hint">Valor do orçamento: R$</string>
+    <string name="itens_ordem_servico_pesquisa_label_valor_servico_hint">Valor aplicado: R$ </string>
+    <string name="itens_ordem_servico_pesquisa_titulo">Itens da Ordem de Serviço</string>
     <!-- login -->
     <string name="login_input_senha_hint">Senha</string>
     <string name="login_input_usuario_hint">Usuário</string>
     <string name="login_mensagem_usuario_inativo">%s, seu usuário está inativo</string>
     <string name="login_titulo">Login</string>
+    <!-- ordem -->
+    <string name="ordem_cadastro_button_adicionar_hint">ADICIONAR</string>
+    <string name="ordem_cadastro_button_alterar_hint">ALTERAR</string>
+    <string name="ordem_cadastro_button_salvar_hint">SALVAR ALTERAÇÕES</string>
+    <string name="ordem_cadastro_input_itens_ordem_servico_text">Visualizar serviços</string>
+    <string name="ordem_cadastro_label_calendario_hint">Calendário</string>
+    <string name="ordem_cadastro_label_cliente_hint">Cliente</string>
+    <string name="ordem_cadastro_label_id_hint">Código</string>
+    <string name="ordem_cadastro_label_itens_ordem_servico_hint">Serviços</string>
+    <string name="ordem_cadastro_label_nenhum_cliente_hint">Pesquisar clientes</string>
+    <string name="ordem_cadastro_label_nenhum_item_ordem_servico_hint">Nenhum serviço</string>
+    <string name="ordem_cadastro_label_observacao_hint">Observação</string>
+    <string name="ordem_cadastro_label_situacao_hint">Situação</string>
+    <string name="ordem_cadastro_label_tipo_hint">Tipo</string>
+    <string name="ordem_cadastro_mensagem_cliente_nao_cliente">Sem perfil de cliente</string>
+    <string name="ordem_cadastro_radio_orcamento">Orçamento</string>
+    <string name="ordem_cadastro_radio_ordem_servico">Ordem de Serviço</string>
+    <string name="ordem_cadastro_titulo">Ordem</string>
+    <string name="ordens_pesquisa_label_0_registros_hint">0 registros</string>
+    <string name="ordens_pesquisa_label_cliente_hint">Cliente</string>
+    <string name="ordens_pesquisa_label_id_hint">@string/ordem_cadastro_label_id_hint</string>
+    <string name="ordens_pesquisa_label_tipo_hint">@string/ordem_cadastro_label_tipo_hint</string>
+    <string name="ordens_pesquisa_titulo">Ordens</string>
     <!-- pessoa -->
     <string name="pessoa_cadastro_button_adicionar_hint">ADICIONAR</string>
     <string name="pessoa_cadastro_button_alterar_hint">ALTERAR</string>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?><!-- @layout/view_lista_ordens.xml -->
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/view_lista_ordens"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/label_id"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/list_margin"
+        android:layout_marginLeft="@dimen/list_margin"
+        android:layout_marginRight="@dimen/list_margin"
+        android:layout_marginStart="@dimen/list_margin"
+        android:layout_marginTop="@dimen/list_margin"
+        android:hint="@string/ordens_pesquisa_label_id_hint"
+        android:textSize="@dimen/list_title_textSize"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/label_cliente"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/list_margin"
+        android:layout_marginLeft="@dimen/list_margin"
+        android:layout_marginRight="@dimen/list_margin"
+        android:layout_marginStart="@dimen/list_margin"
+        android:hint="@string/ordens_pesquisa_label_cliente_hint"
+        android:textSize="@dimen/list_content_textSize"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/label_id" />
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/label_tipo"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/list_margin"
+        android:layout_marginLeft="@dimen/list_margin"
+        android:layout_marginRight="@dimen/list_margin"
+        android:layout_marginStart="@dimen/list_margin"
+        android:hint="@string/ordens_pesquisa_label_tipo_hint"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/label_cliente" />
+
+    <android.support.v7.widget.AppCompatImageButton
+        android:id="@+id/button_remover_ordem"
+        android:layout_width="@dimen/round_button_small_width"
+        android:layout_height="@dimen/round_button_small_height"
+        android:layout_marginEnd="@dimen/button_margin"
+        android:layout_marginRight="@dimen/button_margin"
+        android:background="@drawable/layout_componente_arredondado_transparente"
+        app:layout_constraintBottom_toBottomOf="@id/label_tipo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/label_tipo"
+        app:srcCompat="@drawable/ic_lixeira_tomato_24dp" />
+
+    <View
+        android:id="@+id/divider_ordem"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/list_divider_height"
+        android:layout_marginTop="@dimen/list_margin"
+        android:background="@color/accent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/label_tipo" />
+</android.support.constraint.ConstraintLayout>

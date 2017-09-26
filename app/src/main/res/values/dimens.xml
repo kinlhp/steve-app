@@ -30,6 +30,10 @@
     <!-- navigation -->
     <dimen name="navigation_header_spacing_vertical">8dp</dimen>
     <dimen name="navigation_header_height">176dp</dimen>
+    <!-- radio -->
+    <dimen name="radio_button_margin">16dp</dimen>
+    <dimen name="radio_button_textSize">18sp</dimen>
+    <dimen name="radio_group_margin">16dp</dimen>
     <!-- spinner -->
     <dimen name="spinner_height">50dp</dimen>
     <dimen name="spinner_margin">16dp</dimen>

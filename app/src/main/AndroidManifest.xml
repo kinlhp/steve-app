@@ -57,6 +57,17 @@
         </activity>
 
         <activity
+            android:name=".atividade.OrdemActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/ordem_cadastro_titulo"
+            android:parentActivityName=".atividade.DashboardActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".atividade.DashboardActivity" />
+        </activity>
+
+        <activity
             android:name=".atividade.PessoaActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/pessoa_cadastro_titulo"

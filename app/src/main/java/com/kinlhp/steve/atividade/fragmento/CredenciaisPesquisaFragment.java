@@ -52,7 +52,8 @@ public class CredenciaisPesquisaFragment extends Fragment
 	private static final long serialVersionUID = -8376353501525687443L;
 	private static final String CREDENCIAIS = "credenciais";
 	private static final String LINKS = "_links";
-	private static final String PAGINA_0 = "credenciais?page=0&size=20";
+	private static final String PAGINA_0 =
+			"credenciais?sort=usuario,asc&page=0&size=20";
 	private AdaptadorRecyclerCredenciais mAdaptadorCredenciais;
 	private ArrayList<Credencial> mCredenciais = new ArrayList<>();
 	private Links mLinks;

@@ -311,6 +311,11 @@ public class PessoaCadastroFragment extends Fragment
 					isIeRgValido();
 				}
 				break;
+			case R.id.input_abertura_nascimento:
+				if (!focused) {
+					isAberturaNascimentoValido();
+				}
+				break;
 		}
 	}
 
@@ -887,6 +892,26 @@ public class PessoaCadastroFragment extends Fragment
 		}
 	}
 
+	private boolean isAberturaNascimentoValido() {
+		if (!TextUtils.isEmpty(mInputAberturaNascimento.getText())) {
+			Date data = new Date(System.currentTimeMillis());
+			try {
+				data = Data
+						.deStringData(mInputAberturaNascimento.getText().toString());
+			} catch (ParseException e) {
+				Toast.makeText(getActivity(), getString(R.string.suporte_mensagem_conversao_data), Toast.LENGTH_LONG)
+						.show();
+			}
+			if (data.compareTo(Data.fimDoDia()) > 0) {
+				mLabelAberturaNascimento.setError(getString(R.string.input_invalido));
+				return false;
+			}
+		}
+		mLabelAberturaNascimento.setError(null);
+		mLabelAberturaNascimento.setErrorEnabled(false);
+		return true;
+	}
+
 	private boolean isCnpjValido() {
 		try {
 			new CNPJValidator().assertValid(mInputCnpjCpf.getText().toString());
@@ -922,8 +947,9 @@ public class PessoaCadastroFragment extends Fragment
 
 	private boolean isFormularioValido() {
 		return isCnpjCpfValido()
+				&& isNomeRazaoValido()
 				&& isIeRgValido()
-				&& isNomeRazaoValido();
+				&& isAberturaNascimentoValido();
 	}
 
 	private boolean isIeRgValido() {
@@ -951,6 +977,18 @@ public class PessoaCadastroFragment extends Fragment
 		return true;
 	}
 
+	private void iterarAberturaNascimento() throws ParseException {
+		mPessoaAuxiliar
+				.setAberturaNascimento(TextUtils.isEmpty(mInputAberturaNascimento.getText())
+						? null
+						: Data.deStringData(mInputAberturaNascimento.getText().toString()));
+//		try {
+//		} catch (ParseException e) {
+//			Snackbar.make(mButtonPessoasPesquisa, getString(R.string.suporte_mensagem_conversao_data), Snackbar.LENGTH_LONG)
+//					.show();
+//		}
+	}
+
 	private void iterarFormulario() {
 		mPessoaAuxiliar.setTipo((Pessoa.Tipo) mSpinnerTipo.getSelectedItem());
 		mPessoaAuxiliar.setCnpjCpf(mInputCnpjCpf.getText().toString());
@@ -958,12 +996,8 @@ public class PessoaCadastroFragment extends Fragment
 		mPessoaAuxiliar
 				.setFantasiaSobrenome(mInputFantasiaSobrenome.getText().toString());
 		mPessoaAuxiliar.setIeRg(mInputIeRg.getText().toString());
-
 		try {
-			mPessoaAuxiliar
-					.setAberturaNascimento(TextUtils.isEmpty(mInputAberturaNascimento.getText())
-							? null
-							: Data.deStringData(mInputAberturaNascimento.getText().toString()));
+			iterarAberturaNascimento();
 		} catch (ParseException e) {
 			Snackbar.make(mButtonPessoasPesquisa, getString(R.string.suporte_mensagem_conversao_data), Snackbar.LENGTH_LONG)
 					.show();

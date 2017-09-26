@@ -17,7 +17,7 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * Created by luis on 9/5/17.
+ * Created by kin on 9/5/17.
  */
 public class AdaptadorRecyclerEmails
 		extends RecyclerView.Adapter<AdaptadorRecyclerEmails.ViewHolderEmails>
@@ -45,9 +45,8 @@ public class AdaptadorRecyclerEmails
 		viewHolder.mLabelNomeContato
 				.setText(!TextUtils.isEmpty(email.getNomeContato())
 						? email.getNomeContato() : "");
-		viewHolder.mButtonRemover
-				.setVisibility(email.getId() == null
-						? View.VISIBLE : View.GONE);
+		viewHolder.mButtonRemover.setVisibility(email.getId() == null
+				? View.VISIBLE : View.GONE);
 	}
 
 	@Override

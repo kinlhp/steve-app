@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8"?><!-- @layout/fragment_ordem_cadastro.xml -->
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_ordem_cadastro"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".atividade.fragmento.OrdemCadastroFragment">
+
+    <ProgressBar
+        android:id="@+id/progress_bar_consumir_ordens"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="@dimen/floating_action_button_width"
+        android:layout_height="@dimen/floating_action_button_height"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/floating_action_button_margin"
+        android:visibility="gone" />
+
+    <ScrollView
+        android:id="@+id/scroll_ordem_cadastro"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/form_ordem_cadastro"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ProgressBar
+                android:id="@+id/progress_bar_consumir_por_id"
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/button_consumir_por_id"
+                app:layout_constraintEnd_toEndOf="@+id/button_consumir_por_id"
+                app:layout_constraintLeft_toLeftOf="@+id/button_consumir_por_id"
+                app:layout_constraintRight_toRightOf="@+id/button_consumir_por_id"
+                app:layout_constraintStart_toStartOf="@+id/button_consumir_por_id"
+                app:layout_constraintTop_toTopOf="@+id/button_consumir_por_id" />
+
+            <ProgressBar
+                android:id="@+id/progress_bar_adicionar"
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/button_adicionar"
+                app:layout_constraintEnd_toEndOf="@+id/button_adicionar"
+                app:layout_constraintLeft_toLeftOf="@+id/button_adicionar"
+                app:layout_constraintRight_toRightOf="@+id/button_adicionar"
+                app:layout_constraintStart_toStartOf="@+id/button_adicionar"
+                app:layout_constraintTop_toTopOf="@+id/button_adicionar" />
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/label_id"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/label_margin"
+                app:layout_constraintEnd_toStartOf="@+id/button_consumir_por_id"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@+id/button_consumir_por_id"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/input_id"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/ordem_cadastro_label_id_hint"
+                    android:imeOptions="actionSearch"
+                    android:inputType="number"
+                    android:maxLength="5" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.v7.widget.AppCompatImageButton
+                android:id="@+id/button_consumir_por_id"
+                android:layout_width="@dimen/round_button_width"
+                android:layout_height="@dimen/round_button_height"
+                android:layout_marginEnd="@dimen/button_margin"
+                android:layout_marginRight="@dimen/button_margin"
+                android:background="@drawable/layout_componente_arredondado_transparente"
+                app:layout_constraintBottom_toBottomOf="@+id/label_id"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/label_id"
+                app:srcCompat="@drawable/ic_consumir_por_id_accent_24dp" />
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/label_cliente"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/label_margin"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/label_id">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/input_cliente"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:focusable="false"
+                    android:hint="@string/ordem_cadastro_label_cliente_hint"
+                    android:inputType="textCapWords|textPersonName"
+                    android:maxLength="128" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/label_tipo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/label_margin"
+                android:hint="@string/ordem_cadastro_label_tipo_hint"
+                android:textSize="@dimen/label_textSize"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/label_cliente" />
+
+            <RadioGroup
+                android:id="@+id/radio_group_tipo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/radio_group_margin"
+                android:layout_marginLeft="@dimen/radio_group_margin"
+                android:layout_marginRight="@dimen/radio_group_margin"
+                android:layout_marginStart="@dimen/radio_group_margin"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/label_tipo">
+
+                <android.support.v7.widget.AppCompatRadioButton
+                    android:id="@+id/radio_button_ordem_servico"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/radio_button_margin"
+                    android:layout_marginRight="@dimen/radio_button_margin"
+                    android:checked="true"
+                    android:text="@string/ordem_cadastro_radio_ordem_servico"
+                    android:textSize="@dimen/radio_button_textSize" />
+
+                <android.support.v7.widget.AppCompatRadioButton
+                    android:id="@+id/radio_button_orcamento"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/radio_button_margin"
+                    android:layout_marginStart="@dimen/radio_button_margin"
+                    android:checked="false"
+                    android:text="@string/ordem_cadastro_radio_orcamento"
+                    android:textSize="@dimen/radio_button_textSize" />
+            </RadioGroup>
+
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/label_situacao"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/label_margin"
+                android:hint="@string/ordem_cadastro_label_situacao_hint"
+                android:textSize="@dimen/label_textSize"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/radio_group_tipo" />
+
+            <android.support.v7.widget.AppCompatSpinner
+                android:id="@+id/spinner_situacao"
+                style="@style/Base.Widget.AppCompat.Spinner.Underlined"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_marginEnd="@dimen/spinner_margin"
+                android:layout_marginLeft="@dimen/spinner_margin"
+                android:layout_marginRight="@dimen/spinner_margin"
+                android:layout_marginStart="@dimen/spinner_margin"
+                android:spinnerMode="dropdown"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/label_situacao" />
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/label_itens_ordem_servico"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/label_margin"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/spinner_situacao">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/input_itens_ordem_servico"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:focusable="false"
+                    android:hint="@string/ordem_cadastro_label_nenhum_item_ordem_servico_hint" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/label_observacao"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/label_margin"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/label_itens_ordem_servico">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/input_observacao"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/ordem_cadastro_label_observacao_hint"
+                    android:inputType="textLongMessage|textMultiLine"
+                    android:maxLength="256"
+                    android:overScrollMode="always"
+                    android:scrollHorizontally="false"
+                    android:scrollbarStyle="insideInset"
+                    android:scrollbars="vertical" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/button_adicionar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/last_view_marginBottom"
+                android:layout_marginTop="@dimen/button_margin"
+                android:background="@drawable/layout_componente_arredondado_accent"
+                android:hint="@string/ordem_cadastro_button_adicionar_hint"
+                android:paddingEnd="@dimen/round_button_padding"
+                android:paddingLeft="@dimen/round_button_padding"
+                android:paddingRight="@dimen/round_button_padding"
+                android:paddingStart="@dimen/round_button_padding"
+                android:textColorHint="@android:color/white"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/label_observacao" />
+        </android.support.constraint.ConstraintLayout>
+    </ScrollView>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/button_ordens_pesquisa"
+        android:layout_width="@dimen/floating_action_button_width"
+        android:layout_height="@dimen/floating_action_button_height"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/floating_action_button_margin"
+        app:srcCompat="@drawable/ic_pesquisa_ordem_white_24dp" />
+</android.support.design.widget.CoordinatorLayout>

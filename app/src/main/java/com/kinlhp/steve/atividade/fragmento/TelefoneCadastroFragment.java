@@ -158,14 +158,6 @@ public class TelefoneCadastroFragment extends Fragment
 	}
 
 	private void alternarButtonAdicionar() {
-		/*
-		Método contains não se comparta corretamente
-		 */
-//		if (mTelefone.getPessoa().getTelefones().contains(mTelefone)) {
-//			mButtonAdicionar.setHint(mTelefone.getId() == null
-//					? R.string.telefone_cadastro_button_alterar_hint
-//					: R.string.telefone_cadastro_button_salvar_hint);
-//		}
 		// TODO: 9/15/17 resolver de forma elegante a inconsistência acima (método contains não se comporta corretamente)
 		List<Telefone> telefones =
 				new ArrayList<>(mTelefone.getPessoa().getTelefones());

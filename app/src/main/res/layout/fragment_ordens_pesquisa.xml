@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?><!-- @layout/fragment_ordens_pesquisa.xml -->
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_ordens_pesquisa"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".atividade.fragmento.OrdensPesquisaFragment">
+
+    <ProgressBar
+        android:id="@+id/progress_bar_consumir_ordens_paginado"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="@dimen/round_button_width"
+        android:layout_height="@dimen/round_button_height"
+        android:layout_marginBottom="@dimen/last_view_marginBottom"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_ordens"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:scrollbars="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/progress_bar_consumir_ordens_paginado"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/label_0_registros"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:hint="@string/ordens_pesquisa_label_0_registros_hint"
+        android:textStyle="bold|italic"
+        app:layout_constraintBottom_toBottomOf="@+id/recycler_ordens"
+        app:layout_constraintEnd_toEndOf="@+id/recycler_ordens"
+        app:layout_constraintLeft_toLeftOf="@+id/recycler_ordens"
+        app:layout_constraintRight_toRightOf="@+id/recycler_ordens"
+        app:layout_constraintStart_toStartOf="@+id/recycler_ordens"
+        app:layout_constraintTop_toTopOf="@+id/recycler_ordens" />
+</android.support.constraint.ConstraintLayout>

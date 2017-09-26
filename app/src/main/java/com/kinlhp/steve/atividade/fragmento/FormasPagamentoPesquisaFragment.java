@@ -20,15 +20,19 @@ import android.widget.Toast;
 
 import com.kinlhp.steve.R;
 import com.kinlhp.steve.atividade.adaptador.AdaptadorRecyclerFormasPagamento;
+import com.kinlhp.steve.dominio.CondicaoPagamento;
 import com.kinlhp.steve.dominio.FormaPagamento;
+import com.kinlhp.steve.dto.CondicaoPagamentoDTO;
 import com.kinlhp.steve.dto.FormaPagamentoDTO;
 import com.kinlhp.steve.href.HRef;
+import com.kinlhp.steve.mapeamento.CondicaoPagamentoMapeamento;
 import com.kinlhp.steve.mapeamento.FormaPagamentoMapeamento;
 import com.kinlhp.steve.requisicao.Falha;
 import com.kinlhp.steve.requisicao.FormaPagamentoRequisicao;
 import com.kinlhp.steve.resposta.Colecao;
 import com.kinlhp.steve.resposta.ColecaoCallback;
 import com.kinlhp.steve.resposta.Links;
+import com.kinlhp.steve.util.Parametro;
 import com.kinlhp.steve.util.Teclado;
 
 import java.io.Serializable;
@@ -44,16 +48,19 @@ public class FormasPagamentoPesquisaFragment extends Fragment
 		AdaptadorRecyclerFormasPagamento.OnItemLongClickListener,
 		MenuItem.OnActionExpandListener, SearchView.OnQueryTextListener,
 		Serializable {
-	private static final long serialVersionUID = -5437208456414152523L;
+	private static final long serialVersionUID = 408735893653785118L;
 	private static final String FORMAS_PAGAMENTO = "formasPagamento";
 	private static final String LINKS = "_links";
-	private static final String PAGINA_0 = "formaspagamento?page=0&size=20";
+	private static final String PAGINA_0 =
+			"formaspagamento?sort=descricao,asc&page=0&size=20";
 	private AdaptadorRecyclerFormasPagamento mAdaptadorFormasPagamento;
+	private FormaPagamento mFormaPagamentoSelecionada;
 	private ArrayList<FormaPagamento> mFormasPagamento = new ArrayList<>();
 	private Links mLinks;
 	private OnFormaPagamentoSelecionadoListener mOnFormaPagamentoSelecionadoListener;
 	private OnLongoFormaPagamentoSelecionadoListener mOnLongoFormaPagamentoSelecionadoListener;
 	private int mTarefasPendentes;
+	private View mViewSelecionada;
 
 	private AppCompatTextView mLabel0Registros;
 	private ProgressBar mProgressBarConsumirFormasPagamentoPaginado;
@@ -119,22 +126,16 @@ public class FormasPagamentoPesquisaFragment extends Fragment
 
 	@Override
 	public void onItemClick(View view, int posicao) {
-		FormaPagamento formaPagamento = mFormasPagamento.get(posicao);
-		if (mOnFormaPagamentoSelecionadoListener != null) {
-			mOnFormaPagamentoSelecionadoListener
-					.onFormaPagamentoSelecionado(view, formaPagamento);
-		}
-		getActivity().onBackPressed();
+		mFormaPagamentoSelecionada = mFormasPagamento.get(posicao);
+		mViewSelecionada = view;
+		consumirFormaPagamentoGETCondicoesPagamento();
 	}
 
 	@Override
 	public void onItemLongClickListener(View view, int posicao) {
-		FormaPagamento formaPagamento = mFormasPagamento.get(posicao);
-		if (mOnLongoFormaPagamentoSelecionadoListener != null) {
-			mOnLongoFormaPagamentoSelecionadoListener
-					.onLongoFormaPagamentoSelecionado(view, formaPagamento);
-		}
-		getActivity().onBackPressed();
+		mFormaPagamentoSelecionada = mFormasPagamento.get(posicao);
+		mViewSelecionada = view;
+		consumirFormaPagamentoGETCondicoesPagamento();
 	}
 
 	@Override
@@ -197,6 +198,38 @@ public class FormasPagamentoPesquisaFragment extends Fragment
 				? View.VISIBLE : View.GONE);
 	}
 
+	private ColecaoCallback<Colecao<CondicaoPagamentoDTO>> callbackFormaPagamentoGETCondicoesPagamento() {
+		return new ColecaoCallback<Colecao<CondicaoPagamentoDTO>>() {
+
+			@Override
+			public void onFailure(@NonNull Call<Colecao<CondicaoPagamentoDTO>> chamada,
+			                      @NonNull Throwable causa) {
+				--mTarefasPendentes;
+				ocultarProgresso(mProgressBarConsumirFormasPagamentoPaginado, false);
+				Falha.tratar(mProgressBarConsumirFormasPagamentoPaginado, causa);
+			}
+
+			@Override
+			public void onResponse(@NonNull Call<Colecao<CondicaoPagamentoDTO>> chamada,
+			                       @NonNull Response<Colecao<CondicaoPagamentoDTO>> resposta) {
+				--mTarefasPendentes;
+				if (!resposta.isSuccessful()) {
+					ocultarProgresso(mProgressBarConsumirFormasPagamentoPaginado, false);
+					Falha.tratar(mProgressBarConsumirFormasPagamentoPaginado, resposta);
+				} else {
+					Set<CondicaoPagamentoDTO> dtos = resposta.body()
+							.getEmbedded().getDtos();
+					Set<CondicaoPagamento> condicoesPagamento =
+							CondicaoPagamentoMapeamento
+									.paraDominios(dtos, mFormaPagamentoSelecionada);
+					mFormaPagamentoSelecionada.getCondicoesPagamento()
+							.addAll(condicoesPagamento);
+					ocultarProgresso(mProgressBarConsumirFormasPagamentoPaginado, true);
+				}
+			}
+		};
+	}
+
 	private ColecaoCallback<Colecao<FormaPagamentoDTO>> callbackFormasPagamentoGETPaginado() {
 		return new ColecaoCallback<Colecao<FormaPagamentoDTO>>() {
 
@@ -204,7 +237,7 @@ public class FormasPagamentoPesquisaFragment extends Fragment
 			public void onFailure(@NonNull Call<Colecao<FormaPagamentoDTO>> chamada,
 			                      @NonNull Throwable causa) {
 				--mTarefasPendentes;
-				ocultarProgresso(mProgressBarConsumirFormasPagamentoPaginado);
+				ocultarProgresso(mProgressBarConsumirFormasPagamentoPaginado, false);
 				Falha.tratar(mProgressBarConsumirFormasPagamentoPaginado, causa);
 			}
 
@@ -226,9 +259,21 @@ public class FormasPagamentoPesquisaFragment extends Fragment
 					alternarLabel0Registros();
 					mLinks = colecao.getLinks();
 				}
-				ocultarProgresso(mProgressBarConsumirFormasPagamentoPaginado);
+				ocultarProgresso(mProgressBarConsumirFormasPagamentoPaginado, false);
 			}
 		};
+	}
+
+	private void consumirFormaPagamentoGETCondicoesPagamento() {
+		exibirProgresso(mProgressBarConsumirFormasPagamentoPaginado);
+		// TODO: 9/25/17 corrigir hard-coded
+		String url = Parametro.get(Parametro.Chave.URL_BASE).toString()
+				.concat("formaspagamento/%d/condicoesPagamento");
+		HRef href =
+				new HRef(String.format(url, mFormaPagamentoSelecionada.getId()));
+		++mTarefasPendentes;
+		FormaPagamentoRequisicao
+				.getCondicoesPagamento(callbackFormaPagamentoGETCondicoesPagamento(), href);
 	}
 
 	private void consumirFormasPagamentoGETPaginado(@NonNull HRef href) {
@@ -244,9 +289,22 @@ public class FormasPagamentoPesquisaFragment extends Fragment
 		progresso.setVisibility(View.VISIBLE);
 	}
 
-	private void ocultarProgresso(@NonNull ProgressBar progresso) {
+	private void ocultarProgresso(@NonNull ProgressBar progresso,
+	                              boolean chamarOuvinte) {
 		if (mTarefasPendentes <= 0) {
 			progresso.setVisibility(View.GONE);
+			if (chamarOuvinte) {
+				// TODO: 9/18/17 definir implementações diferentes para clique curto e longo
+				if (mOnLongoFormaPagamentoSelecionadoListener != null) {
+					mOnLongoFormaPagamentoSelecionadoListener
+							.onLongoFormaPagamentoSelecionado(mViewSelecionada, mFormaPagamentoSelecionada);
+				}
+				if (mOnFormaPagamentoSelecionadoListener != null) {
+					mOnFormaPagamentoSelecionadoListener
+							.onFormaPagamentoSelecionado(mViewSelecionada, mFormaPagamentoSelecionada);
+				}
+				getActivity().onBackPressed();
+			}
 		}
 	}
 

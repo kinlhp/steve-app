@@ -1,6 +1,8 @@
 package com.kinlhp.steve.dominio;
 
 import java.math.BigInteger;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,8 +21,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @Setter
 public class FormaPagamento extends Dominio<BigInteger> {
-	private static final long serialVersionUID = -6636990457235789054L;
+	private static final long serialVersionUID = 7158932283229250348L;
+	@Builder.Default
+	private Set<CondicaoPagamento> condicoesPagamento = new LinkedHashSet<>();
 	private String descricao;
-
-	// TODO: 9/20/17 implementar condições de pagamento (Set<CondicaoPagamento>)
 }

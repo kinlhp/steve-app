@@ -17,7 +17,7 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * Created by luis on 9/5/17.
+ * Created by kin on 9/5/17.
  */
 public class AdaptadorRecyclerEnderecos
 		extends RecyclerView.Adapter<AdaptadorRecyclerEnderecos.ViewHolderEnderecos>
@@ -44,9 +44,8 @@ public class AdaptadorRecyclerEnderecos
 		viewHolder.mLabelNomeContato
 				.setText(!TextUtils.isEmpty(endereco.getNomeContato())
 						? endereco.getNomeContato() : "");
-		viewHolder.mButtonRemover
-				.setVisibility(endereco.getId() == null
-						? View.VISIBLE : View.GONE);
+		viewHolder.mButtonRemover.setVisibility(endereco.getId() == null
+				? View.VISIBLE : View.GONE);
 	}
 
 	@Override

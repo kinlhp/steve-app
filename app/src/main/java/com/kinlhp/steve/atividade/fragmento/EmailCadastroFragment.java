@@ -161,14 +161,6 @@ public class EmailCadastroFragment extends Fragment
 	}
 
 	private void alternarButtonAdicionar() {
-		/*
-		Método contains não se comparta corretamente
-		 */
-//		if (mEmail.getPessoa().getEmails().contains(mEmail)) {
-//			mButtonAdicionar.setHint(mEmail.getId() == null
-//					? R.string.email_cadastro_button_alterar_hint
-//					: R.string.email_cadastro_button_salvar_hint);
-//		}
 		// TODO: 9/15/17 resolver de forma elegante a inconsistência acima (método contains não se comporta corretamente)
 		List<Email> emails = new ArrayList<>(mEmail.getPessoa().getEmails());
 		if (emails.contains(mEmail)) {

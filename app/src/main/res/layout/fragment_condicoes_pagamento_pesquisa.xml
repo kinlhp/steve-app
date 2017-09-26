@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?><!-- @layout/fragment_condicoes_pagamento_pesquisa.xml -->
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_condicoes_pagamento_pesquisa"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".atividade.fragmento.CondicoesPagamentoPesquisaFragment">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_condicoes_pagamento"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:scrollbars="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/button_novo_condicao_pagamento"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <android.support.v7.widget.AppCompatImageButton
+        android:id="@+id/button_novo_condicao_pagamento"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/button_height"
+        android:layout_marginBottom="@dimen/last_view_marginBottom"
+        android:background="@drawable/layout_componente_arredondado_transparente"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/ic_novo_condicao_pagamento_accent_24dp" />
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/label_0_registros"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:hint="@string/condicoes_pagamento_pesquisa_label_0_registros_hint"
+        android:textStyle="bold|italic"
+        app:layout_constraintBottom_toBottomOf="@+id/recycler_condicoes_pagamento"
+        app:layout_constraintEnd_toEndOf="@+id/recycler_condicoes_pagamento"
+        app:layout_constraintLeft_toLeftOf="@+id/recycler_condicoes_pagamento"
+        app:layout_constraintRight_toRightOf="@+id/recycler_condicoes_pagamento"
+        app:layout_constraintStart_toStartOf="@+id/recycler_condicoes_pagamento"
+        app:layout_constraintTop_toTopOf="@+id/recycler_condicoes_pagamento" />
+</android.support.constraint.ConstraintLayout>

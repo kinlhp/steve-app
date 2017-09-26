@@ -17,7 +17,7 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * Created by luis on 9/5/17.
+ * Created by kin on 9/5/17.
  */
 public class AdaptadorRecyclerTelefones
 		extends RecyclerView.Adapter<AdaptadorRecyclerTelefones.ViewHolderTelefones>
@@ -49,8 +49,7 @@ public class AdaptadorRecyclerTelefones
 	}
 
 	@Override
-	public ViewHolderTelefones onCreateViewHolder(ViewGroup parent,
-	                                              int viewType) {
+	public ViewHolderTelefones onCreateViewHolder(ViewGroup parent, int viewType) {
 		View view = LayoutInflater.from(parent.getContext())
 				.inflate(R.layout.view_lista_telefones, parent, false);
 		return new ViewHolderTelefones(view);

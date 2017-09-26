@@ -624,7 +624,7 @@ public class CredencialCadastroFragment extends Fragment
 		}
 		if (!mCredencial.getFuncionario().isPerfilUsuario()) {
 			mLabelFuncionario
-					.setError(getString(R.string.credencial_cadastro_input_funcionario_nao_usuario));
+					.setError(getString(R.string.credencial_cadastro_mensagem_funcionario_nao_usuario));
 			return false;
 		}
 		mLabelFuncionario.setError(null);
@@ -661,8 +661,7 @@ public class CredencialCadastroFragment extends Fragment
 				.setPerfilAdministrador(credencialLogado.isPerfilAdministrador()
 						&& mSwitchPerfilAdministrador.isChecked());
 		mCredencialAuxiliar.setSituacao(mSwitchSituacao.isChecked()
-				? Credencial.Situacao.ATIVO
-				: Credencial.Situacao.INATIVO);
+				? Credencial.Situacao.ATIVO : Credencial.Situacao.INATIVO);
 		transcreverFuncionarioCredencial();
 	}
 

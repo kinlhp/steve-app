@@ -67,6 +67,9 @@ public class DashboardActivity extends AppCompatActivity
 			case R.id.subitem_forma_pagamento:
 				iniciarFormaPagamento();
 				break;
+			case R.id.subitem_ordem_servico:
+				iniciarOrdem();
+				break;
 			case R.id.subitem_pessoa:
 				iniciarPessoa();
 				break;
@@ -112,6 +115,11 @@ public class DashboardActivity extends AppCompatActivity
 		Intent intentFormaPagamento =
 				new Intent(this, FormaPagamentoActivity.class);
 		startActivityForResult(intentFormaPagamento, 0);
+	}
+
+	private void iniciarOrdem() {
+		Intent intentOrdem = new Intent(this, OrdemActivity.class);
+		startActivityForResult(intentOrdem, 0);
 	}
 
 	private void iniciarPessoa() {

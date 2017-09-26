@@ -26,7 +26,7 @@
             app:layout_constraintTop_toTopOf="@+id/button_consumir_por_cep" />
 
         <ProgressBar
-            android:id="@+id/progress_bar_consumir_por_uf"
+            android:id="@+id/progress_bar_consumir_uf"
             style="?android:attr/progressBarStyleLarge"
             android:layout_width="0dp"
             android:layout_height="0dp"

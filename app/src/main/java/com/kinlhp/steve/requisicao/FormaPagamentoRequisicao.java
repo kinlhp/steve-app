@@ -2,6 +2,7 @@ package com.kinlhp.steve.requisicao;
 
 import android.support.annotation.NonNull;
 
+import com.kinlhp.steve.dto.CondicaoPagamentoDTO;
 import com.kinlhp.steve.dto.FormaPagamentoDTO;
 import com.kinlhp.steve.href.HRef;
 import com.kinlhp.steve.recurso.FormaPagamentoRecurso;
@@ -16,7 +17,7 @@ import retrofit2.Callback;
  * Created by kin on 9/20/17.
  */
 public final class FormaPagamentoRequisicao implements Serializable {
-	private static final long serialVersionUID = 2195253635630104876L;
+	private static final long serialVersionUID = 6148099001450229444L;
 	private static final FormaPagamentoRecurso RECURSO = Requisicao
 			.criar(FormaPagamentoRecurso.class);
 
@@ -27,10 +28,10 @@ public final class FormaPagamentoRequisicao implements Serializable {
 		RECURSO.get().enqueue(callback);
 	}
 
-//	public static void getCondicoesPagamento(@NonNull Callback<Colecao<CondicaoPagamentoDTO>> callback,
-//	                                         @NonNull HRef condicoesPagamento) {
-//		RECURSO.getCondicoesPagamento(condicoesPagamento.getHref()).enqueue(callback);
-//	}
+	public static void getCondicoesPagamento(@NonNull Callback<Colecao<CondicaoPagamentoDTO>> callback,
+	                                         @NonNull HRef condicoesPagamento) {
+		RECURSO.getCondicoesPagamento(condicoesPagamento.getHref()).enqueue(callback);
+	}
 
 	public static void getPaginado(@NonNull Callback<Colecao<FormaPagamentoDTO>> callback,
 	                               @NonNull HRef pagina) {

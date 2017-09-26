@@ -61,7 +61,8 @@ public class PessoasPesquisaFragment extends Fragment
 		Serializable {
 	private static final long serialVersionUID = 7719005372445071516L;
 	private static final String LINKS = "_links";
-	private static final String PAGINA_0 = "pessoas?page=0&size=20";
+	private static final String PAGINA_0 =
+			"pessoas?sort=nomeRazao,asc&page=0&size=20";
 	private static final String PESSOAS = "pessoas";
 	private AdaptadorRecyclerPessoas mAdaptadorPessoas;
 	private ArrayList<Pessoa> mPessoas = new ArrayList<>();

@@ -19,6 +19,11 @@ import lombok.Setter;
 @NoArgsConstructor
 @Setter
 public class Servico extends Dominio<BigInteger> {
-	private static final long serialVersionUID = -484275206792008743L;
+	private static final long serialVersionUID = 6920041164563734422L;
 	private String descricao;
+
+	@Override
+	public String toString() {
+		return descricao;
+	}
 }

@@ -2,6 +2,7 @@ package com.kinlhp.steve.recurso;
 
 import android.support.annotation.NonNull;
 
+import com.kinlhp.steve.dto.CondicaoPagamentoDTO;
 import com.kinlhp.steve.dto.FormaPagamentoDTO;
 import com.kinlhp.steve.resposta.Colecao;
 
@@ -24,8 +25,8 @@ public interface FormaPagamentoRecurso {
 	@GET(value = "formaspagamento?sort=descricao,asc")
 	Call<Colecao<FormaPagamentoDTO>> get();
 
-//	@GET
-//	Call<Colecao<CondicaoPagamentoDTO>> getCondicoesPagamento(@NonNull @Url String href);
+	@GET
+	Call<Colecao<CondicaoPagamentoDTO>> getCondicoesPagamento(@NonNull @Url String href);
 
 	@GET
 	Call<Colecao<FormaPagamentoDTO>> getPaginado(@NonNull @Url String href);

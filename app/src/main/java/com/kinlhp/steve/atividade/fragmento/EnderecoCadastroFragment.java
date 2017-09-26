@@ -54,14 +54,14 @@ public class EnderecoCadastroFragment extends Fragment
 		implements View.OnClickListener, TextView.OnEditorActionListener,
 		View.OnFocusChangeListener, AdapterView.OnItemSelectedListener,
 		Serializable {
-	private static final long serialVersionUID = 7875571880510640617L;
+	private static final long serialVersionUID = -5512378900845349680L;
 	private static final String ENDERECO = "endereco";
 	private static final String ENDERECO_AUXILIAR = "enderecoAuxiliar";
 	private AdaptadorSpinner<Endereco.Tipo> mAdaptadorTipos;
 	private AdaptadorSpinner<Uf.Sigla> mAdaptadorUfs;
 	private Endereco mEndereco;
-	private Endereco mEnderecoAuxiliar;
 	private OnEnderecoAdicionadoListener mOnEnderecoAdicionadoListener;
+	private Endereco mEnderecoAuxiliar;
 	private boolean mPressionarVoltar;
 	private int mTarefasPendentes;
 	private ArrayList<Endereco.Tipo> mTipos;
@@ -84,7 +84,7 @@ public class EnderecoCadastroFragment extends Fragment
 	private TextInputLayout mLabelNumero;
 	private ProgressBar mProgressBarAdicionar;
 	private ProgressBar mProgressBarConsumirPorCep;
-	private ProgressBar mProgressBarConsumirPorUf;
+	private ProgressBar mProgressBarConsumirUf;
 	private ScrollView mScrollEnderecoCadastro;
 	private AppCompatSpinner mSpinnerTipo;
 	private AppCompatSpinner mSpinnerUf;
@@ -159,8 +159,8 @@ public class EnderecoCadastroFragment extends Fragment
 		mProgressBarAdicionar = view.findViewById(R.id.progress_bar_adicionar);
 		mProgressBarConsumirPorCep = view
 				.findViewById(R.id.progress_bar_consumir_por_cep);
-		mProgressBarConsumirPorUf = view
-				.findViewById(R.id.progress_bar_consumir_por_uf);
+		mProgressBarConsumirUf = view
+				.findViewById(R.id.progress_bar_consumir_uf);
 		mSpinnerTipo = view.findViewById(R.id.spinner_tipo);
 		mSpinnerUf = view.findViewById(R.id.spinner_uf);
 
@@ -267,14 +267,6 @@ public class EnderecoCadastroFragment extends Fragment
 	}
 
 	private void alternarButtonAdicionar() {
-		/*
-		Método contains não se comparta corretamente
-		 */
-//		if (mEndereco.getPessoa().getEnderecos().contains(mEndereco)) {
-//			mButtonAdicionar.setHint(mEndereco.getId() == null
-//					? R.string.endereco_cadastro_button_alterar_hint
-//					: R.string.endereco_cadastro_button_salvar_hint);
-//		}
 		// TODO: 9/15/17 resolver de forma elegante a inconsistência acima (método contains não se comporta corretamente)
 		List<Endereco> enderecos =
 				new ArrayList<>(mEndereco.getPessoa().getEnderecos());
@@ -382,7 +374,7 @@ public class EnderecoCadastroFragment extends Fragment
 			                      @NonNull Throwable causa) {
 				--mTarefasPendentes;
 				mPressionarVoltar = false;
-				ocultarProgresso(mProgressBarConsumirPorUf, mSpinnerUf);
+				ocultarProgresso(mProgressBarConsumirUf, mSpinnerUf);
 				Falha.tratar(mButtonAdicionar, causa);
 			}
 
@@ -398,7 +390,7 @@ public class EnderecoCadastroFragment extends Fragment
 					mEnderecoAuxiliar.setUf(uf);
 				}
 				mPressionarVoltar = false;
-				ocultarProgresso(mProgressBarConsumirPorUf, mSpinnerUf);
+				ocultarProgresso(mProgressBarConsumirUf, mSpinnerUf);
 			}
 		};
 	}
@@ -443,7 +435,7 @@ public class EnderecoCadastroFragment extends Fragment
 	private void consumirUfGETPorSigla(@NonNull Uf.Sigla sigla) {
 		mTarefasPendentes = 0;
 		mPressionarVoltar = false;
-		exibirProgresso(mProgressBarConsumirPorUf, null);
+		exibirProgresso(mProgressBarConsumirUf, null);
 		mSpinnerUf.setVisibility(View.INVISIBLE);
 		Teclado.ocultar(getActivity(), mSpinnerUf);
 		UfDTO.SiglaDTO siglaDTO = UfMapeamento.SiglaMapeamento.paraDTO(sigla);
@@ -582,8 +574,7 @@ public class EnderecoCadastroFragment extends Fragment
 		mEnderecoAuxiliar.setIbge(enderecamento.getIbge());
 		mInputCep.requestFocus();
 		mInputCep.setText(enderecamento.getCep() == null
-				? ""
-				: enderecamento.getCep().replace("-", ""));
+				? "" : enderecamento.getCep().replace("-", ""));
 		mInputLogradouro.requestFocus();
 		mInputLogradouro.setText(enderecamento.getLogradouro() == null
 				? "" : enderecamento.getLogradouro());
