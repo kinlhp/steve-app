@@ -61,6 +61,9 @@ public class DashboardActivity extends AppCompatActivity
 	@Override
 	public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 		switch (item.getItemId()) {
+			case R.id.subitem_conta_receber:
+				iniciarContaReceber();
+				break;
 			case R.id.subitem_credencial:
 				iniciarCredencial();
 				break;
@@ -104,6 +107,11 @@ public class DashboardActivity extends AppCompatActivity
 
 	private void exibirDashboard() {
 		mDrawerLayout.openDrawer(GravityCompat.START);
+	}
+
+	private void iniciarContaReceber() {
+		Intent intentContaReceber = new Intent(this, ContaReceberActivity.class);
+		startActivityForResult(intentContaReceber, 0);
 	}
 
 	private void iniciarCredencial() {

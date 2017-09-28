@@ -65,10 +65,15 @@ public class OrdemActivity extends AppCompatActivity
 	@Override
 	public void onItemOrdemServicoAdicionado(@NonNull View view,
 	                                         @NonNull ItemOrdemServico itemOrdemServico) {
-		// TODO: 9/13/17 resolver de forma elegante a inconsistência acima (método contains não se comporta corretamente)
-		List<ItemOrdemServico> itensOrdemServico =
-				new ArrayList<>(itemOrdemServico.getOrdem().getItensOrdemServico());
-		if (!itensOrdemServico.contains(itemOrdemServico)) {
+		ArrayList<ItemOrdemServico> itensOrdemServico = new ArrayList<>(mOrdem.getItensOrdemServico());
+		boolean contem = false;
+		for (ItemOrdemServico item : itensOrdemServico) {
+			if (itemOrdemServico == item) {
+				contem = true;
+				break;
+			}
+		}
+		if (!contem) {
 			itensOrdemServico.add(itemOrdemServico);
 			if (mFragmentoItensOrdemServicoPesquisa != null) {
 				mFragmentoItensOrdemServicoPesquisa

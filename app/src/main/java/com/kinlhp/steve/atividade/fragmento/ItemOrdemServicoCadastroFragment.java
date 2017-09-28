@@ -23,6 +23,7 @@ import com.kinlhp.steve.atividade.adaptador.AdaptadorSpinner;
 import com.kinlhp.steve.componente.DialogoCalendario;
 import com.kinlhp.steve.dominio.Credencial;
 import com.kinlhp.steve.dominio.ItemOrdemServico;
+import com.kinlhp.steve.dominio.Ordem;
 import com.kinlhp.steve.dominio.Servico;
 import com.kinlhp.steve.dto.ItemOrdemServicoDTO;
 import com.kinlhp.steve.dto.ServicoDTO;
@@ -46,7 +47,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
@@ -254,13 +254,12 @@ public class ItemOrdemServicoCadastroFragment extends Fragment
 	}
 
 	private void alternarButtonAdicionar() {
-		// TODO: 9/15/17 resolver de forma elegante a inconsistência acima (método contains não se comporta corretamente)
-		List<ItemOrdemServico> itensOrdemServico =
-				new ArrayList<>(mItemOrdemServico.getOrdem().getItensOrdemServico());
-		if (itensOrdemServico.contains(mItemOrdemServico)) {
-			mButtonAdicionar.setHint(mItemOrdemServico.getId() == null
-					? R.string.item_ordem_servico_cadastro_button_alterar_hint
-					: R.string.item_ordem_servico_cadastro_button_salvar_hint);
+		for (ItemOrdemServico itemOrdemServico : mItemOrdemServico.getOrdem().getItensOrdemServico()) {
+			if (itemOrdemServico == mItemOrdemServico) {
+				mButtonAdicionar.setHint(mItemOrdemServico.getId() == null
+						? R.string.item_ordem_servico_cadastro_button_alterar_hint
+						: R.string.item_ordem_servico_cadastro_button_salvar_hint);
+			}
 		}
 
 		Credencial credencialLogado = (Credencial) Parametro
@@ -269,6 +268,10 @@ public class ItemOrdemServicoCadastroFragment extends Fragment
 				|| credencialLogado.isPerfilAdministrador()
 				|| mItemOrdemServico.getSituacao().equals(ItemOrdemServico.Situacao.ABERTO)
 				? View.VISIBLE : View.INVISIBLE);
+		if (mItemOrdemServico.getOrdem().getSituacao().equals(Ordem.Situacao.GERADO) && !credencialLogado.isPerfilSistema()) {
+			mSpinnerSituacao.setEnabled(false);
+			mButtonAdicionar.setVisibility(View.GONE);
+		}
 	}
 
 	private VazioCallback callbackItemOrdemServicoPUT() {
@@ -435,7 +438,7 @@ public class ItemOrdemServicoCadastroFragment extends Fragment
 				Toast.makeText(getActivity(), getString(R.string.suporte_mensagem_conversao_data), Toast.LENGTH_LONG)
 						.show();
 			}
-			if (data.compareTo(Data.inicioDoDia()) < 0) {
+			if (data.compareTo(Data.inicioDoDia()) < 0 && mItemOrdemServico.getId() == null) {
 				mLabelDataFinalizacaoPrevista
 						.setError(getString(R.string.input_invalido));
 				return false;

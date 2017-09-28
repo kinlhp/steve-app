@@ -141,8 +141,6 @@
                     android:id="@+id/radio_button_ordem_servico"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="@dimen/radio_button_margin"
-                    android:layout_marginRight="@dimen/radio_button_margin"
                     android:checked="true"
                     android:text="@string/ordem_cadastro_radio_ordem_servico"
                     android:textSize="@dimen/radio_button_textSize" />

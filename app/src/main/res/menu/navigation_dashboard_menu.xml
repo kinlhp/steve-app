@@ -13,7 +13,8 @@
                 <item
                     android:id="@+id/subitem_condicao_pagamento"
                     android:icon="@drawable/ic_condicao_pagamento_black_24dp"
-                    android:title="@string/dashboard_subitem_condicao_pagamento" />
+                    android:title="@string/dashboard_subitem_condicao_pagamento"
+                    android:visible="false" />
 
                 <item
                     android:id="@+id/subitem_conta_pagar"
@@ -71,7 +72,8 @@
                 <item
                     android:id="@+id/subitem_senha"
                     android:icon="@drawable/ic_senha_black_24dp"
-                    android:title="@string/dashboard_subitem_senha" />
+                    android:title="@string/dashboard_subitem_senha"
+                    android:visible="false" />
 
                 <item
                     android:id="@+id/subitem_credencial"

@@ -126,8 +126,6 @@ public class PessoasPesquisaFragment extends Fragment
 
 		mRecyclerPessoas.addOnScrollListener(new OnPessoaScrollListener());
 
-		setHasOptionsMenu(true);
-
 		return view;
 	}
 

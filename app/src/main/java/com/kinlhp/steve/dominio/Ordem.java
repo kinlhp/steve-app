@@ -32,6 +32,8 @@ public class Ordem extends Dominio<BigInteger> {
 	@Override
 	public String toString() {
 		StringBuilder ordem = new StringBuilder();
+		ordem.append(id != null ? id : "");
+		ordem.append(tipo != null && ordem.length() > 0 ? " - " : "");
 		ordem.append(tipo != null ? tipo.toString() : "");
 		ordem.append(cliente != null && ordem.length() > 0 ? " - " : "");
 		ordem.append(cliente != null ? cliente.toString() : "");

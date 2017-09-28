@@ -14,6 +14,27 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="@string/file_provider_authority"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_provider_paths" />
+        </provider>
+
+        <activity
+            android:name=".atividade.ContaReceberActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/conta_receber_cadastro_titulo"
+            android:parentActivityName=".atividade.DashboardActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".atividade.DashboardActivity" />
+        </activity>
+
         <activity
             android:name=".atividade.CredencialActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"

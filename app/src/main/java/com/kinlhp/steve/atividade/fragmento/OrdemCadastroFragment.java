@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
@@ -13,6 +14,7 @@ import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatImageButton;
@@ -302,7 +304,8 @@ public class OrdemCadastroFragment extends Fragment
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.action_imprimir:
-				verificarPermissão();
+				exibirProgresso(mProgressBarAdicionar, mButtonAdicionar);
+				new BarraProgresso().execute();
 				return true;
 			default:
 				return super.onOptionsItemSelected(item);
@@ -322,13 +325,16 @@ public class OrdemCadastroFragment extends Fragment
 		switch (requestCode) {
 			case CODIGO_REQUISICAO_PERMISSAO:
 				if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-					try {
-						gerarPDF();
-					} catch (Exception e) {
-						String mensagem =
-								getString(R.string.suporte_mensagem_pdf_escrever);
-						Falha.tratar(mButtonOrdensPesquisa, new Exception(mensagem));
-					}
+					getActivity().runOnUiThread(() -> {
+						try {
+							gerarPDF();
+						} catch (Exception e) {
+							ocultarProgresso(mProgressBarAdicionar, mButtonAdicionar);
+							String mensagem =
+									getString(R.string.suporte_mensagem_pdf_escrever);
+							Falha.tratar(mButtonOrdensPesquisa, new Exception(mensagem));
+						}
+					});
 				} else {
 					Toast.makeText(getActivity(), "Permissão negada!", Toast.LENGTH_SHORT)
 							.show();
@@ -364,7 +370,10 @@ public class OrdemCadastroFragment extends Fragment
 		alerta.setTitle("Impressão")
 				.setMessage("Deseja imprimir a ordem de serviço?")
 				.setCancelable(false)
-				.setPositiveButton("Sim", (dialogInterface, i) -> verificarPermissão())
+				.setPositiveButton("Sim", (dialogInterface, i) -> {
+					new BarraProgresso().execute();
+					exibirProgresso(mProgressBarAdicionar, mButtonAdicionar);
+				})
 				.setNegativeButton("Não", (dialogInterface, i) -> {
 					if (mOnOrdemAdicionadoListener != null) {
 						mOnOrdemAdicionadoListener
@@ -388,6 +397,10 @@ public class OrdemCadastroFragment extends Fragment
 				|| mOrdem.getSituacao().equals(Ordem.Situacao.ABERTO)
 				|| mOrdem.getSituacao().equals(Ordem.Situacao.FINALIZADO)
 				? View.VISIBLE : View.INVISIBLE);
+		if (mOrdem.getSituacao().equals(Ordem.Situacao.GERADO) && !credencialLogado.isPerfilSistema()) {
+			mSpinnerSituacao.setEnabled(false);
+			mButtonAdicionar.setVisibility(View.GONE);
+		}
 	}
 
 	private void alternarInputCliente() {
@@ -987,12 +1000,14 @@ public class OrdemCadastroFragment extends Fragment
 	private void previewPdf() {
 		try {
 			Intent intent = new Intent(Intent.ACTION_VIEW);
-			Uri uri = Uri.fromFile(mPDFFile);
+			Uri uri = FileProvider.getUriForFile(getActivity(), getString(R.string.file_provider_authority), mPDFFile);
 			intent.setDataAndType(uri, "application/pdf");
-			intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
 			startActivity(intent);
-			getActivity().onBackPressed();
+			getActivity().finish();
 		} catch (Exception e) {
+			e.printStackTrace();
+			ocultarProgresso(mProgressBarAdicionar, mButtonAdicionar);
 			String mensagem = getString(R.string.suporte_mensagem_pdf_ler);
 			Falha.tratar(mButtonOrdensPesquisa, new Exception(mensagem));
 		}
@@ -1058,16 +1073,20 @@ public class OrdemCadastroFragment extends Fragment
 	}
 
 	private void verificarPermissão() {
+		exibirProgresso(mProgressBarAdicionar, mButtonAdicionar);
 		if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
 			requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, CODIGO_REQUISICAO_PERMISSAO);
 		} else {
-			try {
-				gerarPDF();
-			} catch (Exception e) {
-				String mensagem =
-						getString(R.string.suporte_mensagem_pdf_escrever);
-				Falha.tratar(mButtonOrdensPesquisa, new Exception(mensagem));
-			}
+			getActivity().runOnUiThread(() -> {
+				try {
+					gerarPDF();
+				} catch (Exception e) {
+					ocultarProgresso(mProgressBarAdicionar, mButtonAdicionar);
+					String mensagem =
+							getString(R.string.suporte_mensagem_pdf_escrever);
+					Falha.tratar(mButtonOrdensPesquisa, new Exception(mensagem));
+				}
+			});
 		}
 	}
 
@@ -1094,5 +1113,13 @@ public class OrdemCadastroFragment extends Fragment
 	public interface OnReferenciaOrdemAlteradoListener {
 
 		void onReferenciaOrdemAlterado(@NonNull Ordem novaReferencia);
+	}
+
+	private class BarraProgresso extends AsyncTask<Void, Void, Void> {
+		@Override
+		protected Void doInBackground(Void... voids) {
+			verificarPermissão();
+			return null;
+		}
 	}
 }

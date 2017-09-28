@@ -21,8 +21,13 @@ import lombok.Setter;
 @NoArgsConstructor
 @Setter
 public class FormaPagamento extends Dominio<BigInteger> {
-	private static final long serialVersionUID = 7158932283229250348L;
+	private static final long serialVersionUID = -5643756381762405235L;
 	@Builder.Default
 	private Set<CondicaoPagamento> condicoesPagamento = new LinkedHashSet<>();
 	private String descricao;
+
+	@Override
+	public String toString() {
+		return descricao;
+	}
 }

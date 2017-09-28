@@ -16,7 +16,7 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * Created by luis on 9/5/17.
+ * Created by kin on 9/5/17.
  */
 public class AdaptadorRecyclerPessoas
 		extends RecyclerView.Adapter<AdaptadorRecyclerPessoas.ViewHolderPessoas>

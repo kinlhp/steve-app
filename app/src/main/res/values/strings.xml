@@ -5,6 +5,7 @@
     <string name="action_settings">Configurações</string>
     <string name="app_name">Steve App</string>
     <string name="app_search">Pesquisa</string>
+    <string name="file_provider_authority" translatable="false">com.kinlhp.steve</string>
     <!-- condicao pagamento-->
     <string name="condicao_pagamento_cadastro_button_adicionar_hint">ADICIONAR</string>
     <string name="condicao_pagamento_cadastro_button_alterar_hint">ALTERAR</string>
@@ -18,6 +19,33 @@
     <string name="condicoes_pagamento_pesquisa_label_periodo_entre_parcelas_hint">@string/condicao_pagamento_cadastro_label_periodo_entre_parcelas_hint</string>
     <string name="condicoes_pagamento_pesquisa_label_quantidade_parcelas_hint">@string/condicao_pagamento_cadastro_label_quantidade_parcelas_hint</string>
     <string name="condicoes_pagamento_pesquisa_titulo">Condições de Pagamento</string>
+    <!-- conta receber -->
+    <string name="conta_receber_cadastro_button_gerar_hint">GERAR</string>
+    <string name="conta_receber_cadastro_input_parcelas_text">Visualizar parcelas</string>
+    <string name="conta_receber_cadastro_label_condicao_pagamento_hint">Condição de Pagamento</string>
+    <string name="conta_receber_cadastro_label_forma_pagamento_hint">Forma de Pagamento</string>
+    <string name="conta_receber_cadastro_label_id_hint">Código</string>
+    <string name="conta_receber_cadastro_label_nenhum_condicao_pagamento_hint">Pesquisar condições de pagamento</string>
+    <string name="conta_receber_cadastro_label_nenhum_forma_pagamento_hint">Pesquisar formas de pagamento</string>
+    <string name="conta_receber_cadastro_label_nenhum_ordem_hint">Pesquisar ordens</string>
+    <string name="conta_receber_cadastro_label_nenhum_parcela_hint">Nenhuma parcela</string>
+    <string name="conta_receber_cadastro_label_nenhum_sacado_hint">Pesquisar sacados</string>
+    <string name="conta_receber_cadastro_label_ordem_hint">Ordem</string>
+    <string name="conta_receber_cadastro_label_parcelas_hint">Parcelas</string>
+    <string name="conta_receber_cadastro_label_sacado_hint">Sacado</string>
+    <string name="conta_receber_cadastro_mensagem_ordem_nao_finalizado">Situação não \'Finalizado\'</string>
+    <string name="conta_receber_cadastro_mensagem_sacado_nao_cliente">Sem perfil cliente</string>
+    <string name="conta_receber_cadastro_titulo">Conta a Receber</string>
+    <string name="contas_receber_pesquisa_label_0_registros_hint">0 registros</string>
+    <string name="contas_receber_pesquisa_label_condicao_pagamento_hint">@string/conta_receber_cadastro_label_condicao_pagamento_hint</string>
+    <string name="contas_receber_pesquisa_label_data_vencimento_hint">Data de vencimento</string>
+    <string name="contas_receber_pesquisa_label_forma_pagamento_hint">@string/conta_receber_cadastro_label_forma_pagamento_hint</string>
+    <string name="contas_receber_pesquisa_label_montante_pago_hint">Montante pago</string>
+    <string name="contas_receber_pesquisa_label_numero_parcela_hint">Número parcela</string>
+    <string name="contas_receber_pesquisa_label_sacado_hint">@string/conta_receber_cadastro_label_sacado_hint</string>
+    <string name="contas_receber_pesquisa_label_saldo_devedor_hint">Saldo devedor</string>
+    <string name="contas_receber_pesquisa_label_valor_hint">Valor</string>
+    <string name="contas_receber_pesquisa_titulo">Contas a receber</string>
     <!-- credencial -->
     <string name="credenciais_pesquisa_label_0_registros_hint">0 registros</string>
     <string name="credenciais_pesquisa_label_funcionario_hint">@string/credencial_cadastro_label_funcionario_hint</string>
@@ -89,7 +117,7 @@
     <string name="enderecos_pesquisa_label_nome_contato_hint">@string/endereco_cadastro_label_nome_contato_hint</string>
     <string name="enderecos_pesquisa_label_tipo_hint">@string/endereco_cadastro_label_tipo_hint</string>
     <string name="enderecos_pesquisa_titulo">Endereços</string>
-    <!-- forma de pagamento -->
+    <!-- forma pagamento -->
     <string name="forma_pagamento_cadastro_button_adicionar_hint">ADICIONAR</string>
     <string name="forma_pagamento_cadastro_button_alterar_hint">ALTERAR</string>
     <string name="forma_pagamento_cadastro_button_salvar_hint">SALVAR ALTERAÇÕES</string>
