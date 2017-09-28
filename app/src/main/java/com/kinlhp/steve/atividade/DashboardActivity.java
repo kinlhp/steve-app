@@ -20,8 +20,9 @@ import java.io.Serializable;
 public class DashboardActivity extends AppCompatActivity
 		implements NavigationView.OnNavigationItemSelectedListener,
 		Serializable {
-	private static final long serialVersionUID = 5293247457273355103L;
+	private static final long serialVersionUID = -9134543732313010320L;
 	private DrawerLayout mDrawerLayout;
+	private NavigationView mNavigationDashboard;
 
 	@Override
 	public void onBackPressed() {
@@ -37,7 +38,7 @@ public class DashboardActivity extends AppCompatActivity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_dashboard);
 
-		NavigationView navigationView = findViewById(R.id.navigation_dashboard);
+		mNavigationDashboard = findViewById(R.id.navigation_dashboard);
 		Toolbar toolbar = findViewById(R.id.toolbar_dashboard);
 		mDrawerLayout = findViewById(R.id.activity_dashboard);
 
@@ -48,7 +49,9 @@ public class DashboardActivity extends AppCompatActivity
 		mDrawerLayout.addDrawerListener(toggle);
 		toggle.syncState();
 
-		navigationView.setNavigationItemSelectedListener(this);
+		mNavigationDashboard.setNavigationItemSelectedListener(this);
+
+		limitarMenusDisponíveis();
 	}
 
 	@Override
@@ -91,8 +94,7 @@ public class DashboardActivity extends AppCompatActivity
 		// as you specify a parent activity in AndroidManifest.xml.
 		switch (item.getItemId()) {
 			case R.id.action_configuracao:
-				Toast.makeText(this, "Implementar", Toast.LENGTH_SHORT)
-						.show();
+				Toast.makeText(this, "Implementar", Toast.LENGTH_SHORT).show();
 				return true;
 			default:
 				return super.onOptionsItemSelected(item);
@@ -110,7 +112,8 @@ public class DashboardActivity extends AppCompatActivity
 	}
 
 	private void iniciarContaReceber() {
-		Intent intentContaReceber = new Intent(this, ContaReceberActivity.class);
+		Intent intentContaReceber = new Intent(this,
+				ContaReceberActivity.class);
 		startActivityForResult(intentContaReceber, 0);
 	}
 
@@ -138,6 +141,15 @@ public class DashboardActivity extends AppCompatActivity
 	private void iniciarServico() {
 		Intent intentServico = new Intent(this, ServicoActivity.class);
 		startActivityForResult(intentServico, 0);
+	}
+
+	private void limitarMenusDisponíveis() {
+		mNavigationDashboard.getMenu().findItem(R.id.subitem_forma_pagamento)
+				.setEnabled(false);
+		mNavigationDashboard.getMenu().findItem(R.id.subitem_servico)
+				.setEnabled(false);
+		mNavigationDashboard.getMenu().findItem(R.id.subitem_relatorio)
+				.setEnabled(false);
 	}
 
 	private void ocultarDashboard() {
