@@ -46,7 +46,7 @@ public class ServicosPesquisaFragment extends Fragment
 		Serializable {
 	private static final long serialVersionUID = -3379979343070269750L;
 	private static final String LINKS = "_links";
-	private static final String PAGINA_0 = "servicos?page=0&size=20";
+	private static final String PAGINA_0 = "servicos?sort=descricao,asc&page=0&size=20";
 	private static final String SERVICOS = "servicos";
 	private AdaptadorRecyclerServicos mAdaptadorServicos;
 	private ArrayList<Servico> mServicos = new ArrayList<>();
