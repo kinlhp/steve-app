@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
@@ -89,6 +90,7 @@ public class OrdemCadastroFragment extends Fragment
 		RadioGroup.OnCheckedChangeListener, Serializable,
 		TextView.OnEditorActionListener, View.OnClickListener,
 		View.OnFocusChangeListener {
+	private static final long serialVersionUID = 2281886527875973324L;
 	private static final int CODIGO_REQUISICAO_PERMISSAO = 200;
 	private static final String ORDEM = "ordem";
 	private static final String ORDEM_AUXILIAR = "ordemAuxiliar";
@@ -846,8 +848,7 @@ public class OrdemCadastroFragment extends Fragment
 
 	private void gerarPDF() throws IOException, DocumentException {
 
-		File docsFolder =
-				new File(Environment.getExternalStorageDirectory() + "/Documents");
+		File docsFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
 		if (!docsFolder.exists()) {
 			docsFolder.mkdir();
 		}
@@ -998,19 +999,28 @@ public class OrdemCadastroFragment extends Fragment
 	}
 
 	private void previewPdf() {
+		Intent intentPDF = new Intent(Intent.ACTION_VIEW);
+		String caminhoArquivo = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).getPath().concat(File.separator).concat(String.valueOf(mOrdem.getId())).concat(".pdf");
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+			intentPDF.setDataAndType(Uri.fromFile(new File(caminhoArquivo)), "application/pdf");
+		} else {
+			Uri uri = Uri.parse(caminhoArquivo);
+			File arquivo = new File(uri.getPath());
+			if (arquivo.exists()) {
+				uri = FileProvider.getUriForFile(getActivity(), getString(R.string.file_provider_authority), arquivo);
+				intentPDF.setDataAndType(uri, "application/pdf");
+				intentPDF.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+			}
+			intentPDF.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+		}
 		try {
-			Intent intent = new Intent(Intent.ACTION_VIEW);
-			Uri uri = FileProvider.getUriForFile(getActivity(), getString(R.string.file_provider_authority), mPDFFile);
-			intent.setDataAndType(uri, "application/pdf");
-			intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-			startActivity(intent);
-			getActivity().finish();
+			getActivity().startActivity(intentPDF);
 		} catch (Exception e) {
 			e.printStackTrace();
 			ocultarProgresso(mProgressBarAdicionar, mButtonAdicionar);
-			String mensagem = getString(R.string.suporte_mensagem_pdf_ler);
-			Falha.tratar(mButtonOrdensPesquisa, new Exception(mensagem));
+			Toast.makeText(getActivity(), R.string.suporte_mensagem_pdf_ler, Toast.LENGTH_SHORT).show();
 		}
+		getActivity().finish();
 	}
 
 	public void setOnClientesPesquisaListener(@Nullable OnClientesPesquisaListener ouvinte) {

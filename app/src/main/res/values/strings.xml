@@ -5,7 +5,7 @@
     <string name="action_settings">Configurações</string>
     <string name="app_name">Steve App</string>
     <string name="app_search">Pesquisa</string>
-    <string name="file_provider_authority" translatable="false">com.kinlhp.steve</string>
+    <string name="file_provider_authority" translatable="false">com.kinlhp.steve.provider</string>
     <!-- condicao pagamento-->
     <string name="condicao_pagamento_cadastro_button_adicionar_hint">ADICIONAR</string>
     <string name="condicao_pagamento_cadastro_button_alterar_hint">ALTERAR</string>
