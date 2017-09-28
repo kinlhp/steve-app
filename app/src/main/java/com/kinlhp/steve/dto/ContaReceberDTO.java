@@ -28,9 +28,11 @@ public class ContaReceberDTO extends DTO {
 	@SerializedName(value = "_links")
 	private ContaReceberDTOLinks links;
 
+	@Builder.Default
 	@SerializedName(value = "montantePago")
 	private BigDecimal montantePago = BigDecimal.ZERO;
 
+	@Builder.Default
 	@SerializedName(value = "numeroParcela")
 	private BigInteger numeroParcela = BigInteger.ZERO;
 

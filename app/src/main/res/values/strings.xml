@@ -74,8 +74,10 @@
     <string name="dashboard_item_lancamento">Lançamento</string>
     <string name="dashboard_item_segurança">Segurança</string>
     <string name="dashboard_subitem_condicao_pagamento">Condição de pagamento</string>
-    <string name="dashboard_subitem_conta_pagar">Conta a pagar</string>
-    <string name="dashboard_subitem_conta_receber">Conta a receber</string>
+    <string name="dashboard_subitem_conta_pagar_lancamento">Conta a pagar (lançamento)</string>
+    <string name="dashboard_subitem_conta_pagar_pagamento">Conta a pagar (pagamento)</string>
+    <string name="dashboard_subitem_conta_receber_lancamento">Conta a receber (lançamento)</string>
+    <string name="dashboard_subitem_conta_receber_recebimento">Conta a receber (recebimento)</string>
     <string name="dashboard_subitem_credencial">Credencial</string>
     <string name="dashboard_subitem_forma_pagamento">Forma de pagamento</string>
     <string name="dashboard_subitem_ordem_servico">Ordem de serviço</string>

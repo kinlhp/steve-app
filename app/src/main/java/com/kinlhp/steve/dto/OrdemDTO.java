@@ -28,6 +28,7 @@ public class OrdemDTO extends DTO {
 	@SerializedName(value = "situacao")
 	private SituacaoDTO situacao = SituacaoDTO.ABERTO;
 
+	@Builder.Default
 	@SerializedName(value = "tipo")
 	private TipoDTO tipo = TipoDTO.ORDEM_SERVICO;
 

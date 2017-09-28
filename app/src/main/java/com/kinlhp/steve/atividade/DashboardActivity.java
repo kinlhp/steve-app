@@ -61,7 +61,7 @@ public class DashboardActivity extends AppCompatActivity
 	@Override
 	public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 		switch (item.getItemId()) {
-			case R.id.subitem_conta_receber:
+			case R.id.subitem_conta_receber_lancamento:
 				iniciarContaReceber();
 				break;
 			case R.id.subitem_credencial:

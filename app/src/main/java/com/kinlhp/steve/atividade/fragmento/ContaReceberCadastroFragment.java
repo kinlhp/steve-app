@@ -44,10 +44,10 @@ import retrofit2.Call;
 import retrofit2.Response;
 
 public class ContaReceberCadastroFragment extends Fragment implements Serializable, View.OnClickListener {
+	private static final long serialVersionUID = 8463604932698640145L;
 	private static final String CONDICAO_PAGAMENTO = "condicaoPagamento";
 	private static final String FORMA_PAGAMENTO = "formaPagamento";
 	private static final String ORDEM = "ordem";
-	private static final String PARCELAS = "parcelas";
 	private static final String SACADO = "sacado";
 	private CondicaoPagamento mCondicaoPagamento;
 	private FormaPagamento mFormaPagamento;
@@ -270,6 +270,7 @@ public class ContaReceberCadastroFragment extends Fragment implements Serializab
 		isFormularioValido();
 		if (mOrdem != null && mSacado != null && mCondicaoPagamento != null) {
 			BigDecimal valorTotal = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_EVEN);
+			BigDecimal totalGerado = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_EVEN);
 			for (ItemOrdemServico itemOrdemServico : mOrdem.getItensOrdemServico()) {
 				valorTotal = valorTotal.add(itemOrdemServico.getValorServico());
 			}
@@ -287,6 +288,7 @@ public class ContaReceberCadastroFragment extends Fragment implements Serializab
 							.build();
 					contaReceber.setDataVencimento(new Date(Data.inicioDoDia().getTime() + prazo));
 					parcelas.add(contaReceber);
+					totalGerado = totalGerado.add(contaReceber.getValor());
 				} else {
 					BigDecimal valor = valorTotal.divide(new BigDecimal(mCondicaoPagamento.getQuantidadeParcelas()), 2, RoundingMode.HALF_EVEN);
 					for (int numeroParcela = 1; numeroParcela <= mCondicaoPagamento.getQuantidadeParcelas().intValue(); numeroParcela++) {
@@ -300,8 +302,18 @@ public class ContaReceberCadastroFragment extends Fragment implements Serializab
 								.build();
 						contaReceber.setDataVencimento(new Date(Data.inicioDoDia().getTime() + (prazo * numeroParcela)));
 						parcelas.add(contaReceber);
+						totalGerado = totalGerado.add(contaReceber.getValor());
 					}
 				}
+			}
+			if (valorTotal.compareTo(totalGerado) != 0) {
+				totalGerado = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_EVEN);
+				for (int i = 0; i < parcelas.size() - 1; i++) {
+					totalGerado = totalGerado.add(parcelas.get(i).getValor());
+				}
+				ContaReceber ultimaParcela = parcelas.get(parcelas.size() - 1);
+				ultimaParcela.setValor(valorTotal.subtract(totalGerado));
+				ultimaParcela.setSaldoDevedor(ultimaParcela.getValor());
 			}
 			mParcelas.clear();
 			mParcelas.addAll(parcelas);

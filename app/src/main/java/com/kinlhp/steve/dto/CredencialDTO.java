@@ -24,6 +24,7 @@ public class CredencialDTO extends DTO {
 	@SerializedName(value = "perfilAdministrador")
 	private boolean perfilAdministrador;
 
+	@Builder.Default
 	@SerializedName(value = "perfilPadrao")
 	private boolean perfilPadrao = true;
 
@@ -33,6 +34,7 @@ public class CredencialDTO extends DTO {
 	@SerializedName(value = "senha")
 	private String senha;
 
+	@Builder.Default
 	@SerializedName(value = "situacao")
 	private SituacaoDTO situacao = SituacaoDTO.ATIVO;
 

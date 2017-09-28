@@ -17,14 +17,24 @@
                     android:visible="false" />
 
                 <item
-                    android:id="@+id/subitem_conta_pagar"
-                    android:icon="@drawable/ic_conta_pagar_black_24dp"
-                    android:title="@string/dashboard_subitem_conta_pagar" />
+                    android:id="@+id/subitem_conta_pagar_lancamento"
+                    android:icon="@drawable/ic_conta_pagar_lancamento_black_24dp"
+                    android:title="@string/dashboard_subitem_conta_pagar_lancamento" />
 
                 <item
-                    android:id="@+id/subitem_conta_receber"
-                    android:icon="@drawable/ic_conta_receber_black_24dp"
-                    android:title="@string/dashboard_subitem_conta_receber" />
+                    android:id="@+id/subitem_conta_pagar_pagamento"
+                    android:icon="@drawable/ic_conta_pagar_pagamento_black_24dp"
+                    android:title="@string/dashboard_subitem_conta_pagar_pagamento" />
+
+                <item
+                    android:id="@+id/subitem_conta_receber_lancamento"
+                    android:icon="@drawable/ic_conta_receber_lancamento_black_24dp"
+                    android:title="@string/dashboard_subitem_conta_receber_lancamento" />
+
+                <item
+                    android:id="@+id/subitem_conta_receber_recebimento"
+                    android:icon="@drawable/ic_conta_receber_recebimento_black_24dp"
+                    android:title="@string/dashboard_subitem_conta_receber_recebimento" />
 
                 <item
                     android:id="@+id/subitem_forma_pagamento"

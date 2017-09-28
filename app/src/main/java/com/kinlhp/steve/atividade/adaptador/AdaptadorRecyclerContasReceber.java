@@ -11,9 +11,9 @@ import android.view.ViewGroup;
 import com.kinlhp.steve.R;
 import com.kinlhp.steve.dominio.ContaReceber;
 import com.kinlhp.steve.util.Data;
+import com.kinlhp.steve.util.Moeda;
 
 import java.io.Serializable;
-import java.math.RoundingMode;
 import java.util.List;
 
 /**
@@ -40,13 +40,13 @@ public class AdaptadorRecyclerContasReceber
 	public void onBindViewHolder(ViewHolderContasReceber viewHolder, int position) {
 		ContaReceber contaReceber = mContasReceber.get(position);
 		viewHolder.mLabelSacado.setText(contaReceber.getSacado() == null ? "" : contaReceber.getSacado().toString());
-		viewHolder.mLabelValor.setText(contaReceber.getValor() == null ? "" : contaReceber.getValor().setScale(2, RoundingMode.HALF_EVEN).toString());
+		viewHolder.mLabelValor.setText(contaReceber.getValor() == null ? "" : "Valor ".concat(Moeda.comSifra(contaReceber.getValor())));
 		viewHolder.mLabelFormaPagamento.setText(contaReceber.getCondicaoPagamento() != null && contaReceber.getCondicaoPagamento().getFormaPagamento() != null ? contaReceber.getCondicaoPagamento().getFormaPagamento().toString() : "");
 		viewHolder.mLabelCondicaoPagamento.setText(contaReceber.getCondicaoPagamento() != null ? contaReceber.getCondicaoPagamento().toString() : "");
-		viewHolder.mLabelNumeroParcela.setText(contaReceber.getNumeroParcela() == null ? "" : contaReceber.getNumeroParcela().toString());
-		viewHolder.mLabelDataVencimento.setText(contaReceber.getDataVencimento() == null ? "" : Data.paraStringData(contaReceber.getDataVencimento()));
-		viewHolder.mLabelMontantePago.setText(contaReceber.getMontantePago() == null ? "" : contaReceber.getMontantePago().setScale(2, RoundingMode.HALF_EVEN).toString());
-		viewHolder.mLabelSaldoDevedor.setText(contaReceber.getSaldoDevedor() == null ? "" : contaReceber.getSaldoDevedor().setScale(2, RoundingMode.HALF_EVEN).toString());
+		viewHolder.mLabelNumeroParcela.setText(contaReceber.getNumeroParcela() == null ? "" : "Parcela " + contaReceber.getNumeroParcela().toString());
+		viewHolder.mLabelDataVencimento.setText(contaReceber.getDataVencimento() == null ? "" : "Vencimento " + Data.paraStringData(contaReceber.getDataVencimento()));
+		viewHolder.mLabelMontantePago.setText(contaReceber.getMontantePago() == null ? "" : "Montante pago ".concat(Moeda.comSifra(contaReceber.getMontantePago())));
+		viewHolder.mLabelSaldoDevedor.setText(contaReceber.getSaldoDevedor() == null ? "" : "Saldo devedor ".concat(Moeda.comSifra(contaReceber.getSaldoDevedor())));
 		viewHolder.mButtonRemover.setVisibility(contaReceber.getId() == null ? View.GONE : View.GONE);
 	}
 

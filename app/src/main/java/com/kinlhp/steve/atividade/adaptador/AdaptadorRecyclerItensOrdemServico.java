@@ -12,13 +12,13 @@ import android.view.ViewGroup;
 
 import com.kinlhp.steve.R;
 import com.kinlhp.steve.dominio.ItemOrdemServico;
+import com.kinlhp.steve.util.Moeda;
 
 import java.io.Serializable;
-import java.math.RoundingMode;
 import java.util.List;
 
 /**
- * Created by luis on 9/21/17.
+ * Created by kin on 9/21/17.
  */
 public class AdaptadorRecyclerItensOrdemServico
 		extends RecyclerView.Adapter<AdaptadorRecyclerItensOrdemServico.ViewHolderItensOrdemServico>
@@ -47,9 +47,9 @@ public class AdaptadorRecyclerItensOrdemServico
 				.setText(itemOrdemServico.getServico().toString());
 		// TODO: 9/24/17 corrigir hard-coded
 		viewHolder.mLabelValorOrcamento
-				.setText("Valor do orçamento: R$ " + itemOrdemServico.getValorOrcamento().setScale(2, RoundingMode.HALF_EVEN).toString());
+				.setText("Valor do orçamento ".concat(Moeda.comSifra(itemOrdemServico.getValorOrcamento())));
 		viewHolder.mLabelValorServico
-				.setText("Valor aplicado: R$ " + itemOrdemServico.getValorServico().setScale(2, RoundingMode.HALF_EVEN).toString());
+				.setText("Valor aplicado ".concat(Moeda.comSifra(itemOrdemServico.getValorServico())));
 		viewHolder.mLabelDescricao
 				.setText(TextUtils.isEmpty(itemOrdemServico.getDescricao())
 						? " " : itemOrdemServico.getDescricao());
