@@ -5,7 +5,7 @@
     android:id="@+id/fragment_contas_receber_pesquisa"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".atividade.fragmento.ContasReceberPesquisaFragment">
+    tools:context=".atividade.fragmento.ContasReceberCadastroPreVisualizacaoFragment">
 
     <ProgressBar
         android:id="@+id/progress_bar_consumir_contas_receber_paginado"

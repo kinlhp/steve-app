@@ -10,7 +10,7 @@ import android.view.View;
 import com.kinlhp.steve.R;
 import com.kinlhp.steve.atividade.fragmento.CondicoesPagamentoPesquisaFragment;
 import com.kinlhp.steve.atividade.fragmento.ContaReceberCadastroFragment;
-import com.kinlhp.steve.atividade.fragmento.ContasReceberPesquisaFragment;
+import com.kinlhp.steve.atividade.fragmento.ContasReceberCadastroPreVisualizacaoFragment;
 import com.kinlhp.steve.atividade.fragmento.FormasPagamentoPesquisaFragment;
 import com.kinlhp.steve.atividade.fragmento.OrdensPesquisaFragment;
 import com.kinlhp.steve.atividade.fragmento.PessoasPesquisaFragment;
@@ -43,7 +43,7 @@ public class ContaReceberActivity extends AppCompatActivity
 		Serializable {
 	private CondicoesPagamentoPesquisaFragment mFragmentoCondicoesPagamentoPesquisa;
 	private ContaReceberCadastroFragment mFragmentoContaReceberCadastro;
-	private ContasReceberPesquisaFragment mFragmentoContasReceberPesquisa;
+	private ContasReceberCadastroPreVisualizacaoFragment mFragmentoContasReceberPesquisa;
 	private FormasPagamentoPesquisaFragment mFragmentoFormasPagamentoPesquisa;
 	private OrdensPesquisaFragment mFragmentoOrdensPesquisa;
 	private PessoasPesquisaFragment mFragmentoPessoasPesquisa;
@@ -193,7 +193,7 @@ public class ContaReceberActivity extends AppCompatActivity
 
 	private void inflarContasReceberPesquisa(@NonNull ArrayList<ContaReceber> contasReceber) {
 		if (mFragmentoContasReceberPesquisa == null) {
-			mFragmentoContasReceberPesquisa = ContasReceberPesquisaFragment.newInstance(contasReceber);
+			mFragmentoContasReceberPesquisa = ContasReceberCadastroPreVisualizacaoFragment.newInstance(contasReceber);
 		} else {
 			mFragmentoContasReceberPesquisa.setContasReceber(contasReceber);
 		}
