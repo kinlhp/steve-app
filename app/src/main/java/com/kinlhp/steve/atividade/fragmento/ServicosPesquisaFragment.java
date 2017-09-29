@@ -8,7 +8,6 @@ import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -16,7 +15,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.kinlhp.steve.R;
 import com.kinlhp.steve.atividade.adaptador.AdaptadorRecyclerServicos;
@@ -149,13 +147,15 @@ public class ServicosPesquisaFragment extends Fragment
 
 	@Override
 	public boolean onQueryTextSubmit(String query) {
-		if (TextUtils.isEmpty(query)) {
-			Toast.makeText(getActivity(), "Cancelar/Limpar pesquisa", Toast.LENGTH_SHORT)
-					.show();
-			return true;
-		}
-		Toast.makeText(getActivity(), "Consumir servicos GET", Toast.LENGTH_SHORT)
-				.show();
+		StringBuilder url =
+				new StringBuilder(getString(R.string.requisicao_url_base))
+						.append("servicos/")
+						.append("search/")
+						.append("findByDescricaoContainingOrderByDescricaoAsc")
+						.append("?descricao=").append(query)
+						.append("&page=0&size=20");
+		HRef pagina0 = new HRef(url.toString());
+		consumirServicosGETPaginado(pagina0);
 		return true;
 	}
 
@@ -229,6 +229,9 @@ public class ServicosPesquisaFragment extends Fragment
 		mTarefasPendentes = 0;
 		Teclado.ocultar(getActivity(), mProgressBarConsumirServicosPaginado);
 		exibirProgresso(mProgressBarConsumirServicosPaginado);
+		int tamanho = mServicos.size();
+		mServicos.clear();
+		mAdaptadorServicos.notifyItemRangeRemoved(0, tamanho);
 		++mTarefasPendentes;
 		ServicoRequisicao.getPaginado(callbackServicosGETPaginado(), href);
 	}
@@ -239,6 +242,7 @@ public class ServicosPesquisaFragment extends Fragment
 
 	private void ocultarProgresso(@NonNull ProgressBar progresso) {
 		if (mTarefasPendentes <= 0) {
+			alternarLabel0Registros();
 			progresso.setVisibility(View.GONE);
 		}
 	}
