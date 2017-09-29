@@ -8,7 +8,6 @@ import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -16,7 +15,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.kinlhp.steve.R;
 import com.kinlhp.steve.atividade.adaptador.AdaptadorRecyclerPessoas;
@@ -126,6 +124,8 @@ public class PessoasPesquisaFragment extends Fragment
 
 		mRecyclerPessoas.addOnScrollListener(new OnPessoaScrollListener());
 
+		setHasOptionsMenu(true);
+
 		return view;
 	}
 
@@ -164,13 +164,17 @@ public class PessoasPesquisaFragment extends Fragment
 
 	@Override
 	public boolean onQueryTextSubmit(String query) {
-		if (TextUtils.isEmpty(query)) {
-			Toast.makeText(getActivity(), "Cancelar/Limpar pesquisa", Toast.LENGTH_SHORT)
-					.show();
-			return true;
-		}
-		Toast.makeText(getActivity(), "Consumir pessoas GET", Toast.LENGTH_SHORT)
-				.show();
+		StringBuilder url =
+				new StringBuilder(getString(R.string.requisicao_url_base))
+						.append("pessoas/")
+						.append("search/")
+						.append("findByCnpjCpfOrNomeRazaoOrFantasiaSobrenome")
+						.append("?cnpjCpf=").append(query)
+						.append("&nomeRazao=").append(query)
+						.append("&fantasiaSobrenome=").append(query)
+						.append("&page=0&size=20");
+		HRef pagina0 = new HRef(url.toString());
+		consumirPessoasGETPaginado(pagina0);
 		return true;
 	}
 
@@ -179,7 +183,8 @@ public class PessoasPesquisaFragment extends Fragment
 		super.onResume();
 		getActivity().setTitle(R.string.pessoas_pesquisa_titulo);
 		if (mPessoas.isEmpty()) {
-			String url = getString(R.string.requisicao_url_base) + PAGINA_0;
+			String url = getString(R.string.requisicao_url_base)
+					.concat(PAGINA_0);
 			HRef pagina0 = new HRef(url);
 			consumirPessoasGETPaginado(pagina0);
 		}
@@ -390,6 +395,9 @@ public class PessoasPesquisaFragment extends Fragment
 		mTarefasPendentes = 0;
 		Teclado.ocultar(getActivity(), mProgressBarConsumirPessoasPaginado);
 		exibirProgresso(mProgressBarConsumirPessoasPaginado);
+		int tamanho = mPessoas.size();
+		mPessoas.clear();
+		mAdaptadorPessoas.notifyItemRangeRemoved(0, tamanho);
 		++mTarefasPendentes;
 		PessoaRequisicao.getPaginado(callbackPessoasGETPaginado(), href);
 	}
@@ -410,6 +418,7 @@ public class PessoasPesquisaFragment extends Fragment
 	private void ocultarProgresso(@NonNull ProgressBar progresso,
 	                              boolean chamarOuvinte) {
 		if (mTarefasPendentes <= 0) {
+			alternarLabel0Registros();
 			progresso.setVisibility(View.GONE);
 			if (chamarOuvinte) {
 				// TODO: 9/18/17 definir implementações diferentes para clique curto e longo
