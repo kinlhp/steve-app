@@ -8,7 +8,6 @@ import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -16,7 +15,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.kinlhp.steve.R;
 import com.kinlhp.steve.atividade.adaptador.AdaptadorRecyclerCredenciais;
@@ -158,13 +156,16 @@ public class CredenciaisPesquisaFragment extends Fragment
 
 	@Override
 	public boolean onQueryTextSubmit(String query) {
-		if (TextUtils.isEmpty(query)) {
-			Toast.makeText(getActivity(), "Cancelar/Limpar pesquisa", Toast.LENGTH_SHORT)
-					.show();
-			return true;
-		}
-		Toast.makeText(getActivity(), "Consumir credenciais GET", Toast.LENGTH_SHORT)
-				.show();
+		StringBuilder url =
+				new StringBuilder(getString(R.string.requisicao_url_base))
+						.append("credenciais/")
+						.append("search/")
+						.append("findByUsuarioOrFuncionario")
+						.append("?usuario=").append(query)
+						.append("&cpfFuncionario=").append(query)
+						.append("&page=0&size=20");
+		HRef pagina0 = new HRef(url.toString());
+		consumirCredenciaisGETPaginado(pagina0);
 		return true;
 	}
 
@@ -276,6 +277,9 @@ public class CredenciaisPesquisaFragment extends Fragment
 		mTarefasPendentes = 0;
 		Teclado.ocultar(getActivity(), mProgressBarConsumirCredenciaisPaginado);
 		exibirProgresso(mProgressBarConsumirCredenciaisPaginado);
+		int tamanho = mCredenciais.size();
+		mCredenciais.clear();
+		mAdaptadorCredenciais.notifyItemRangeRemoved(0, tamanho);
 		++mTarefasPendentes;
 		CredencialRequisicao
 				.getPaginado(callbackCredenciaisGETPaginado(), href);
@@ -287,6 +291,7 @@ public class CredenciaisPesquisaFragment extends Fragment
 
 	private void ocultarProgresso(@NonNull ProgressBar progresso) {
 		if (mTarefasPendentes <= 0) {
+			alternarLabel0Registros();
 			progresso.setVisibility(View.GONE);
 		}
 	}
