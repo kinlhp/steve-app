@@ -157,7 +157,7 @@ public class FormasPagamentoPesquisaFragment extends Fragment
 				new StringBuilder(getString(R.string.requisicao_url_base))
 						.append("formaspagamento/")
 						.append("search/")
-						.append("findByDescricaoContaining")
+						.append("findByDescricaoContainingOrderByDescricaoAsc")
 						.append("?descricao=").append(query)
 						.append("&page=0&size=20");
 		HRef pagina0 = new HRef(url.toString());
