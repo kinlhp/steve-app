@@ -25,6 +25,17 @@
         </provider>
 
         <activity
+            android:name=".atividade.ContaPagarActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/conta_pagar_cadastro_titulo"
+            android:parentActivityName=".atividade.DashboardActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".atividade.DashboardActivity" />
+        </activity>
+
+        <activity
             android:name=".atividade.ContaReceberActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/conta_receber_cadastro_titulo"

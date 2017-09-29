@@ -66,6 +66,9 @@ public class DashboardActivity extends AppCompatActivity
 	@Override
 	public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 		switch (item.getItemId()) {
+			case R.id.subitem_conta_pagar_lancamento:
+				iniciarContaPagar();
+				break;
 			case R.id.subitem_conta_receber_lancamento:
 				iniciarContaReceber();
 				break;
@@ -111,6 +114,11 @@ public class DashboardActivity extends AppCompatActivity
 
 	private void exibirDashboard() {
 		mDrawerLayout.openDrawer(GravityCompat.START);
+	}
+
+	private void iniciarContaPagar() {
+		Intent intentContaPagar = new Intent(this, ContaPagarActivity.class);
+		startActivityForResult(intentContaPagar, 0);
 	}
 
 	private void iniciarContaReceber() {

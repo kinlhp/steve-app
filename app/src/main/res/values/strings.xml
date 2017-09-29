@@ -19,6 +19,8 @@
     <string name="condicoes_pagamento_pesquisa_label_periodo_entre_parcelas_hint">@string/condicao_pagamento_cadastro_label_periodo_entre_parcelas_hint</string>
     <string name="condicoes_pagamento_pesquisa_label_quantidade_parcelas_hint">@string/condicao_pagamento_cadastro_label_quantidade_parcelas_hint</string>
     <string name="condicoes_pagamento_pesquisa_titulo">Condições de Pagamento</string>
+    <!-- conta pagar -->
+    <string name="conta_pagar_cadastro_titulo">Conta a Pagar</string>
     <!-- conta receber -->
     <string name="conta_receber_cadastro_button_gerar_hint">GERAR</string>
     <string name="conta_receber_cadastro_input_parcelas_text">Visualizar parcelas</string>
