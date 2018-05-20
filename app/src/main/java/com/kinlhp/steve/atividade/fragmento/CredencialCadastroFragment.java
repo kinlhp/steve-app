@@ -26,15 +26,15 @@ import com.kinlhp.steve.R;
 import com.kinlhp.steve.dominio.Credencial;
 import com.kinlhp.steve.dominio.Pessoa;
 import com.kinlhp.steve.dto.CredencialDTO;
-import com.kinlhp.steve.dto.LoginDTO;
 import com.kinlhp.steve.dto.PessoaDTO;
+import com.kinlhp.steve.dto.TokenDTO;
 import com.kinlhp.steve.href.HRef;
 import com.kinlhp.steve.mapeamento.CredencialMapeamento;
 import com.kinlhp.steve.mapeamento.PessoaMapeamento;
 import com.kinlhp.steve.requisicao.CredencialRequisicao;
 import com.kinlhp.steve.requisicao.Falha;
-import com.kinlhp.steve.requisicao.LoginRequisicao;
 import com.kinlhp.steve.requisicao.Requisicao;
+import com.kinlhp.steve.requisicao.TokenRequisicao;
 import com.kinlhp.steve.resposta.ItemCallback;
 import com.kinlhp.steve.resposta.VazioCallback;
 import com.kinlhp.steve.util.Criptografia;
@@ -81,7 +81,6 @@ public class CredencialCadastroFragment extends Fragment
 	private TextInputLayout mLabelSenha;
 	private TextInputLayout mLabelUsuario;
 	private ProgressBar mProgressBarAdicionar;
-	private ProgressBar mProgressBarConsumirCredenciais;
 	private ProgressBar mProgressBarConsumirPorId;
 	private ScrollView mScrollCredencialCadastro;
 	private SwitchCompat mSwitchPerfilAdministrador;
@@ -182,8 +181,6 @@ public class CredencialCadastroFragment extends Fragment
 		mLabelSenha = view.findViewById(R.id.label_senha);
 		mLabelUsuario = view.findViewById(R.id.label_usuario);
 		mProgressBarAdicionar = view.findViewById(R.id.progress_bar_adicionar);
-		mProgressBarConsumirCredenciais = view
-				.findViewById(R.id.progress_bar_consumir_credenciais);
 		mProgressBarConsumirPorId = view
 				.findViewById(R.id.progress_bar_consumir_por_id);
 		mScrollCredencialCadastro = view
@@ -428,7 +425,7 @@ public class CredencialCadastroFragment extends Fragment
 					Credencial credencialLogado = (Credencial) Parametro
 							.get(Parametro.Chave.CREDENCIAL);
 					if (credencialLogado.getId().equals(mCredencial.getId())) {
-						consumirLoginPOST();
+						consumirTokenPOST();
 					}
 				}
 				ocultarProgresso(mProgressBarAdicionar, mButtonAdicionar);
@@ -463,11 +460,11 @@ public class CredencialCadastroFragment extends Fragment
 		};
 	}
 
-	private VazioCallback callbackLoginPOST() {
-		return new VazioCallback() {
+	private ItemCallback<TokenDTO> callbackTokenPOST() {
+		return new ItemCallback<TokenDTO>() {
 
 			@Override
-			public void onFailure(@NonNull Call<Void> chamada,
+			public void onFailure(@NonNull Call<TokenDTO> chamada,
 			                      @NonNull Throwable causa) {
 				--mTarefasPendentes;
 				mPressionarVoltar = false;
@@ -476,16 +473,15 @@ public class CredencialCadastroFragment extends Fragment
 			}
 
 			@Override
-			public void onResponse(@NonNull Call<Void> chamada,
-			                       @NonNull Response<Void> resposta) {
+			public void onResponse(@NonNull Call<TokenDTO> chamada,
+			                       @NonNull Response<TokenDTO> resposta) {
 				--mTarefasPendentes;
 				if (!resposta.isSuccessful()) {
 					mPressionarVoltar = false;
 					Falha.tratar(mButtonCredenciaisPesquisa, resposta);
 				} else {
-					String token = resposta.headers()
-							.get(Requisicao.AUTHORIZATION_HEADER);
-					Parametro.put(Parametro.Chave.TOKEN, token);
+					TokenDTO dto = resposta.body();
+					Parametro.put(Parametro.Chave.TOKEN, dto.getAccessToken());
 					Parametro.put(Parametro.Chave.CREDENCIAL, mCredencial);
 					if (mCredencial.isPerfilAdministrador()) {
 						consumirCredencialPUTFuncionario();
@@ -579,12 +575,11 @@ public class CredencialCadastroFragment extends Fragment
 				.putFuncionario(callbackCredencialPUTFuncionario(), mCredencial.getId(), uriList);
 	}
 
-	private void consumirLoginPOST() {
+	private void consumirTokenPOST() {
 		String usuario = mCredencial.getUsuario();
 		String senha = mCredencial.getSenha();
-		LoginDTO dto = LoginDTO.builder().usuario(usuario).senha(senha).build();
 		++mTarefasPendentes;
-		LoginRequisicao.post(callbackLoginPOST(), dto);
+		TokenRequisicao.post(callbackTokenPOST(), senha, usuario);
 	}
 
 	private void exibirProgresso(@NonNull ProgressBar progresso,

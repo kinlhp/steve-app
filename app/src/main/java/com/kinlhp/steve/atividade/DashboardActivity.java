@@ -163,6 +163,8 @@ public class DashboardActivity extends AppCompatActivity
 					.setEnabled(false);
 			mNavigationDashboard.getMenu().findItem(R.id.subitem_relatorio)
 					.setEnabled(false);
+			mNavigationDashboard.getMenu().findItem(R.id.subitem_credencial)
+					.setEnabled(false);
 		}
 	}
 

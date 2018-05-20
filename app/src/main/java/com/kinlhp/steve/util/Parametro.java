@@ -24,6 +24,8 @@ public final class Parametro implements Serializable {
 
 	public enum Chave {
 		CREDENCIAL,
+		NOME_CLIENTE,
+		SENHA_CLIENTE,
 		TOKEN,
 		URL_BASE
 	}

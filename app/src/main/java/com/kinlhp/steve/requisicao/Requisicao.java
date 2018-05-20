@@ -31,17 +31,16 @@ public abstract class Requisicao implements Serializable {
 	private static Retrofit retrofit = retrofitBuilder.build();
 	private static OkHttpClient.Builder httpClientBuilder = new OkHttpClient
 			.Builder();
-	private static Interceptor autorizacao;
+	private static Interceptor interceptadorAutorizacao;
 	// TODO: 8/13/17 desabilitar logging em ambiente de produção
 	private static Interceptor logging = new HttpLoggingInterceptor()
 			.setLevel(HttpLoggingInterceptor.Level.BODY);
 
 	static <T> T criar(@NonNull Class<T> requisicao) {
-		String token = (String) Parametro.get(Parametro.Chave.TOKEN);
-		if (token != null && autorizacao == null) {
-			autorizacao = new Interceptador();
-			if (!httpClientBuilder.interceptors().contains(autorizacao)) {
-				httpClientBuilder.addInterceptor(autorizacao);
+		if (interceptadorAutorizacao == null) {
+			interceptadorAutorizacao = new InterceptadorAutorizacao();
+			if (!httpClientBuilder.interceptors().contains(interceptadorAutorizacao)) {
+				httpClientBuilder.addInterceptor(interceptadorAutorizacao);
 				retrofitBuilder.client(httpClientBuilder.build());
 				retrofit = retrofitBuilder.build();
 			}

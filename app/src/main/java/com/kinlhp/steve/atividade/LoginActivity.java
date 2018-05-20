@@ -18,17 +18,15 @@ import com.kinlhp.steve.R;
 import com.kinlhp.steve.dominio.Credencial;
 import com.kinlhp.steve.dominio.Pessoa;
 import com.kinlhp.steve.dto.CredencialDTO;
-import com.kinlhp.steve.dto.LoginDTO;
 import com.kinlhp.steve.dto.PessoaDTO;
+import com.kinlhp.steve.dto.TokenDTO;
 import com.kinlhp.steve.href.HRef;
 import com.kinlhp.steve.mapeamento.CredencialMapeamento;
 import com.kinlhp.steve.mapeamento.PessoaMapeamento;
 import com.kinlhp.steve.requisicao.CredencialRequisicao;
 import com.kinlhp.steve.requisicao.Falha;
-import com.kinlhp.steve.requisicao.LoginRequisicao;
-import com.kinlhp.steve.requisicao.Requisicao;
+import com.kinlhp.steve.requisicao.TokenRequisicao;
 import com.kinlhp.steve.resposta.ItemCallback;
-import com.kinlhp.steve.resposta.VazioCallback;
 import com.kinlhp.steve.util.Criptografia;
 import com.kinlhp.steve.util.Parametro;
 import com.kinlhp.steve.util.Teclado;
@@ -43,22 +41,23 @@ import retrofit2.Response;
 public class LoginActivity extends AppCompatActivity
 		implements View.OnClickListener, TextView.OnEditorActionListener,
 		Serializable {
-	private static final long serialVersionUID = -3424404939614981647L;
+	private static final long serialVersionUID = 3914451699131021189L;
 	private AppCompatImageButton mButtonAutenticacao;
 	private Credencial mCredencial;
 	private CredencialDTO mCredencialDTO;
 	private TextInputEditText mInputSenha;
 	private TextInputEditText mInputUsuario;
-	private LoginDTO mLoginDTO;
 	private ProgressBar mProgressBarAutenticacao;
+	private String mSenha;
+	private String mUsuario;
 
 	@Override
 	public void onClick(@NonNull View view) {
 		if (view.getId() == mButtonAutenticacao.getId()) {
 			Teclado.ocultar(this, view);
 			exibirProgresso();
-			mLoginDTO = iterarFormulario();
-			consumirLoginPOST(mLoginDTO);
+			iterarFormulario();
+			consumirTokenPOST();
 		}
 	}
 
@@ -145,27 +144,26 @@ public class LoginActivity extends AppCompatActivity
 		};
 	}
 
-	private VazioCallback callbackLoginPOST() {
-		return new VazioCallback() {
+	private ItemCallback<TokenDTO> callbackTokenPOST() {
+		return new ItemCallback<TokenDTO>() {
 
 			@Override
-			public void onFailure(@NonNull Call<Void> chamada,
+			public void onFailure(@NonNull Call<TokenDTO> chamada,
 			                      @NonNull Throwable causa) {
 				ocultarProgresso();
 				Falha.tratar(mButtonAutenticacao, causa);
 			}
 
 			@Override
-			public void onResponse(@NonNull Call<Void> chamada,
-			                       @NonNull Response<Void> resposta) {
+			public void onResponse(@NonNull Call<TokenDTO> chamada,
+			                       @NonNull Response<TokenDTO> resposta) {
 				if (!resposta.isSuccessful()) {
 					ocultarProgresso();
 					mInputSenha.getText().clear();
 					Falha.tratar(mButtonAutenticacao, resposta);
 				} else {
-					String token = resposta.headers()
-							.get(Requisicao.AUTHORIZATION_HEADER);
-					Parametro.put(Parametro.Chave.TOKEN, token);
+					TokenDTO dto = resposta.body();
+					Parametro.put(Parametro.Chave.TOKEN, dto);
 					consumirCredencialGETPorUsuario();
 				}
 			}
@@ -173,9 +171,8 @@ public class LoginActivity extends AppCompatActivity
 	}
 
 	private void consumirCredencialGETPorUsuario() {
-		String usuario = mLoginDTO.getUsuario();
 		CredencialRequisicao
-				.getPorUsuario(callbackCredencialGETPorUsuario(), usuario);
+				.getPorUsuario(callbackCredencialGETPorUsuario(), mUsuario);
 	}
 
 	private void consumirCredencialGETFuncionario() {
@@ -184,9 +181,9 @@ public class LoginActivity extends AppCompatActivity
 				.getFuncionario(callbackCredencialGETFuncionario(), funcionario);
 	}
 
-	private void consumirLoginPOST(@NonNull LoginDTO dto) {
+	private void consumirTokenPOST() {
 		try {
-			dto.setSenha(Criptografia.sha512(dto.getSenha()));
+			mSenha = Criptografia.sha512(mSenha);
 		} catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
 			String mensagem =
 					getString(R.string.suporte_mensagem_criptografia_senha);
@@ -194,9 +191,13 @@ public class LoginActivity extends AppCompatActivity
 					.show();
 			return;
 		}
+		String nomeCliente = getString(R.string.requisicao_cliente_api_nome);
+		String senhaCliente = getString(R.string.requisicao_cliente_api_senha);
 		String urlBase = getString(R.string.requisicao_url_base);
+		Parametro.put(Parametro.Chave.NOME_CLIENTE, nomeCliente);
+		Parametro.put(Parametro.Chave.SENHA_CLIENTE, senhaCliente);
 		Parametro.put(Parametro.Chave.URL_BASE, urlBase);
-		LoginRequisicao.post(callbackLoginPOST(), dto);
+		TokenRequisicao.post(callbackTokenPOST(), mSenha, mUsuario);
 	}
 
 	private void exibirProgresso() {
@@ -220,10 +221,9 @@ public class LoginActivity extends AppCompatActivity
 		finish();
 	}
 
-	private LoginDTO iterarFormulario() {
-		String usuario = mInputUsuario.getText().toString();
-		String senha = mInputSenha.getText().toString();
-		return LoginDTO.builder().usuario(usuario).senha(senha).build();
+	private void iterarFormulario() {
+		mSenha = mInputSenha.getText().toString();
+		mUsuario = mInputUsuario.getText().toString();
 	}
 
 	private void ocultarProgresso() {
