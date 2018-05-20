@@ -223,6 +223,8 @@
     <string name="pessoas_pesquisa_label_nome_razao_hint">Nome/Razão social</string>
     <string name="pessoas_pesquisa_titulo">Pessoas</string>
     <!-- requisicao -->
+    <string name="requisicao_cliente_api_nome">aplicativo</string>
+    <string name="requisicao_cliente_api_senha">\@pl1c\@t1v0</string>
     <string name="requisicao_url_base">http://&#8249;IP&#8250;:&#8249;PORT&#8250;/&#8249;CONTEXT&#8250;/</string>
     <string name="requisicao_url_cep">http://viacep.com.br/ws/%s/json</string>
     <!-- resposta -->
