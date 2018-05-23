@@ -54,11 +54,12 @@ import retrofit2.Response;
 public class ContaPagarCadastroFragment extends Fragment
 		implements Serializable, TextView.OnEditorActionListener,
 		View.OnClickListener, View.OnLongClickListener {
-	private static final long serialVersionUID = -3467960064503410008L;
+	private static final long serialVersionUID = 6163892102374845150L;
 	private static final String CONTA_PAGAR = "contaPagar";
 	private ContaPagar mContaPagar;
 	private OnCedentesPesquisaListener mOnCedentesPesquisaListener;
 	private OnReferenciaContaPagarAlteradoListener mOnReferenciaContaPagarAlteradoListener;
+	private boolean mPressionarVoltar;
 	private int mTarefasPendentes;
 
 	private AppCompatImageButton mButtonConsumirPorId;
@@ -368,6 +369,7 @@ public class ContaPagarCadastroFragment extends Fragment
 
 	private void consumirContaPagarPOST() {
 		mTarefasPendentes = 0;
+		mPressionarVoltar = true;
 		exibirProgresso(mProgressBarGerar, mButtonGerar);
 		Teclado.ocultar(getActivity(), mButtonGerar);
 		ContaPagarDTO dto = ContaPagarMapeamento.paraDTO(mContaPagar);
@@ -574,6 +576,9 @@ public class ContaPagarCadastroFragment extends Fragment
 				view.setVisibility(View.VISIBLE);
 			}
 			progresso.setVisibility(View.GONE);
+			if (mPressionarVoltar) {
+				getActivity().onBackPressed();
+			}
 		}
 	}
 

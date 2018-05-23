@@ -529,8 +529,12 @@ public class ContaReceberCadastroFragment extends Fragment
 
 	public void setOrdem(@NonNull Ordem ordem) {
 		mOrdem = ordem;
+		if (mOrdem != null && mOrdem.getCliente() != null) {
+			mSacado = mOrdem.getCliente();
+		}
 		if (getArguments() != null) {
 			getArguments().putSerializable(ORDEM, mOrdem);
+			getArguments().putSerializable(SACADO, mOrdem.getCliente());
 		}
 		gerarParcelas();
 		isOrdemValido();
