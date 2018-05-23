@@ -25,8 +25,8 @@ public final class ServicoMapeamento implements Serializable {
 		final Servico dominio = Servico.builder()
 				.descricao(dto.getDescricao())
 				.build();
-		dominio.setDataAlteracao(dto.getDataAlteracao());
 		dominio.setDataCriacao(dto.getDataCriacao());
+		dominio.setDataUltimaAlteracao(dto.getDataUltimaAlteracao());
 		dominio.setId(obterId(dto.getLinks().getSelf()));
 		return dominio;
 	}

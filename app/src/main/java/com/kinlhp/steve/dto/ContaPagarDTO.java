@@ -1,7 +1,7 @@
 package com.kinlhp.steve.dto;
 
 import com.google.gson.annotations.SerializedName;
-import com.kinlhp.steve.links.ContaReceberDTOLinks;
+import com.kinlhp.steve.links.ContaPagarDTOLinks;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -12,21 +12,30 @@ import lombok.Builder;
 import lombok.Getter;
 
 /**
- * Created by kin on 9/27/17.
+ * Created by kin on 10/10/17.
  */
 @Builder
 @Getter
-public class ContaReceberDTO extends DTO {
-	private static final long serialVersionUID = 3500448869811941450L;
+public class ContaPagarDTO extends DTO {
+	private static final long serialVersionUID = -591028128306225476L;
 
-	@SerializedName(value = "condicaoPagamento")
-	private String condicaoPagamento;
+	@SerializedName(value = "cedente")
+	private String cedente;
+
+	@SerializedName(value = "dataEmissao")
+	private Date dataEmissao;
 
 	@SerializedName(value = "dataVencimento")
 	private Date dataVencimento;
 
+	@SerializedName(value = "fatura")
+	private String fatura;
+
 	@SerializedName(value = "_links")
-	private ContaReceberDTOLinks links;
+	private ContaPagarDTOLinks links;
+
+	@SerializedName(value = "mesReferente")
+	private String mesReferente;
 
 	@Builder.Default
 	@SerializedName(value = "numeroParcela")
@@ -34,12 +43,6 @@ public class ContaReceberDTO extends DTO {
 
 	@SerializedName(value = "observacao")
 	private String observacao;
-
-	@SerializedName(value = "ordem")
-	private String ordem;
-
-	@SerializedName(value = "sacado")
-	private String sacado;
 
 	@Builder.Default
 	@SerializedName(value = "situacao")

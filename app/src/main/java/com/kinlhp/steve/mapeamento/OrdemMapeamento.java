@@ -30,8 +30,8 @@ public final class OrdemMapeamento implements Serializable {
 				.situacao(Ordem.Situacao.valueOf(dto.getSituacao().name()))
 				.tipo(Ordem.Tipo.valueOf(dto.getTipo().name()))
 				.build();
-		dominio.setDataAlteracao(dto.getDataAlteracao());
 		dominio.setDataCriacao(dto.getDataCriacao());
+		dominio.setDataUltimaAlteracao(dto.getDataUltimaAlteracao());
 		dominio.setId(obterId(dto.getLinks().getSelf()));
 		return dominio;
 	}

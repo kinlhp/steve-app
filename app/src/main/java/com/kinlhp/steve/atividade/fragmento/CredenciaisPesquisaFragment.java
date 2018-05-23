@@ -277,9 +277,7 @@ public class CredenciaisPesquisaFragment extends Fragment
 		mTarefasPendentes = 0;
 		Teclado.ocultar(getActivity(), mProgressBarConsumirCredenciaisPaginado);
 		exibirProgresso(mProgressBarConsumirCredenciaisPaginado);
-		int tamanho = mCredenciais.size();
-		mCredenciais.clear();
-		mAdaptadorCredenciais.notifyItemRangeRemoved(0, tamanho);
+		mAdaptadorCredenciais.notifyItemRangeRemoved(0, mCredenciais.size());
 		++mTarefasPendentes;
 		CredencialRequisicao
 				.getPaginado(callbackCredenciaisGETPaginado(), href);

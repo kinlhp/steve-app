@@ -20,6 +20,20 @@
     <string name="condicoes_pagamento_pesquisa_label_quantidade_parcelas_hint">@string/condicao_pagamento_cadastro_label_quantidade_parcelas_hint</string>
     <string name="condicoes_pagamento_pesquisa_titulo">Condições de Pagamento</string>
     <!-- conta pagar -->
+    <string name="conta_pagar_cadastro_button_gerar_hint">GERAR</string>
+    <string name="conta_pagar_cadastro_button_salvar_hint">SALVAR ALTERAÇÕES</string>
+    <string name="conta_pagar_cadastro_label_calendario_hint">Calendário</string>
+    <string name="conta_pagar_cadastro_label_cedente_hint">Cedente</string>
+    <string name="conta_pagar_cadastro_label_data_emissao_hint">Data de emissão</string>
+    <string name="conta_pagar_cadastro_label_data_vencimento_hint">Data de vencimento</string>
+    <string name="conta_pagar_cadastro_label_fatura_hint">Fatura</string>
+    <string name="conta_pagar_cadastro_label_id_hint">Código</string>
+    <string name="conta_pagar_cadastro_label_mes_referente_hint">Mês referente</string>
+    <string name="conta_pagar_cadastro_label_nenhum_cedente_hint">Pesquisar cedentes</string>
+    <string name="conta_pagar_cadastro_label_numero_parcela_hint">Número da parcela</string>
+    <string name="conta_pagar_cadastro_label_observacao_hint">Observação</string>
+    <string name="conta_pagar_cadastro_label_valor_hint">Valor</string>
+    <string name="conta_pagar_cadastro_mensagem_cedente_nao_fornecedor_nao_transportador">Sem perfil fornecedor/transportador</string>
     <string name="conta_pagar_cadastro_titulo">Conta a Pagar</string>
     <!-- conta receber -->
     <string name="conta_receber_cadastro_button_gerar_hint">GERAR</string>

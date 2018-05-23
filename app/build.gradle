@@ -7,10 +7,12 @@ android {
         applicationId "com.kinlhp.steve"
         minSdkVersion 15
         targetSdkVersion 27
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        vectorDrawables {
+            useSupportLibrary = true
+        }
         versionCode 1
         versionName "1.0.0-Alpha"
-        vectorDrawables.useSupportLibrary = true
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
@@ -45,9 +47,9 @@ dependencies {
     }
     //    lombok
     //    lombok requer pacote javax.annotation
-    annotationProcessor 'org.projectlombok:lombok:1.16.18'
     compileOnly 'org.glassfish:javax.annotation:3.1.1'
-    compileOnly 'org.projectlombok:lombok:1.16.18'
+    implementation 'org.projectlombok:lombok:1.16.18'
+    annotationProcessor 'org.projectlombok:lombok:1.16.18'
     //    teste
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'

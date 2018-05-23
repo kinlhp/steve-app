@@ -395,9 +395,7 @@ public class PessoasPesquisaFragment extends Fragment
 		mTarefasPendentes = 0;
 		Teclado.ocultar(getActivity(), mProgressBarConsumirPessoasPaginado);
 		exibirProgresso(mProgressBarConsumirPessoasPaginado);
-		int tamanho = mPessoas.size();
-		mPessoas.clear();
-		mAdaptadorPessoas.notifyItemRangeRemoved(0, tamanho);
+		mAdaptadorPessoas.notifyItemRangeRemoved(0, mPessoas.size());
 		++mTarefasPendentes;
 		PessoaRequisicao.getPaginado(callbackPessoasGETPaginado(), href);
 	}

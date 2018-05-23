@@ -19,10 +19,10 @@ import lombok.Setter;
 @NoArgsConstructor
 @Setter
 public class Ordem extends Dominio<BigInteger> {
-	private static final long serialVersionUID = 3370067079322499877L;
+	private static final long serialVersionUID = -8847348933929825763L;
 	private Pessoa cliente;
 	@Builder.Default
-	private Set<ItemOrdemServico> itensOrdemServico = new LinkedHashSet<>();
+	private Set<ItemOrdemServico> itens = new LinkedHashSet<>();
 	private String observacao;
 	@Builder.Default
 	private Situacao situacao = Situacao.ABERTO;

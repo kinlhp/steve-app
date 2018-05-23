@@ -15,25 +15,26 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * Created by kin on 9/27/17.
+ * Created by kin on 10/5/17.
  */
 @AllArgsConstructor
 @Builder
-@EqualsAndHashCode(callSuper = false, of = {"ordem", "numeroParcela"})
+@EqualsAndHashCode(callSuper = false, of = {"fatura", "cedente", "numeroParcela"})
 @Getter
 @NoArgsConstructor
 @Setter
-public class ContaReceber extends Dominio<BigInteger> {
-	private static final long serialVersionUID = -111650151714802034L;
-	private CondicaoPagamento condicaoPagamento;
+public class ContaPagar extends Dominio<BigInteger> {
+	private static final long serialVersionUID = 9179186536139228508L;
+	private Pessoa cedente;
+	private Date dataEmissao;
 	private Date dataVencimento;
+	private String fatura;
+	private String mesReferente;
 	@Builder.Default
-	private Set<MovimentacaoContaReceber> movimentacoes = new LinkedHashSet<>();
+	private Set<MovimentacaoContaPagar> movimentacoes = new LinkedHashSet<>();
 	@Builder.Default
 	private BigInteger numeroParcela = BigInteger.ZERO;
 	private String observacao;
-	private Ordem ordem;
-	private Pessoa sacado;
 	@Builder.Default
 	private Situacao situacao = Situacao.ABERTO;
 	private BigDecimal valor;
@@ -43,7 +44,7 @@ public class ContaReceber extends Dominio<BigInteger> {
 			return BigDecimal.ZERO.setScale(2, RoundingMode.HALF_EVEN);
 		}
 		BigDecimal montantePago = BigDecimal.ZERO;
-		for (MovimentacaoContaReceber movimentacao : movimentacoes) {
+		for (MovimentacaoContaPagar movimentacao : movimentacoes) {
 			if (!movimentacao.isEstornado()) {
 				montantePago = montantePago.add(movimentacao.getValorPago());
 			}
@@ -55,9 +56,9 @@ public class ContaReceber extends Dominio<BigInteger> {
 		if (movimentacoes == null || movimentacoes.isEmpty()) {
 			return valor;
 		}
-		MovimentacaoContaReceber movimentacaoMaisRecente = MovimentacaoContaReceber
+		MovimentacaoContaPagar movimentacaoMaisRecente = MovimentacaoContaPagar
 				.builder().build();
-		for (MovimentacaoContaReceber movimentacao : movimentacoes) {
+		for (MovimentacaoContaPagar movimentacao : movimentacoes) {
 			if (!movimentacao.isEstornado()) {
 				if (movimentacaoMaisRecente.getDataCriacao() == null) {
 					movimentacaoMaisRecente = movimentacao;

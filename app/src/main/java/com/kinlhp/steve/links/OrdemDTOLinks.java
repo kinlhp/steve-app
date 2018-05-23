@@ -10,13 +10,13 @@ import lombok.Getter;
  */
 @Getter
 public class OrdemDTOLinks extends DTOLinks {
-	private static final long serialVersionUID = -6777401538327709291L;
+	private static final long serialVersionUID = -2267975978591548149L;
 
 	@SerializedName(value = "cliente")
 	private HRef cliente;
 
-	@SerializedName(value = "itensOrdemServico")
-	private HRef itensOrdemServico;
+	@SerializedName(value = "itens")
+	private HRef itens;
 
 	@SerializedName(value = "ordem")
 	private HRef ordem;

@@ -25,8 +25,8 @@ public final class FormaPagamentoMapeamento implements Serializable {
 		final FormaPagamento dominio = FormaPagamento.builder()
 				.descricao(dto.getDescricao())
 				.build();
-		dominio.setDataAlteracao(dto.getDataAlteracao());
 		dominio.setDataCriacao(dto.getDataCriacao());
+		dominio.setDataUltimaAlteracao(dto.getDataUltimaAlteracao());
 		dominio.setId(obterId(dto.getLinks().getSelf()));
 		return dominio;
 	}

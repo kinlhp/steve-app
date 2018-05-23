@@ -18,8 +18,9 @@ import retrofit2.Callback;
  * Created by kin on 9/21/17.
  */
 public final class OrdemRequisicao implements Serializable {
-	private static final long serialVersionUID = 2804764182738067288L;
-	private static final OrdemRecurso RECURSO = Requisicao.criar(OrdemRecurso.class);
+	private static final long serialVersionUID = -5413504007733492065L;
+	private static final OrdemRecurso RECURSO = Requisicao
+			.criar(OrdemRecurso.class);
 
 	private OrdemRequisicao() {
 	}
@@ -33,9 +34,9 @@ public final class OrdemRequisicao implements Serializable {
 		RECURSO.getCliente(cliente.getHref()).enqueue(callback);
 	}
 
-	public static void getItensOrdemServico(@NonNull Callback<Colecao<ItemOrdemServicoDTO>> callback,
-	                                        @NonNull HRef itensOrdemServico) {
-		RECURSO.getItensOrdemServico(itensOrdemServico.getHref()).enqueue(callback);
+	public static void getItens(@NonNull Callback<Colecao<ItemOrdemServicoDTO>> callback,
+	                            @NonNull HRef itens) {
+		RECURSO.getItens(itens.getHref()).enqueue(callback);
 	}
 
 	public static void getPaginado(@NonNull Callback<Colecao<OrdemDTO>> callback,

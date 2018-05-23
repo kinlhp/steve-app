@@ -40,8 +40,8 @@ public final class EnderecoMapeamento implements Serializable {
 				.pessoa(pessoa)
 				.tipo(Endereco.Tipo.valueOf(dto.getTipo().name()))
 				.build();
-		dominio.setDataAlteracao(dto.getDataAlteracao());
 		dominio.setDataCriacao(dto.getDataCriacao());
+		dominio.setDataUltimaAlteracao(dto.getDataUltimaAlteracao());
 		dominio.setId(obterId(dto.getLinks().getSelf()));
 		return dominio;
 	}

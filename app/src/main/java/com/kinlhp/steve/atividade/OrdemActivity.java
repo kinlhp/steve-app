@@ -65,23 +65,23 @@ public class OrdemActivity extends AppCompatActivity
 	@Override
 	public void onItemOrdemServicoAdicionado(@NonNull View view,
 	                                         @NonNull ItemOrdemServico itemOrdemServico) {
-		ArrayList<ItemOrdemServico> itensOrdemServico = new ArrayList<>(mOrdem.getItensOrdemServico());
+		ArrayList<ItemOrdemServico> itens = new ArrayList<>(mOrdem.getItens());
 		boolean contem = false;
-		for (ItemOrdemServico item : itensOrdemServico) {
+		for (ItemOrdemServico item : itens) {
 			if (itemOrdemServico == item) {
 				contem = true;
 				break;
 			}
 		}
 		if (!contem) {
-			itensOrdemServico.add(itemOrdemServico);
+			itens.add(itemOrdemServico);
 			if (mFragmentoItensOrdemServicoPesquisa != null) {
 				mFragmentoItensOrdemServicoPesquisa
 						.addItemOrdemServico(itemOrdemServico);
 			}
 		}
-		mOrdem.getItensOrdemServico().clear();
-		mOrdem.getItensOrdemServico().addAll(itensOrdemServico);
+		mOrdem.getItens().clear();
+		mOrdem.getItens().addAll(itens);
 	}
 
 	@Override
@@ -92,13 +92,13 @@ public class OrdemActivity extends AppCompatActivity
 
 	@Override
 	public void onItensOrdemServicoPesquisa(@NonNull View view) {
-		if (mOrdem.getItensOrdemServico().isEmpty()) {
+		if (mOrdem.getItens().isEmpty()) {
 			ItemOrdemServico itemOrdemServico = ItemOrdemServico.builder()
 					.ordem(mOrdem).valorOrcamento(null).valorServico(null)
 					.build();
 			inflarItemOrdemServicoCadastro(itemOrdemServico);
 		} else {
-			inflarItensOrdemServicoPesquisa(mOrdem.getItensOrdemServico());
+			inflarItensOrdemServicoPesquisa(mOrdem.getItens());
 		}
 	}
 
@@ -107,7 +107,7 @@ public class OrdemActivity extends AppCompatActivity
 	                                               @NonNull ItemOrdemServico itemOrdemServico) {
 		// TODO: 9/13/17 resolver de forma elegante a inconsistência acima (método contains não se comporta corretamente)
 		List<ItemOrdemServico> itensOrdemServico =
-				new ArrayList<>(itemOrdemServico.getOrdem().getItensOrdemServico());
+				new ArrayList<>(itemOrdemServico.getOrdem().getItens());
 		if (itensOrdemServico.contains(itemOrdemServico)
 				&& itemOrdemServico.getId() == null) {
 			itensOrdemServico.remove(itemOrdemServico);
@@ -116,8 +116,8 @@ public class OrdemActivity extends AppCompatActivity
 						.removeItemOrdemServico(itemOrdemServico);
 			}
 		}
-		mOrdem.getItensOrdemServico().clear();
-		mOrdem.getItensOrdemServico().addAll(itensOrdemServico);
+		mOrdem.getItens().clear();
+		mOrdem.getItens().addAll(itensOrdemServico);
 	}
 
 	@Override

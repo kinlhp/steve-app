@@ -2,8 +2,8 @@ package com.kinlhp.steve.mapeamento;
 
 import android.support.annotation.NonNull;
 
-import com.kinlhp.steve.dominio.ContaReceber;
-import com.kinlhp.steve.dto.ContaReceberDTO;
+import com.kinlhp.steve.dominio.ContaPagar;
+import com.kinlhp.steve.dto.ContaPagarDTO;
 import com.kinlhp.steve.href.HRef;
 import com.kinlhp.steve.util.Parametro;
 
@@ -13,23 +13,26 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
- * Created by kin on 9/28/17.
+ * Created by kin on 10/10/17.
  */
-public final class ContaReceberMapeamento implements Serializable {
-	private static final long serialVersionUID = 5547516998229087978L;
+public final class ContaPagarMapeamento implements Serializable {
+	private static final long serialVersionUID = 7270351346634036031L;
 	private static final String URL_BASE = Parametro
 			.get(Parametro.Chave.URL_BASE).toString();
 
-	private ContaReceberMapeamento() {
+	private ContaPagarMapeamento() {
 	}
 
 	@NonNull
-	public static ContaReceber paraDominio(@NonNull ContaReceberDTO dto) {
-		final ContaReceber dominio = ContaReceber.builder()
+	public static ContaPagar paraDominio(@NonNull ContaPagarDTO dto) {
+		final ContaPagar dominio = ContaPagar.builder()
+				.dataEmissao(dto.getDataEmissao())
 				.dataVencimento(dto.getDataVencimento())
+				.fatura(dto.getFatura())
+				.mesReferente(dto.getMesReferente())
 				.numeroParcela(dto.getNumeroParcela())
 				.observacao(dto.getObservacao())
-				.situacao(ContaReceber.Situacao.valueOf(dto.getSituacao().name()))
+				.situacao(ContaPagar.Situacao.valueOf(dto.getSituacao().name()))
 				.valor(dto.getValor())
 				.build();
 		dominio.setDataCriacao(dto.getDataCriacao());
@@ -39,23 +42,24 @@ public final class ContaReceberMapeamento implements Serializable {
 	}
 
 	@NonNull
-	public static Set<ContaReceber> paraDominios(@NonNull Set<ContaReceberDTO> dtos) {
-		Set<ContaReceber> dominios = new LinkedHashSet<>();
-		for (ContaReceberDTO dto : dtos) {
+	public static Set<ContaPagar> paraDominios(@NonNull Set<ContaPagarDTO> dtos) {
+		Set<ContaPagar> dominios = new LinkedHashSet<>();
+		for (ContaPagarDTO dto : dtos) {
 			dominios.add(paraDominio(dto));
 		}
 		return dominios;
 	}
 
-	public static ContaReceberDTO paraDTO(@NonNull ContaReceber dominio) {
-		return ContaReceberDTO.builder()
-				.condicaoPagamento(URL_BASE + "condicoespagamento/" + dominio.getCondicaoPagamento().getId().intValue())
+	public static ContaPagarDTO paraDTO(@NonNull ContaPagar dominio) {
+		return ContaPagarDTO.builder()
+				.cedente(URL_BASE + "pessoas/" + dominio.getCedente().getId().intValue())
+				.dataEmissao(dominio.getDataEmissao())
 				.dataVencimento(dominio.getDataVencimento())
+				.fatura(dominio.getFatura())
+				.mesReferente(dominio.getMesReferente())
 				.numeroParcela(dominio.getNumeroParcela())
 				.observacao(dominio.getObservacao())
-				.ordem(URL_BASE + "ordens/" + dominio.getOrdem().getId().intValue())
-				.sacado(URL_BASE + "pessoas/" + dominio.getSacado().getId().intValue())
-				.situacao(ContaReceberDTO.SituacaoDTO.valueOf(dominio.getSituacao().name()))
+				.situacao(ContaPagarDTO.SituacaoDTO.valueOf(dominio.getSituacao().name()))
 				.valor(dominio.getValor())
 				.build();
 	}

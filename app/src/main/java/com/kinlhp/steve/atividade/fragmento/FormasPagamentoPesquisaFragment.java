@@ -280,9 +280,8 @@ public class FormasPagamentoPesquisaFragment extends Fragment
 		mTarefasPendentes = 0;
 		Teclado.ocultar(getActivity(), mProgressBarConsumirFormasPagamentoPaginado);
 		exibirProgresso(mProgressBarConsumirFormasPagamentoPaginado);
-		int tamanho = mFormasPagamento.size();
-		mFormasPagamento.clear();
-		mAdaptadorFormasPagamento.notifyItemRangeRemoved(0, tamanho);
+		mAdaptadorFormasPagamento
+				.notifyItemRangeRemoved(0, mFormasPagamento.size());
 		++mTarefasPendentes;
 		FormaPagamentoRequisicao
 				.getPaginado(callbackFormasPagamentoGETPaginado(), href);

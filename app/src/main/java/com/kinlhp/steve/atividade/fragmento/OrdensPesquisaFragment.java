@@ -283,8 +283,7 @@ public class OrdensPesquisaFragment extends Fragment
 					Set<ItemOrdemServico> itensOrdemServico =
 							ItemOrdemServicoMapeamento
 									.paraDominios(dtos, mOrdemSelecionada);
-					mOrdemSelecionada.getItensOrdemServico()
-							.addAll(itensOrdemServico);
+					mOrdemSelecionada.getItens().addAll(itensOrdemServico);
 					for (ItemOrdemServico itemOrdemServico : itensOrdemServico) {
 						consumirItemOrdemServicoGETServico(itemOrdemServico);
 					}
@@ -347,20 +346,17 @@ public class OrdensPesquisaFragment extends Fragment
 	private void consumirOrdemGETItensOrdemServico() {
 		exibirProgresso(mProgressBarConsumirOrdensPaginado);
 		String url = Parametro.get(Parametro.Chave.URL_BASE).toString()
-				.concat("ordens/%d/itensOrdemServico");
+				.concat("ordens/%d/itens");
 		HRef href = new HRef(String.format(url, mOrdemSelecionada.getId()));
 		++mTarefasPendentes;
-		OrdemRequisicao
-				.getItensOrdemServico(callbackOrdemGETItensOrdemServico(), href);
+		OrdemRequisicao.getItens(callbackOrdemGETItensOrdemServico(), href);
 	}
 
 	private void consumirOrdensGETPaginado(@NonNull HRef href) {
 		mTarefasPendentes = 0;
 		Teclado.ocultar(getActivity(), mProgressBarConsumirOrdensPaginado);
 		exibirProgresso(mProgressBarConsumirOrdensPaginado);
-		int tamanho = mOrdens.size();
-		mOrdens.clear();
-		mAdaptadorOrdens.notifyItemRangeRemoved(0, tamanho);
+		mAdaptadorOrdens.notifyItemRangeRemoved(0, mOrdens.size());
 		++mTarefasPendentes;
 		OrdemRequisicao.getPaginado(callbackOrdensGETPaginado(), href);
 	}

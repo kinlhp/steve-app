@@ -229,9 +229,7 @@ public class ServicosPesquisaFragment extends Fragment
 		mTarefasPendentes = 0;
 		Teclado.ocultar(getActivity(), mProgressBarConsumirServicosPaginado);
 		exibirProgresso(mProgressBarConsumirServicosPaginado);
-		int tamanho = mServicos.size();
-		mServicos.clear();
-		mAdaptadorServicos.notifyItemRangeRemoved(0, tamanho);
+		mAdaptadorServicos.notifyItemRangeRemoved(0, mServicos.size());
 		++mTarefasPendentes;
 		ServicoRequisicao.getPaginado(callbackServicosGETPaginado(), href);
 	}

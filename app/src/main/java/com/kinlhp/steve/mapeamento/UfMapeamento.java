@@ -25,8 +25,8 @@ public final class UfMapeamento implements Serializable {
 				.nome(dto.getNome())
 				.sigla(Uf.Sigla.valueOf(dto.getSigla().name()))
 				.build();
-		dominio.setDataAlteracao(dto.getDataAlteracao());
 		dominio.setDataCriacao(dto.getDataCriacao());
+		dominio.setDataUltimaAlteracao(dto.getDataUltimaAlteracao());
 		dominio.setId(obterId(dto.getLinks().getSelf()));
 		return dominio;
 	}

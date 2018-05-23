@@ -43,7 +43,8 @@ import java.util.Set;
 import retrofit2.Call;
 import retrofit2.Response;
 
-public class ContaReceberCadastroFragment extends Fragment implements Serializable, View.OnClickListener {
+public class ContaReceberCadastroFragment extends Fragment
+		implements Serializable, View.OnClickListener {
 	private static final long serialVersionUID = 8463604932698640145L;
 	private static final String CONDICAO_PAGAMENTO = "condicaoPagamento";
 	private static final String FORMA_PAGAMENTO = "formaPagamento";
@@ -85,7 +86,8 @@ public class ContaReceberCadastroFragment extends Fragment implements Serializab
 	}
 
 	public static ContaReceberCadastroFragment newInstance() {
-		ContaReceberCadastroFragment fragmento = new ContaReceberCadastroFragment();
+		ContaReceberCadastroFragment fragmento =
+				new ContaReceberCadastroFragment();
 		Bundle argumentos = new Bundle();
 		fragmento.setArguments(argumentos);
 		return fragmento;
@@ -100,13 +102,16 @@ public class ContaReceberCadastroFragment extends Fragment implements Serializab
 				}
 				break;
 			case R.id.input_condicao_pagamento:
-				if (mOnCondicoesPagamentoPesquisaListener != null && mFormaPagamento != null) {
-					mOnCondicoesPagamentoPesquisaListener.onCondicoesPagamentoPesquisa(view, mFormaPagamento.getCondicoesPagamento());
+				if (mOnCondicoesPagamentoPesquisaListener != null
+						&& mFormaPagamento != null) {
+					mOnCondicoesPagamentoPesquisaListener
+							.onCondicoesPagamentoPesquisa(view, mFormaPagamento.getCondicoesPagamento());
 				}
 				break;
 			case R.id.input_forma_pagamento:
 				if (mOnFormasPagamentoPesquisaListener != null) {
-					mOnFormasPagamentoPesquisaListener.onFormasPagamentoPesquisa(view);
+					mOnFormasPagamentoPesquisaListener
+							.onFormasPagamentoPesquisa(view);
 				}
 				break;
 			case R.id.input_ordem:
@@ -116,7 +121,8 @@ public class ContaReceberCadastroFragment extends Fragment implements Serializab
 				break;
 			case R.id.input_parcelas:
 				if (mOnParcelasPesquisaListener != null) {
-					mOnParcelasPesquisaListener.onParcelasPesquisa(view, mParcelas);
+					mOnParcelasPesquisaListener
+							.onParcelasPesquisa(view, mParcelas);
 				}
 				break;
 			case R.id.input_sacado:
@@ -131,35 +137,44 @@ public class ContaReceberCadastroFragment extends Fragment implements Serializab
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		if (savedInstanceState != null) {
-			mCondicaoPagamento = (CondicaoPagamento) savedInstanceState.getSerializable(CONDICAO_PAGAMENTO);
-			mFormaPagamento = (FormaPagamento) savedInstanceState.getSerializable(FORMA_PAGAMENTO);
+			mCondicaoPagamento = (CondicaoPagamento) savedInstanceState
+					.getSerializable(CONDICAO_PAGAMENTO);
+			mFormaPagamento = (FormaPagamento) savedInstanceState
+					.getSerializable(FORMA_PAGAMENTO);
 			mOrdem = (Ordem) savedInstanceState.getSerializable(ORDEM);
 			mSacado = (Pessoa) savedInstanceState.getSerializable(SACADO);
 		}
 		if (getArguments() != null) {
-			mCondicaoPagamento = (CondicaoPagamento) getArguments().getSerializable(CONDICAO_PAGAMENTO);
-			mFormaPagamento = (FormaPagamento) getArguments().getSerializable(FORMA_PAGAMENTO);
+			mCondicaoPagamento = (CondicaoPagamento) getArguments
+					().getSerializable(CONDICAO_PAGAMENTO);
+			mFormaPagamento = (FormaPagamento) getArguments()
+					.getSerializable(FORMA_PAGAMENTO);
 			mOrdem = (Ordem) getArguments().getSerializable(ORDEM);
 			mSacado = (Pessoa) getArguments().getSerializable(SACADO);
 		}
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.fragment_conta_receber_cadastro, container, false);
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+	                         Bundle savedInstanceState) {
+		View view = inflater
+				.inflate(R.layout.fragment_conta_receber_cadastro, container, false);
 		mButtonGerar = view.findViewById(R.id.button_gerar);
-		mInputCondicaoPagamento = view.findViewById(R.id.input_condicao_pagamento);
+		mInputCondicaoPagamento = view
+				.findViewById(R.id.input_condicao_pagamento);
 		mInputFormaPagamento = view.findViewById(R.id.input_forma_pagamento);
 		mInputOrdem = view.findViewById(R.id.input_ordem);
 		mInputParcelas = view.findViewById(R.id.input_parcelas);
 		mInputSacado = view.findViewById(R.id.input_sacado);
-		mLabelCondicaoPagamento = view.findViewById(R.id.label_condicao_pagamento);
+		mLabelCondicaoPagamento = view
+				.findViewById(R.id.label_condicao_pagamento);
 		mLabelFormaPagamento = view.findViewById(R.id.label_forma_pagamento);
 		mLabelOrdem = view.findViewById(R.id.label_ordem);
 		mLabelParcelas = view.findViewById(R.id.label_parcelas);
 		mLabelSacado = view.findViewById(R.id.label_sacado);
 		mProgressBarGerar = view.findViewById(R.id.progress_bar_gerar);
-		mScrollContaReceberCadastro = view.findViewById(R.id.scroll_conta_receber_cadastro);
+		mScrollContaReceberCadastro = view
+				.findViewById(R.id.scroll_conta_receber_cadastro);
 
 		mButtonGerar.setOnClickListener(this);
 		mInputCondicaoPagamento.setOnClickListener(this);
@@ -223,7 +238,8 @@ public class ContaReceberCadastroFragment extends Fragment implements Serializab
 		return new VazioCallback() {
 
 			@Override
-			public void onFailure(@NonNull Call<Void> chamada, @NonNull Throwable causa) {
+			public void onFailure(@NonNull Call<Void> chamada,
+			                      @NonNull Throwable causa) {
 				mOrdem.setSituacao(mSituacaoAnterior);
 				--mTarefasPendentes;
 				mPressionarVoltar = false;
@@ -232,7 +248,8 @@ public class ContaReceberCadastroFragment extends Fragment implements Serializab
 			}
 
 			@Override
-			public void onResponse(@NonNull Call<Void> chamada, @NonNull Response<Void> resposta) {
+			public void onResponse(@NonNull Call<Void> chamada,
+			                       @NonNull Response<Void> resposta) {
 				--mTarefasPendentes;
 				if (!resposta.isSuccessful()) {
 					mOrdem.setSituacao(mSituacaoAnterior);
@@ -247,7 +264,8 @@ public class ContaReceberCadastroFragment extends Fragment implements Serializab
 	private void consumirContaReceberPOST(@NonNull ContaReceber contaReceber) {
 		ContaReceberDTO dto = ContaReceberMapeamento.paraDTO(contaReceber);
 		++mTarefasPendentes;
-		ContaReceberRequisicao.post(callbackContaReceberPOST(contaReceber), dto);
+		ContaReceberRequisicao
+				.post(callbackContaReceberPOST(contaReceber), dto);
 	}
 
 	private void consumirOrdemPUTSituacao() {
@@ -268,13 +286,17 @@ public class ContaReceberCadastroFragment extends Fragment implements Serializab
 
 	private void gerarParcelas() {
 		isFormularioValido();
-		if (mOrdem != null && mSacado != null && mCondicaoPagamento != null) {
-			BigDecimal valorTotal = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_EVEN);
-			BigDecimal totalGerado = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_EVEN);
-			for (ItemOrdemServico itemOrdemServico : mOrdem.getItensOrdemServico()) {
+		if (mOrdem != null && mSacado != null
+				&& mCondicaoPagamento != null) {
+			BigDecimal valorTotal = BigDecimal.ZERO
+					.setScale(2, RoundingMode.HALF_EVEN);
+			BigDecimal totalGerado = BigDecimal.ZERO
+					.setScale(2, RoundingMode.HALF_EVEN);
+			for (ItemOrdemServico itemOrdemServico : mOrdem.getItens()) {
 				valorTotal = valorTotal.add(itemOrdemServico.getValorServico());
 			}
-			long prazo = 1_000 * 60 * 60 * 24 * mCondicaoPagamento.getPeriodoEntreParcelas().longValue();
+			long prazo = (1_000 * 60 * 60 * 24) * mCondicaoPagamento
+					.getPeriodoEntreParcelas().longValue();
 			ArrayList<ContaReceber> parcelas = new ArrayList<>();
 			if (valorTotal.compareTo(BigDecimal.ZERO) > 0) {
 				if (mCondicaoPagamento.getQuantidadeParcelas().compareTo(BigInteger.ONE) < 1) {
@@ -284,13 +306,14 @@ public class ContaReceberCadastroFragment extends Fragment implements Serializab
 							.ordem(mOrdem)
 							.sacado(mSacado)
 							.valor(valorTotal)
-							.saldoDevedor(valorTotal)
 							.build();
-					contaReceber.setDataVencimento(new Date(Data.inicioDoDia().getTime() + prazo));
+					contaReceber
+							.setDataVencimento(new Date(Data.inicioDoDia().getTime() + prazo));
 					parcelas.add(contaReceber);
 					totalGerado = totalGerado.add(contaReceber.getValor());
 				} else {
-					BigDecimal valor = valorTotal.divide(new BigDecimal(mCondicaoPagamento.getQuantidadeParcelas()), 2, RoundingMode.HALF_EVEN);
+					BigDecimal valor = valorTotal
+							.divide(new BigDecimal(mCondicaoPagamento.getQuantidadeParcelas()), 2, RoundingMode.HALF_EVEN);
 					for (int numeroParcela = 1; numeroParcela <= mCondicaoPagamento.getQuantidadeParcelas().intValue(); numeroParcela++) {
 						ContaReceber contaReceber = ContaReceber.builder()
 								.condicaoPagamento(mCondicaoPagamento)
@@ -298,22 +321,22 @@ public class ContaReceberCadastroFragment extends Fragment implements Serializab
 								.ordem(mOrdem)
 								.sacado(mSacado)
 								.valor(valor)
-								.saldoDevedor(valor)
 								.build();
-						contaReceber.setDataVencimento(new Date(Data.inicioDoDia().getTime() + (prazo * numeroParcela)));
+						contaReceber
+								.setDataVencimento(new Date(Data.inicioDoDia().getTime() + (prazo * numeroParcela)));
 						parcelas.add(contaReceber);
 						totalGerado = totalGerado.add(contaReceber.getValor());
 					}
 				}
 			}
 			if (valorTotal.compareTo(totalGerado) != 0) {
-				totalGerado = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_EVEN);
+				totalGerado = BigDecimal.ZERO
+						.setScale(2, RoundingMode.HALF_EVEN);
 				for (int i = 0; i < parcelas.size() - 1; i++) {
 					totalGerado = totalGerado.add(parcelas.get(i).getValor());
 				}
 				ContaReceber ultimaParcela = parcelas.get(parcelas.size() - 1);
 				ultimaParcela.setValor(valorTotal.subtract(totalGerado));
-				ultimaParcela.setSaldoDevedor(ultimaParcela.getValor());
 			}
 			mParcelas.clear();
 			mParcelas.addAll(parcelas);
@@ -322,12 +345,17 @@ public class ContaReceberCadastroFragment extends Fragment implements Serializab
 	}
 
 	private boolean isFormularioValido() {
-		return isOrdemValido() && isSacadoValido() && isFormaPagamentoValido() && isCondicaoPagamentoValido() && isParcelasValido();
+		return isOrdemValido()
+				&& isSacadoValido()
+				&& isFormaPagamentoValido()
+				&& isCondicaoPagamentoValido()
+				&& isParcelasValido();
 	}
 
 	private boolean isCondicaoPagamentoValido() {
 		if (mCondicaoPagamento == null) {
-			mLabelCondicaoPagamento.setError(getString(R.string.input_obrigatorio));
+			mLabelCondicaoPagamento
+					.setError(getString(R.string.input_obrigatorio));
 			return false;
 		}
 		mLabelCondicaoPagamento.setError(null);
@@ -337,7 +365,8 @@ public class ContaReceberCadastroFragment extends Fragment implements Serializab
 
 	private boolean isFormaPagamentoValido() {
 		if (mFormaPagamento == null) {
-			mLabelFormaPagamento.setError(getString(R.string.input_obrigatorio));
+			mLabelFormaPagamento
+					.setError(getString(R.string.input_obrigatorio));
 			return false;
 		}
 		mLabelFormaPagamento.setError(null);
@@ -351,7 +380,8 @@ public class ContaReceberCadastroFragment extends Fragment implements Serializab
 			return false;
 		}
 		if (!mOrdem.getSituacao().equals(Ordem.Situacao.FINALIZADO)) {
-			mLabelOrdem.setError(getString(R.string.conta_receber_cadastro_mensagem_ordem_nao_finalizado));
+			mLabelOrdem
+					.setError(getString(R.string.conta_receber_cadastro_mensagem_ordem_nao_finalizado));
 			return false;
 		}
 		mLabelOrdem.setError(null);
@@ -379,7 +409,8 @@ public class ContaReceberCadastroFragment extends Fragment implements Serializab
 			return false;
 		}
 		if (!mSacado.isPerfilCliente()) {
-			mLabelSacado.setError(getString(R.string.conta_receber_cadastro_mensagem_sacado_nao_cliente));
+			mLabelSacado
+					.setError(getString(R.string.conta_receber_cadastro_mensagem_sacado_nao_cliente));
 			return false;
 		}
 		mLabelSacado.setError(null);
@@ -396,7 +427,8 @@ public class ContaReceberCadastroFragment extends Fragment implements Serializab
 			progresso.setVisibility(View.GONE);
 			if (mPressionarVoltar) {
 				if (mOnParcelasGeradoListener != null) {
-					mOnParcelasGeradoListener.onParcelasGerado(mButtonGerar, mParcelas);
+					mOnParcelasGeradoListener
+							.onParcelasGerado(mButtonGerar, mParcelas);
 				}
 				getActivity().onBackPressed();
 			}
@@ -412,34 +444,49 @@ public class ContaReceberCadastroFragment extends Fragment implements Serializab
 	}
 
 	private void preencherViewCondicaoPagamento() {
-		mLabelCondicaoPagamento.setHint(mCondicaoPagamento == null ? getString(R.string.conta_receber_cadastro_label_nenhum_condicao_pagamento_hint) : getString(R.string.conta_receber_cadastro_label_condicao_pagamento_hint));
-		mInputCondicaoPagamento.setText(mCondicaoPagamento == null ? "" : mCondicaoPagamento.toString());
+		mLabelCondicaoPagamento.setHint(mCondicaoPagamento == null
+				? getString(R.string.conta_receber_cadastro_label_nenhum_condicao_pagamento_hint)
+				: getString(R.string.conta_receber_cadastro_label_condicao_pagamento_hint));
+		mInputCondicaoPagamento.setText(mCondicaoPagamento == null
+				? "" : mCondicaoPagamento.toString());
 	}
 
 	private void preencherViewFormaPagamento() {
-		mLabelFormaPagamento.setHint(mFormaPagamento == null ? getString(R.string.conta_receber_cadastro_label_nenhum_forma_pagamento_hint) : getString(R.string.conta_receber_cadastro_label_forma_pagamento_hint));
-		mInputFormaPagamento.setText(mFormaPagamento == null ? "" : mFormaPagamento.toString());
+		mLabelFormaPagamento.setHint(mFormaPagamento == null
+				? getString(R.string.conta_receber_cadastro_label_nenhum_forma_pagamento_hint)
+				: getString(R.string.conta_receber_cadastro_label_forma_pagamento_hint));
+		mInputFormaPagamento.setText(mFormaPagamento == null
+				? "" : mFormaPagamento.toString());
 	}
 
 	private void preencherViewOrdem() {
-		mLabelOrdem.setHint(mOrdem == null ? getString(R.string.conta_receber_cadastro_label_nenhum_ordem_hint) : getString(R.string.conta_receber_cadastro_label_ordem_hint));
+		mLabelOrdem.setHint(mOrdem == null
+				? getString(R.string.conta_receber_cadastro_label_nenhum_ordem_hint)
+				: getString(R.string.conta_receber_cadastro_label_ordem_hint));
 		mInputOrdem.setText(mOrdem == null ? "" : mOrdem.toString());
 	}
 
 	private void preencherViewParcelas() {
-		mLabelParcelas.setHint(mParcelas == null || mParcelas.isEmpty() ? getString(R.string.conta_receber_cadastro_label_nenhum_parcela_hint) : getString(R.string.conta_receber_cadastro_label_parcelas_hint));
-		mInputParcelas.setText(mParcelas == null || mParcelas.isEmpty() ? "" : getString(R.string.conta_receber_cadastro_input_parcelas_text));
+		mLabelParcelas.setHint(mParcelas == null || mParcelas.isEmpty()
+				? getString(R.string.conta_receber_cadastro_label_nenhum_parcela_hint)
+				: getString(R.string.conta_receber_cadastro_label_parcelas_hint));
+		mInputParcelas.setText(mParcelas == null || mParcelas.isEmpty()
+				? ""
+				: getString(R.string.conta_receber_cadastro_input_parcelas_text));
 	}
 
 	private void preencherViewSacado() {
-		mLabelSacado.setHint(mSacado == null ? getString(R.string.conta_receber_cadastro_label_nenhum_sacado_hint) : getString(R.string.conta_receber_cadastro_label_sacado_hint));
+		mLabelSacado.setHint(mSacado == null
+				? getString(R.string.conta_receber_cadastro_label_nenhum_sacado_hint)
+				: getString(R.string.conta_receber_cadastro_label_sacado_hint));
 		mInputSacado.setText(mSacado == null ? "" : mSacado.toString());
 	}
 
 	public void setCondicaoPagamento(@NonNull CondicaoPagamento condicaoPagamento) {
 		mCondicaoPagamento = condicaoPagamento;
 		if (getArguments() != null) {
-			getArguments().putSerializable(CONDICAO_PAGAMENTO, mCondicaoPagamento);
+			getArguments()
+					.putSerializable(CONDICAO_PAGAMENTO, mCondicaoPagamento);
 		}
 		gerarParcelas();
 		isCondicaoPagamentoValido();
@@ -513,7 +560,8 @@ public class ContaReceberCadastroFragment extends Fragment implements Serializab
 
 	public interface OnCondicoesPagamentoPesquisaListener {
 
-		void onCondicoesPagamentoPesquisa(@NonNull View view, @NonNull Set<CondicaoPagamento> condicoesPagamento);
+		void onCondicoesPagamentoPesquisa(@NonNull View view,
+		                                  @NonNull Set<CondicaoPagamento> condicoesPagamento);
 	}
 
 	public interface OnFormasPagamentoPesquisaListener {
@@ -528,12 +576,14 @@ public class ContaReceberCadastroFragment extends Fragment implements Serializab
 
 	public interface OnParcelasGeradoListener {
 
-		void onParcelasGerado(@NonNull View view, @NonNull ArrayList<ContaReceber> contasReceber);
+		void onParcelasGerado(@NonNull View view,
+		                      @NonNull ArrayList<ContaReceber> contasReceber);
 	}
 
 	public interface OnParcelasPesquisaListener {
 
-		void onParcelasPesquisa(@NonNull View view, @NonNull ArrayList<ContaReceber> contasReceber);
+		void onParcelasPesquisa(@NonNull View view,
+		                        @NonNull ArrayList<ContaReceber> contasReceber);
 	}
 
 	public interface OnSacadosPesquisaListener {

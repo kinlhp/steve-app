@@ -33,8 +33,8 @@ public final class CredencialMapeamento implements Serializable {
 				.situacao(Credencial.Situacao.valueOf(dto.getSituacao().name()))
 				.usuario(dto.getUsuario())
 				.build();
-		dominio.setDataAlteracao(dto.getDataAlteracao());
 		dominio.setDataCriacao(dto.getDataCriacao());
+		dominio.setDataUltimaAlteracao(dto.getDataUltimaAlteracao());
 		dominio.setId(obterId(dto.getLinks().getSelf()));
 		return dominio;
 	}

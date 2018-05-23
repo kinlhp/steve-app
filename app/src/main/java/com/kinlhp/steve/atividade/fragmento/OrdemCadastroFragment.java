@@ -526,7 +526,7 @@ public class OrdemCadastroFragment extends Fragment
 					Set<ItemOrdemServico> itensOrdemServico =
 							ItemOrdemServicoMapeamento
 									.paraDominios(dtos, mOrdem);
-					mOrdem.getItensOrdemServico().addAll(itensOrdemServico);
+					mOrdem.getItens().addAll(itensOrdemServico);
 					preencherViewItensOrdemServico();
 					for (ItemOrdemServico itemOrdemServico : itensOrdemServico) {
 						consumirItemOrdemServicoGETServico(itemOrdemServico);
@@ -687,8 +687,7 @@ public class OrdemCadastroFragment extends Fragment
 				.concat("ordens/%d/itensOrdemServico");
 		HRef href = new HRef(String.format(url, mOrdem.getId()));
 		++mTarefasPendentes;
-		OrdemRequisicao
-				.getItensOrdemServico(callbackOrdemGETItensOrdemServico(), href);
+		OrdemRequisicao.getItens(callbackOrdemGETItensOrdemServico(), href);
 	}
 
 	private void consumirOrdemGETPorId() {
@@ -721,7 +720,7 @@ public class OrdemCadastroFragment extends Fragment
 	}
 
 	private void consumirOrdemPOSTItensOrdemServico() {
-		for (ItemOrdemServico itemOrdemServico : mOrdem.getItensOrdemServico()) {
+		for (ItemOrdemServico itemOrdemServico : mOrdem.getItens()) {
 			if (itemOrdemServico.getId() == null) {
 				ItemOrdemServicoDTO dto = ItemOrdemServicoMapeamento
 						.paraDTO(itemOrdemServico);
@@ -821,7 +820,7 @@ public class OrdemCadastroFragment extends Fragment
 				.append("        </tr>\n")
 				.append("    </thead>\n")
 				.append("    <tbody>\n");
-		for (ItemOrdemServico itemOrdemServico : mOrdem.getItensOrdemServico()) {
+		for (ItemOrdemServico itemOrdemServico : mOrdem.getItens()) {
 			sb.append("        <tr>\n")
 					.append("            <td style=\"border:1px solid #cccccc\">" + itemOrdemServico.getServico().toString() + "</td>\n")
 					.append("            <td style=\"border:1px solid #cccccc\">" + itemOrdemServico.getSituacao() + "</td>\n")
@@ -890,8 +889,8 @@ public class OrdemCadastroFragment extends Fragment
 	}
 
 	private boolean isItensOrdemServicoValido() {
-		if (mOrdemAuxiliar.getItensOrdemServico() == null
-				|| mOrdemAuxiliar.getItensOrdemServico().isEmpty()) {
+		if (mOrdemAuxiliar.getItens() == null
+				|| mOrdemAuxiliar.getItens().isEmpty()) {
 			mLabelItensOrdemServico
 					.setError(getString(R.string.input_obrigatorio));
 			return false;
@@ -988,14 +987,12 @@ public class OrdemCadastroFragment extends Fragment
 	}
 
 	private void preencherViewItensOrdemServico() {
-		mLabelItensOrdemServico
-				.setHint(mOrdemAuxiliar.getItensOrdemServico().isEmpty()
-						? getString(R.string.ordem_cadastro_label_nenhum_item_ordem_servico_hint)
-						: getString(R.string.ordem_cadastro_label_itens_ordem_servico_hint));
-		mInputItensOrdemServico
-				.setText(mOrdemAuxiliar.getItensOrdemServico().isEmpty()
-						? ""
-						: getString(R.string.ordem_cadastro_input_itens_ordem_servico_text));
+		mLabelItensOrdemServico.setHint(mOrdemAuxiliar.getItens().isEmpty()
+				? getString(R.string.ordem_cadastro_label_nenhum_item_ordem_servico_hint)
+				: getString(R.string.ordem_cadastro_label_itens_ordem_servico_hint));
+		mInputItensOrdemServico.setText(mOrdemAuxiliar.getItens().isEmpty()
+				? ""
+				: getString(R.string.ordem_cadastro_input_itens_ordem_servico_text));
 	}
 
 	private void previewPdf() {
@@ -1070,7 +1067,7 @@ public class OrdemCadastroFragment extends Fragment
 	private void transcreverOrdem() {
 		transcreverClienteOrdem();
 		mOrdemAuxiliar.setId(mOrdem.getId());
-		mOrdemAuxiliar.setItensOrdemServico(mOrdem.getItensOrdemServico());
+		mOrdemAuxiliar.setItens(mOrdem.getItens());
 		mOrdemAuxiliar.setObservacao(mOrdem.getObservacao());
 		mOrdemAuxiliar.setSituacao(mOrdem.getSituacao());
 		mOrdemAuxiliar.setTipo(mOrdem.getTipo());

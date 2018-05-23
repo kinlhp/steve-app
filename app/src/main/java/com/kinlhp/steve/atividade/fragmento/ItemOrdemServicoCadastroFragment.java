@@ -254,7 +254,7 @@ public class ItemOrdemServicoCadastroFragment extends Fragment
 	}
 
 	private void alternarButtonAdicionar() {
-		for (ItemOrdemServico itemOrdemServico : mItemOrdemServico.getOrdem().getItensOrdemServico()) {
+		for (ItemOrdemServico itemOrdemServico : mItemOrdemServico.getOrdem().getItens()) {
 			if (itemOrdemServico == mItemOrdemServico) {
 				mButtonAdicionar.setHint(mItemOrdemServico.getId() == null
 						? R.string.item_ordem_servico_cadastro_button_alterar_hint

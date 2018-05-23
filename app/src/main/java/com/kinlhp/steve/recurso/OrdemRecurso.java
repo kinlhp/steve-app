@@ -30,7 +30,7 @@ public interface OrdemRecurso {
 	Call<PessoaDTO> getCliente(@NonNull @Url String href);
 
 	@GET
-	Call<Colecao<ItemOrdemServicoDTO>> getItensOrdemServico(@NonNull @Url String href);
+	Call<Colecao<ItemOrdemServicoDTO>> getItens(@NonNull @Url String href);
 
 	@GET
 	Call<Colecao<OrdemDTO>> getPaginado(@NonNull @Url String href);

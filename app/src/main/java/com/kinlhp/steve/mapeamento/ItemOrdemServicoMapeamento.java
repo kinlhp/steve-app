@@ -35,8 +35,8 @@ public final class ItemOrdemServicoMapeamento implements Serializable {
 				.valorOrcamento(dto.getValorOrcamento())
 				.valorServico(dto.getValorServico())
 				.build();
-		dominio.setDataAlteracao(dto.getDataAlteracao());
 		dominio.setDataCriacao(dto.getDataCriacao());
+		dominio.setDataUltimaAlteracao(dto.getDataUltimaAlteracao());
 		dominio.setId(obterId(dto.getLinks().getSelf()));
 		return dominio;
 	}

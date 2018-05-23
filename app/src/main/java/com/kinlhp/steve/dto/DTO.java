@@ -12,11 +12,11 @@ import lombok.Getter;
  */
 @Getter
 public abstract class DTO implements Serializable {
-	private static final long serialVersionUID = 6791391857215213657L;
-
-	@SerializedName(value = "dataAlteracao")
-	private Date dataAlteracao;
+	private static final long serialVersionUID = -8405748333630231105L;
 
 	@SerializedName(value = "dataCriacao")
 	private Date dataCriacao;
+
+	@SerializedName(value = "dataUltimaAlteracao")
+	private Date dataUltimaAlteracao;
 }

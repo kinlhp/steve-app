@@ -35,8 +35,8 @@ public final class PessoaMapeamento implements Serializable {
 				.situacao(Pessoa.Situacao.valueOf(dto.getSituacao().name()))
 				.tipo(Pessoa.Tipo.valueOf(dto.getTipo().name()))
 				.build();
-		dominio.setDataAlteracao(dto.getDataAlteracao());
 		dominio.setDataCriacao(dto.getDataCriacao());
+		dominio.setDataUltimaAlteracao(dto.getDataUltimaAlteracao());
 		dominio.setId(obterId(dto.getLinks().getSelf()));
 		return dominio;
 	}
