@@ -54,8 +54,9 @@ import retrofit2.Response;
 public class ContaPagarCadastroFragment extends Fragment
 		implements Serializable, TextView.OnEditorActionListener,
 		View.OnClickListener, View.OnLongClickListener {
-	private static final long serialVersionUID = 6163892102374845150L;
+	private static final long serialVersionUID = -7636964916019642314L;
 	private static final String CONTA_PAGAR = "contaPagar";
+	private Pessoa mCedente;
 	private ContaPagar mContaPagar;
 	private OnCedentesPesquisaListener mOnCedentesPesquisaListener;
 	private OnReferenciaContaPagarAlteradoListener mOnReferenciaContaPagarAlteradoListener;
@@ -621,6 +622,12 @@ public class ContaPagarCadastroFragment extends Fragment
 		} else {
 			mInputMesReferente.getText().clear();
 		}
+	}
+
+	public void setCedente(@NonNull Pessoa cedente) {
+		mCedente = cedente;
+		mContaPagar.setCedente(mCedente);
+		isCedenteValido();
 	}
 
 	public void setContaPagar(@NonNull ContaPagar contaPagar) {

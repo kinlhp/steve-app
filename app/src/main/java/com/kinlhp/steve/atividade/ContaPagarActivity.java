@@ -19,6 +19,7 @@ public class ContaPagarActivity extends AppCompatActivity
 		implements ContaPagarCadastroFragment.OnCedentesPesquisaListener,
 		PessoasPesquisaFragment.OnPessoaSelecionadoListener,
 		Serializable {
+	private static final long serialVersionUID = -3470765148124706540L;
 	private ContaPagar mContaPagar = ContaPagar.builder().numeroParcela(null)
 			.build();
 	private ContaPagarCadastroFragment mFragmentoContaPagarCadastro;
@@ -65,7 +66,9 @@ public class ContaPagarActivity extends AppCompatActivity
 	@Override
 	public void onPessoaSelecionado(@NonNull View view,
 	                                @NonNull Pessoa pessoa) {
-		mContaPagar.setCedente(pessoa);
+		if (mFragmentoContaPagarCadastro != null) {
+			mFragmentoContaPagarCadastro.setCedente(pessoa);
+		}
 	}
 
 	private void inflarContaPagarCadastro() {
