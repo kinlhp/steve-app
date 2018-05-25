@@ -17,10 +17,10 @@ import retrofit2.http.Path;
  */
 public interface CondicaoPagamentoRecurso {
 
-	@POST(value = "condicoespagamento")
+	@POST(value = "condicoesPagamento?sort=descricao,asc&page=0&size=20")
 	Call<Void> post(@NonNull @Body CondicaoPagamentoDTO dto);
 
-	@PUT(value = "condicoespagamento/{id}")
+	@PUT(value = "condicoesPagamento/{id}")
 	Call<Void> put(@NonNull @Path(value = "id") BigInteger id,
 	               @NonNull @Body CondicaoPagamentoDTO dto);
 }

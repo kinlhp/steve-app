@@ -61,7 +61,7 @@
     <string name="contas_receber_pesquisa_label_sacado_hint">@string/conta_receber_cadastro_label_sacado_hint</string>
     <string name="contas_receber_pesquisa_label_saldo_devedor_hint">Saldo devedor</string>
     <string name="contas_receber_pesquisa_label_valor_hint">Valor</string>
-    <string name="contas_receber_pesquisa_titulo">Contas a receber</string>
+    <string name="contas_receber_pesquisa_titulo">Contas a Receber</string>
     <!-- credencial -->
     <string name="credenciais_pesquisa_label_0_registros_hint">0 registros</string>
     <string name="credenciais_pesquisa_label_funcionario_hint">@string/credencial_cadastro_label_funcionario_hint</string>
@@ -161,21 +161,53 @@
     <string name="item_ordem_servico_cadastro_label_descricao_hint">Descrição</string>
     <string name="item_ordem_servico_cadastro_label_servico_hint">Serviço</string>
     <string name="item_ordem_servico_cadastro_label_situacao_hint">Situação</string>
-    <string name="item_ordem_servico_cadastro_label_valor_orcamento_hint">Valor orçado</string>
-    <string name="item_ordem_servico_cadastro_label_valor_servico_hint">Valor aplicado</string>
+    <string name="item_ordem_servico_cadastro_label_valor_orcamento_hint">Valor orçado ¤</string>
+    <string name="item_ordem_servico_cadastro_label_valor_servico_hint">Valor aplicado ¤</string>
     <string name="item_ordem_servico_cadastro_titulo">Item da Ordem de Serviço</string>
     <string name="itens_ordem_servico_pesquisa_label_0_registros_hint">0 registros</string>
     <string name="itens_ordem_servico_pesquisa_label_descricao_hint">@string/item_ordem_servico_cadastro_label_descricao_hint</string>
     <string name="itens_ordem_servico_pesquisa_label_servico_hint">@string/item_ordem_servico_cadastro_label_servico_hint</string>
     <string name="itens_ordem_servico_pesquisa_label_situacao_hint">@string/item_ordem_servico_cadastro_label_situacao_hint</string>
-    <string name="itens_ordem_servico_pesquisa_label_valor_orcamento_hint">Valor do orçamento: R$</string>
-    <string name="itens_ordem_servico_pesquisa_label_valor_servico_hint">Valor aplicado: R$ </string>
+    <string name="itens_ordem_servico_pesquisa_label_valor_orcamento_hint">Valor do orçamento ¤</string>
+    <string name="itens_ordem_servico_pesquisa_label_valor_servico_hint">Valor aplicado ¤</string>
     <string name="itens_ordem_servico_pesquisa_titulo">Itens da Ordem de Serviço</string>
     <!-- login -->
     <string name="login_input_senha_hint">Senha</string>
     <string name="login_input_usuario_hint">Usuário</string>
     <string name="login_mensagem_usuario_inativo">%s, seu usuário está inativo</string>
     <string name="login_titulo">Login</string>
+    <!-- movimentacao conta receber -->
+    <string name="movimentacao_conta_receber_cadastro_button_gerar_hint">GERAR</string>
+    <string name="movimentacao_conta_receber_cadastro_input_parcelas_text">Visualizar parcelas</string>
+    <string name="movimentacao_conta_receber_cadastro_label_cliente_hint">Cliente</string>
+    <string name="movimentacao_conta_receber_cadastro_label_condicao_pagamento_hint">Condição de Pagamento</string>
+    <string name="movimentacao_conta_receber_cadastro_label_data_vencimento_hint">Data de vencimento</string>
+    <string name="movimentacao_conta_receber_cadastro_label_desconto_concedido_hint">Desconto concedido ¤</string>
+    <string name="movimentacao_conta_receber_cadastro_label_forma_pagamento_hint">Forma de Pagamento</string>
+    <string name="movimentacao_conta_receber_cadastro_label_juro_aplicado_hint">Juro aplicado ¤</string>
+    <string name="movimentacao_conta_receber_cadastro_label_montante_pago_hint">Montante pago ¤</string>
+    <string name="movimentacao_conta_receber_cadastro_label_nenhum_cliente_hint">Pesquisar clientes</string>
+    <string name="movimentacao_conta_receber_cadastro_label_nenhum_condicao_pagamento_hint">Pesquisar condições de pagamento</string>
+    <string name="movimentacao_conta_receber_cadastro_label_nenhum_forma_pagamento_hint">Pesquisar formas de pagamento</string>
+    <string name="movimentacao_conta_receber_cadastro_label_nenhum_ordem_hint">Pesquisar ordens</string>
+    <string name="movimentacao_conta_receber_cadastro_label_nenhum_parcela_hint">Nenhuma parcela</string>
+    <string name="movimentacao_conta_receber_cadastro_label_numero_parcela_hint">Número da parcela</string>
+    <string name="movimentacao_conta_receber_cadastro_label_ordem_hint">Ordem</string>
+    <string name="movimentacao_conta_receber_cadastro_label_parcelas_hint">Parcelas</string>
+    <string name="movimentacao_conta_receber_cadastro_label_saldo_devedor_hint">Saldo devedor ¤</string>
+    <string name="movimentacao_conta_receber_cadastro_label_valor_hint">Valor ¤</string>
+    <string name="movimentacao_conta_receber_cadastro_label_valor_pago_hint">Valor pago ¤</string>
+    <string name="movimentacao_conta_receber_cadastro_titulo">Movimentação de Conta a Receber</string>
+    <string name="movimentacoes_conta_receber_pesquisa_label_0_registros_hint">0 registros</string>
+    <string name="movimentacoes_conta_receber_pesquisa_label_cliente_hint">@string/movimentacao_conta_receber_cadastro_label_cliente_hint</string>
+    <string name="movimentacoes_conta_receber_pesquisa_label_condicao_pagamento_hint">@string/movimentacao_conta_receber_cadastro_label_condicao_pagamento_hint</string>
+    <string name="movimentacoes_conta_receber_pesquisa_label_data_vencimento_hint">Data de vencimento</string>
+    <string name="movimentacoes_conta_receber_pesquisa_label_forma_pagamento_hint">@string/movimentacao_conta_receber_cadastro_label_forma_pagamento_hint</string>
+    <string name="movimentacoes_conta_receber_pesquisa_label_montante_pago_hint">Montante pago ¤</string>
+    <string name="movimentacoes_conta_receber_pesquisa_label_numero_parcela_hint">Número parcela</string>
+    <string name="movimentacoes_conta_receber_pesquisa_label_saldo_devedor_hint">Saldo devedor ¤</string>
+    <string name="movimentacoes_conta_receber_pesquisa_label_valor_hint">Valor ¤</string>
+    <string name="movimentacoes_conta_receber_pesquisa_titulo">Movimentações de Conta a Receber</string>
     <!-- ordem -->
     <string name="ordem_cadastro_button_adicionar_hint">ADICIONAR</string>
     <string name="ordem_cadastro_button_alterar_hint">ALTERAR</string>

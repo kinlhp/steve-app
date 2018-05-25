@@ -69,8 +69,14 @@ public class DashboardActivity extends AppCompatActivity
 			case R.id.subitem_conta_pagar_lancamento:
 				iniciarContaPagar();
 				break;
+			case R.id.subitem_conta_pagar_pagamento:
+				iniciarMovimentacaoContaPagar();
+				break;
 			case R.id.subitem_conta_receber_lancamento:
 				iniciarContaReceber();
+				break;
+			case R.id.subitem_conta_receber_recebimento:
+				iniciarMovimentacaoContaReceber();
 				break;
 			case R.id.subitem_credencial:
 				iniciarCredencial();
@@ -136,6 +142,18 @@ public class DashboardActivity extends AppCompatActivity
 		Intent intentFormaPagamento =
 				new Intent(this, FormaPagamentoActivity.class);
 		startActivityForResult(intentFormaPagamento, 0);
+	}
+
+	private void iniciarMovimentacaoContaPagar() {
+//		Intent intentMovimentacaoContaPagar = new Intent(this,
+//				MovimentacaoContaPagarActivity.class);
+//		startActivityForResult(intentMovimentacaoContaPagar, 0);
+	}
+
+	private void iniciarMovimentacaoContaReceber() {
+		Intent intentMovimentacaoContaReceber = new Intent(this,
+				MovimentacaoContaReceberActivity.class);
+		startActivityForResult(intentMovimentacaoContaReceber, 0);
 	}
 
 	private void iniciarOrdem() {

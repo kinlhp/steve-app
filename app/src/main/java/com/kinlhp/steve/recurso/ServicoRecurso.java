@@ -21,7 +21,7 @@ import retrofit2.http.Url;
  */
 public interface ServicoRecurso {
 
-	@GET(value = "servicos?sort=descricao,asc")
+	@GET(value = "servicos?sort=descricao,asc&page=0&size=20")
 	Call<Colecao<ServicoDTO>> get();
 
 	@GET

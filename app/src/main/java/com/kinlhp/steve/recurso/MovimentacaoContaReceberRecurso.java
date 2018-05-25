@@ -23,10 +23,10 @@ public interface MovimentacaoContaReceberRecurso {
 	@GET
 	Call<CondicaoPagamentoDTO> getCondicaoPagamento(@NonNull @Url String href);
 
-	@POST(value = "movimentacoescontareceber")
+	@POST(value = "movimentacoesContaReceber")
 	Call<Void> post(@NonNull @Body MovimentacaoContaReceberDTO dto);
 
-	@PUT(value = "movimentacoescontareceber/{id}")
+	@PUT(value = "movimentacoesContaReceber/{id}")
 	Call<Void> put(@NonNull @Path(value = "id") BigInteger id,
 	               @NonNull @Body MovimentacaoContaReceberDTO dto);
 }

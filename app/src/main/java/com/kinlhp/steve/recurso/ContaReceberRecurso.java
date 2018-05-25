@@ -23,7 +23,7 @@ import retrofit2.http.Url;
  */
 public interface ContaReceberRecurso {
 
-	@GET(value = "contasreceber?sort=id,asc")
+	@GET(value = "contasReceber?sort=contaReceber,asc&sort=numeroParcela,asc&page=0&size=20")
 	Call<Colecao<ContaReceberDTO>> get();
 
 	@GET
@@ -35,17 +35,17 @@ public interface ContaReceberRecurso {
 	@GET
 	Call<Colecao<ContaReceberDTO>> getPaginado(@NonNull @Url String href);
 
-	@GET(value = "contasreceber/{id}")
+	@GET(value = "contasReceber/{id}")
 	Call<ContaReceberDTO> getPorId(@NonNull @Path(value = "id") BigInteger id);
 
-	@PATCH(value = "contasreceber/{id}")
+	@PATCH(value = "contasReceber/{id}")
 	Call<Void> patch(@NonNull @Path(value = "id") BigInteger id,
 	                 @NonNull @Body ContaReceberDTO dto);
 
-	@POST(value = "contasreceber")
+	@POST(value = "contasReceber")
 	Call<Void> post(@NonNull @Body ContaReceberDTO dto);
 
-	@PUT(value = "contasreceber/{id}")
+	@PUT(value = "contasReceber/{id}")
 	Call<Void> put(@NonNull @Path(value = "id") BigInteger id,
 	               @NonNull @Body ContaReceberDTO dto);
 }

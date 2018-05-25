@@ -23,7 +23,7 @@ import retrofit2.http.Url;
  */
 public interface OrdemRecurso {
 
-	@GET(value = "ordens?sort=id,asc")
+	@GET(value = "ordens?sort=id,asc&page=0&size=20")
 	Call<Colecao<OrdemDTO>> get();
 
 	@GET

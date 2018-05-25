@@ -168,13 +168,14 @@ public class PessoasPesquisaFragment extends Fragment
 				new StringBuilder(getString(R.string.requisicao_url_base))
 						.append("pessoas/")
 						.append("search/")
-						.append("findByCnpjCpfOrNomeRazaoOrFantasiaSobrenome")
+						.append("cnpjCpf-nomeRazao-fantasiaSobrenome")
 						.append("?cnpjCpf=").append(query)
 						.append("&nomeRazao=").append(query)
 						.append("&fantasiaSobrenome=").append(query)
+						.append("&sort=nomeRazao,asc")
 						.append("&page=0&size=20");
 		HRef pagina0 = new HRef(url.toString());
-		consumirPessoasGETPaginado(pagina0);
+		consumirPessoasGETPesquisaPaginado(pagina0);
 		return true;
 	}
 
@@ -303,6 +304,36 @@ public class PessoasPesquisaFragment extends Fragment
 		};
 	}
 
+	private ColecaoCallback<Colecao<TelefoneDTO>> callbackPessoaGETTelefones() {
+		return new ColecaoCallback<Colecao<TelefoneDTO>>() {
+
+			@Override
+			public void onFailure(@NonNull Call<Colecao<TelefoneDTO>> chamada,
+			                      @NonNull Throwable causa) {
+				--mTarefasPendentes;
+				ocultarProgresso(mProgressBarConsumirPessoasPaginado, false);
+				Falha.tratar(mProgressBarConsumirPessoasPaginado, causa);
+			}
+
+			@Override
+			public void onResponse(@NonNull Call<Colecao<TelefoneDTO>> chamada,
+			                       @NonNull Response<Colecao<TelefoneDTO>> resposta) {
+				--mTarefasPendentes;
+				if (!resposta.isSuccessful()) {
+					ocultarProgresso(mProgressBarConsumirPessoasPaginado, false);
+					Falha.tratar(mProgressBarConsumirPessoasPaginado, resposta);
+				} else {
+					Set<TelefoneDTO> dtos = resposta.body().getEmbedded()
+							.getDtos();
+					Set<Telefone> telefones = TelefoneMapeamento
+							.paraDominios(dtos, mPessoaSelecionada);
+					mPessoaSelecionada.getTelefones().addAll(telefones);
+					ocultarProgresso(mProgressBarConsumirPessoasPaginado, true);
+				}
+			}
+		};
+	}
+
 	private ColecaoCallback<Colecao<PessoaDTO>> callbackPessoasGETPaginado() {
 		return new ColecaoCallback<Colecao<PessoaDTO>>() {
 
@@ -334,11 +365,11 @@ public class PessoasPesquisaFragment extends Fragment
 		};
 	}
 
-	private ColecaoCallback<Colecao<TelefoneDTO>> callbackPessoaGETTelefones() {
-		return new ColecaoCallback<Colecao<TelefoneDTO>>() {
+	private ColecaoCallback<Colecao<PessoaDTO>> callbackPessoasGETPesquisaPaginado() {
+		return new ColecaoCallback<Colecao<PessoaDTO>>() {
 
 			@Override
-			public void onFailure(@NonNull Call<Colecao<TelefoneDTO>> chamada,
+			public void onFailure(@NonNull Call<Colecao<PessoaDTO>> chamada,
 			                      @NonNull Throwable causa) {
 				--mTarefasPendentes;
 				ocultarProgresso(mProgressBarConsumirPessoasPaginado, false);
@@ -346,20 +377,21 @@ public class PessoasPesquisaFragment extends Fragment
 			}
 
 			@Override
-			public void onResponse(@NonNull Call<Colecao<TelefoneDTO>> chamada,
-			                       @NonNull Response<Colecao<TelefoneDTO>> resposta) {
+			public void onResponse(@NonNull Call<Colecao<PessoaDTO>> chamada,
+			                       @NonNull Response<Colecao<PessoaDTO>> resposta) {
 				--mTarefasPendentes;
 				if (!resposta.isSuccessful()) {
-					ocultarProgresso(mProgressBarConsumirPessoasPaginado, false);
 					Falha.tratar(mProgressBarConsumirPessoasPaginado, resposta);
 				} else {
-					Set<TelefoneDTO> dtos = resposta.body().getEmbedded()
-							.getDtos();
-					Set<Telefone> telefones = TelefoneMapeamento
-							.paraDominios(dtos, mPessoaSelecionada);
-					mPessoaSelecionada.getTelefones().addAll(telefones);
-					ocultarProgresso(mProgressBarConsumirPessoasPaginado, true);
+					Colecao<PessoaDTO> colecao = resposta.body();
+					Set<PessoaDTO> dtos = colecao.getEmbedded().getDtos();
+					Set<Pessoa> pessoas = PessoaMapeamento.paraDominios(dtos);
+					for (Pessoa pessoa : pessoas) {
+						addPessoa(pessoa);
+					}
+					mLinks = colecao.getLinks();
 				}
+				ocultarProgresso(mProgressBarConsumirPessoasPaginado, false);
 			}
 		};
 	}
@@ -391,6 +423,15 @@ public class PessoasPesquisaFragment extends Fragment
 		PessoaRequisicao.getEnderecos(callbackPessoaGETEnderecos(), href);
 	}
 
+	private void consumirPessoaGETTelefones() {
+		exibirProgresso(mProgressBarConsumirPessoasPaginado);
+		String url = Parametro.get(Parametro.Chave.URL_BASE).toString()
+				.concat("pessoas/%d/telefones");
+		HRef href = new HRef(String.format(url, mPessoaSelecionada.getId()));
+		++mTarefasPendentes;
+		PessoaRequisicao.getTelefones(callbackPessoaGETTelefones(), href);
+	}
+
 	private void consumirPessoasGETPaginado(@NonNull HRef href) {
 		mTarefasPendentes = 0;
 		Teclado.ocultar(getActivity(), mProgressBarConsumirPessoasPaginado);
@@ -400,13 +441,15 @@ public class PessoasPesquisaFragment extends Fragment
 		PessoaRequisicao.getPaginado(callbackPessoasGETPaginado(), href);
 	}
 
-	private void consumirPessoaGETTelefones() {
+	private void consumirPessoasGETPesquisaPaginado(@NonNull HRef href) {
+		mTarefasPendentes = 0;
+		Teclado.ocultar(getActivity(), mProgressBarConsumirPessoasPaginado);
 		exibirProgresso(mProgressBarConsumirPessoasPaginado);
-		String url = Parametro.get(Parametro.Chave.URL_BASE).toString()
-				.concat("pessoas/%d/telefones");
-		HRef href = new HRef(String.format(url, mPessoaSelecionada.getId()));
+		mAdaptadorPessoas.notifyItemRangeRemoved(0, mPessoas.size());
+		mPessoas.clear();
+		mLinks = null;
 		++mTarefasPendentes;
-		PessoaRequisicao.getTelefones(callbackPessoaGETTelefones(), href);
+		PessoaRequisicao.getPaginado(callbackPessoasGETPesquisaPaginado(), href);
 	}
 
 	private void exibirProgresso(@NonNull ProgressBar progresso) {

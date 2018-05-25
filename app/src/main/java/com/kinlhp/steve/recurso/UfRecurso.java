@@ -13,6 +13,6 @@ import retrofit2.http.Query;
  */
 public interface UfRecurso {
 
-	@GET(value = "ufs/search/findBySigla")
+	@GET(value = "ufs/search/sigla")
 	Call<UfDTO> getPorSigla(@NonNull @Query(value = "sigla") UfDTO.SiglaDTO siglaDTO);
 }

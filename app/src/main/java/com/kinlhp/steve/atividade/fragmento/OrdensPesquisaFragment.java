@@ -160,12 +160,13 @@ public class OrdensPesquisaFragment extends Fragment
 				new StringBuilder(getString(R.string.requisicao_url_base))
 						.append("ordens/")
 						.append("search/")
-						.append("findByIdOrCnpjCpfCliente")
+						.append("id-cnpjCpf")
 						.append("?id=").append(query)
-						.append("&cnpjCpfCliente=").append(query)
+						.append("&cnpjCpf=").append(query)
+						.append("&sort=id,asc")
 						.append("&page=0&size=20");
 		HRef pagina0 = new HRef(url.toString());
-		consumirOrdensGETPaginado(pagina0);
+		consumirOrdensGETPesquisaPaginado(pagina0);
 		return true;
 	}
 
@@ -324,10 +325,41 @@ public class OrdensPesquisaFragment extends Fragment
 		};
 	}
 
+	private ColecaoCallback<Colecao<OrdemDTO>> callbackOrdensGETPesquisaPaginado() {
+		return new ColecaoCallback<Colecao<OrdemDTO>>() {
+
+			@Override
+			public void onFailure(@NonNull Call<Colecao<OrdemDTO>> chamada,
+			                      @NonNull Throwable causa) {
+				--mTarefasPendentes;
+				ocultarProgresso(mProgressBarConsumirOrdensPaginado, false);
+				Falha.tratar(mProgressBarConsumirOrdensPaginado, causa);
+			}
+
+			@Override
+			public void onResponse(@NonNull Call<Colecao<OrdemDTO>> chamada,
+			                       @NonNull Response<Colecao<OrdemDTO>> resposta) {
+				--mTarefasPendentes;
+				if (!resposta.isSuccessful()) {
+					Falha.tratar(mProgressBarConsumirOrdensPaginado, resposta);
+				} else {
+					Colecao<OrdemDTO> colecao = resposta.body();
+					Set<OrdemDTO> dtos = colecao.getEmbedded().getDtos();
+					Set<Ordem> ordens = OrdemMapeamento.paraDominios(dtos);
+					for (Ordem ordem : ordens) {
+						consumirOrdemGETCliente(ordem);
+					}
+					mLinks = colecao.getLinks();
+				}
+				ocultarProgresso(mProgressBarConsumirOrdensPaginado, false);
+			}
+		};
+	}
+
 	private void consumirItemOrdemServicoGETServico(@NonNull ItemOrdemServico itemOrdemServico) {
 		// TODO: 9/11/17 corrigir hard-coded
 		String url = Parametro.get(Parametro.Chave.URL_BASE).toString()
-				.concat("itensordemservico/%d/servico");
+				.concat("itensOrdemServico/%d/servico");
 		HRef href = new HRef(String.format(url, itemOrdemServico.getId()));
 		++mTarefasPendentes;
 		ItemOrdemServicoRequisicao
@@ -359,6 +391,17 @@ public class OrdensPesquisaFragment extends Fragment
 		mAdaptadorOrdens.notifyItemRangeRemoved(0, mOrdens.size());
 		++mTarefasPendentes;
 		OrdemRequisicao.getPaginado(callbackOrdensGETPaginado(), href);
+	}
+
+	private void consumirOrdensGETPesquisaPaginado(@NonNull HRef href) {
+		mTarefasPendentes = 0;
+		Teclado.ocultar(getActivity(), mProgressBarConsumirOrdensPaginado);
+		exibirProgresso(mProgressBarConsumirOrdensPaginado);
+		mAdaptadorOrdens.notifyItemRangeRemoved(0, mOrdens.size());
+		mOrdens.clear();
+		mLinks = null;
+		++mTarefasPendentes;
+		OrdemRequisicao.getPaginado(callbackOrdensGETPesquisaPaginado(), href);
 	}
 
 	private void exibirProgresso(@NonNull ProgressBar progresso) {

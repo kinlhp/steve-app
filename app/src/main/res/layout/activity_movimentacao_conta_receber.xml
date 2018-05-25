@@ -1,21 +1,20 @@
-<?xml version="1.0" encoding="utf-8"?><!-- @layout/container_dashboard.xml -->
+<?xml version="1.0" encoding="utf-8"?><!-- @layout/activity_movimentacao_conta_receber.xml -->
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/container_dashboard"
+    android:id="@+id/activity_movimentacao_conta_receber"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".atividade.DashboardActivity">
+    tools:context=".atividade.MovimentacaoContaReceberActivity">
 
     <android.support.design.widget.AppBarLayout
-        android:id="@+id/app_bar_dashboard"
+        android:id="@+id/app_bar_movimentacao_conta_receber"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar_dashboard"
+            android:id="@+id/toolbar_movimentacao_conta_receber"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
@@ -23,6 +22,6 @@
     </android.support.design.widget.AppBarLayout>
 
     <include
-        android:id="@+id/include_content_dashboard"
-        layout="@layout/content_dashboard" />
+        android:id="@+id/include_container_movimentacao_conta_receber"
+        layout="@layout/container_movimentacao_conta_receber" />
 </android.support.design.widget.CoordinatorLayout>

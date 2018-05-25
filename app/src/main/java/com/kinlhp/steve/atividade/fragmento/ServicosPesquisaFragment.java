@@ -151,11 +151,12 @@ public class ServicosPesquisaFragment extends Fragment
 				new StringBuilder(getString(R.string.requisicao_url_base))
 						.append("servicos/")
 						.append("search/")
-						.append("findByDescricaoContainingOrderByDescricaoAsc")
+						.append("descricao")
 						.append("?descricao=").append(query)
+						.append("&sort=descricao,asc")
 						.append("&page=0&size=20");
 		HRef pagina0 = new HRef(url.toString());
-		consumirServicosGETPaginado(pagina0);
+		consumirServicosGETPesquisaPaginado(pagina0);
 		return true;
 	}
 
@@ -225,6 +226,39 @@ public class ServicosPesquisaFragment extends Fragment
 		};
 	}
 
+	private ColecaoCallback<Colecao<ServicoDTO>> callbackServicosGETPesquisaPaginado() {
+		return new ColecaoCallback<Colecao<ServicoDTO>>() {
+
+			@Override
+			public void onFailure(@NonNull Call<Colecao<ServicoDTO>> chamada,
+			                      @NonNull Throwable causa) {
+				--mTarefasPendentes;
+				ocultarProgresso(mProgressBarConsumirServicosPaginado);
+				Falha.tratar(mProgressBarConsumirServicosPaginado, causa);
+			}
+
+			@Override
+			public void onResponse(@NonNull Call<Colecao<ServicoDTO>> chamada,
+			                       @NonNull Response<Colecao<ServicoDTO>> resposta) {
+				--mTarefasPendentes;
+				if (!resposta.isSuccessful()) {
+					Falha.tratar(mProgressBarConsumirServicosPaginado, resposta);
+				} else {
+					Colecao<ServicoDTO> colecao = resposta.body();
+					Set<ServicoDTO> dtos = colecao.getEmbedded().getDtos();
+					Set<Servico> servicos = ServicoMapeamento
+							.paraDominios(dtos);
+					for (Servico servico : servicos) {
+						addServico(servico);
+					}
+					alternarLabel0Registros();
+					mLinks = colecao.getLinks();
+				}
+				ocultarProgresso(mProgressBarConsumirServicosPaginado);
+			}
+		};
+	}
+
 	private void consumirServicosGETPaginado(@NonNull HRef href) {
 		mTarefasPendentes = 0;
 		Teclado.ocultar(getActivity(), mProgressBarConsumirServicosPaginado);
@@ -232,6 +266,17 @@ public class ServicosPesquisaFragment extends Fragment
 		mAdaptadorServicos.notifyItemRangeRemoved(0, mServicos.size());
 		++mTarefasPendentes;
 		ServicoRequisicao.getPaginado(callbackServicosGETPaginado(), href);
+	}
+
+	private void consumirServicosGETPesquisaPaginado(@NonNull HRef href) {
+		mTarefasPendentes = 0;
+		Teclado.ocultar(getActivity(), mProgressBarConsumirServicosPaginado);
+		exibirProgresso(mProgressBarConsumirServicosPaginado);
+		mAdaptadorServicos.notifyItemRangeRemoved(0, mServicos.size());
+		mServicos.clear();
+		mLinks = null;
+		++mTarefasPendentes;
+		ServicoRequisicao.getPaginado(callbackServicosGETPesquisaPaginado(), href);
 	}
 
 	private void exibirProgresso(@NonNull ProgressBar progresso) {

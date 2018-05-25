@@ -24,14 +24,14 @@ public interface ItemOrdemServicoRecurso {
 	@GET
 	Call<ServicoDTO> getServico(@NonNull @Url String href);
 
-	@POST(value = "itensordemservico")
+	@POST(value = "itensOrdemServico")
 	Call<Void> post(@NonNull @Body ItemOrdemServicoDTO dto);
 
-	@PUT(value = "itensordemservico/{id}")
+	@PUT(value = "itensOrdemServico/{id}")
 	Call<Void> put(@NonNull @Path(value = "id") BigInteger id,
 	               @NonNull @Body ItemOrdemServicoDTO dto);
 
-	@PUT(value = "itensordemservico/{id}/servico")
+	@PUT(value = "itensOrdemServico/{id}/servico")
 	Call<Void> putServico(@NonNull @Path(value = "id") BigInteger id,
 	                      @Body RequestBody urlList);
 }

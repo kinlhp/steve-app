@@ -160,12 +160,13 @@ public class CredenciaisPesquisaFragment extends Fragment
 				new StringBuilder(getString(R.string.requisicao_url_base))
 						.append("credenciais/")
 						.append("search/")
-						.append("findByUsuarioOrFuncionario")
+						.append("usuario-cpf")
 						.append("?usuario=").append(query)
-						.append("&cpfFuncionario=").append(query)
+						.append("&cpf=").append(query)
+						.append("&sort=usuario,asc")
 						.append("&page=0&size=20");
 		HRef pagina0 = new HRef(url.toString());
-		consumirCredenciaisGETPaginado(pagina0);
+		consumirCredenciaisGETPesquisaPaginado(pagina0);
 		return true;
 	}
 
@@ -263,6 +264,38 @@ public class CredenciaisPesquisaFragment extends Fragment
 		};
 	}
 
+	private ColecaoCallback<Colecao<CredencialDTO>> callbackCredenciaisGETPesquisaPaginado() {
+		return new ColecaoCallback<Colecao<CredencialDTO>>() {
+
+			@Override
+			public void onFailure(@NonNull Call<Colecao<CredencialDTO>> chamada,
+			                      @NonNull Throwable causa) {
+				--mTarefasPendentes;
+				ocultarProgresso(mProgressBarConsumirCredenciaisPaginado);
+				Falha.tratar(mProgressBarConsumirCredenciaisPaginado, causa);
+			}
+
+			@Override
+			public void onResponse(@NonNull Call<Colecao<CredencialDTO>> chamada,
+			                       @NonNull Response<Colecao<CredencialDTO>> resposta) {
+				--mTarefasPendentes;
+				if (!resposta.isSuccessful()) {
+					Falha.tratar(mProgressBarConsumirCredenciaisPaginado, resposta);
+				} else {
+					Colecao<CredencialDTO> colecao = resposta.body();
+					Set<CredencialDTO> dtos = colecao.getEmbedded().getDtos();
+					Set<Credencial> credenciais = CredencialMapeamento
+							.paraDominios(dtos);
+					for (Credencial credencial : credenciais) {
+						consumirCredencialGETFuncionario(credencial);
+					}
+					mLinks = colecao.getLinks();
+				}
+				ocultarProgresso(mProgressBarConsumirCredenciaisPaginado);
+			}
+		};
+	}
+
 	private void consumirCredencialGETFuncionario(@NonNull Credencial credencial) {
 		// TODO: 9/11/17 corrigir hard-coded
 		String url = Parametro.get(Parametro.Chave.URL_BASE).toString()
@@ -281,6 +314,18 @@ public class CredenciaisPesquisaFragment extends Fragment
 		++mTarefasPendentes;
 		CredencialRequisicao
 				.getPaginado(callbackCredenciaisGETPaginado(), href);
+	}
+
+	private void consumirCredenciaisGETPesquisaPaginado(@NonNull HRef href) {
+		mTarefasPendentes = 0;
+		Teclado.ocultar(getActivity(), mProgressBarConsumirCredenciaisPaginado);
+		exibirProgresso(mProgressBarConsumirCredenciaisPaginado);
+		mAdaptadorCredenciais.notifyItemRangeRemoved(0, mCredenciais.size());
+		mCredenciais.clear();
+		mLinks = null;
+		++mTarefasPendentes;
+		CredencialRequisicao
+				.getPaginado(callbackCredenciaisGETPesquisaPaginado(), href);
 	}
 
 	private void exibirProgresso(@NonNull ProgressBar progresso) {

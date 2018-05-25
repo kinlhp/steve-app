@@ -24,7 +24,7 @@ import retrofit2.http.Url;
  */
 public interface PessoaRecurso {
 
-	@GET(value = "pessoas?sort=nomeRazao,asc")
+	@GET(value = "pessoas?sort=nomeRazao,asc&page=0&size=20")
 	Call<Colecao<PessoaDTO>> get();
 
 	@GET

@@ -32,7 +32,7 @@ public interface CredencialRecurso {
 	@GET(value = "credenciais/{id}")
 	Call<CredencialDTO> getPorId(@NonNull @Path(value = "id") BigInteger id);
 
-	@GET(value = "credenciais/search/findByUsuario")
+	@GET(value = "credenciais/search/usuario")
 	Call<CredencialDTO> getPorUsuario(@NonNull @Query(value = "usuario") String usuario);
 
 	@POST(value = "credenciais")

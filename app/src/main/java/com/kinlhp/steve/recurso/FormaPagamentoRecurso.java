@@ -22,7 +22,7 @@ import retrofit2.http.Url;
  */
 public interface FormaPagamentoRecurso {
 
-	@GET(value = "formaspagamento?sort=descricao,asc")
+	@GET(value = "formasPagamento?sort=descricao,asc&page=0&size=20")
 	Call<Colecao<FormaPagamentoDTO>> get();
 
 	@GET
@@ -31,17 +31,17 @@ public interface FormaPagamentoRecurso {
 	@GET
 	Call<Colecao<FormaPagamentoDTO>> getPaginado(@NonNull @Url String href);
 
-	@GET(value = "formaspagamento/{id}")
+	@GET(value = "formasPagamento/{id}")
 	Call<FormaPagamentoDTO> getPorId(@NonNull @Path(value = "id") BigInteger id);
 
-	@PATCH(value = "formaspagamento/{id}")
+	@PATCH(value = "formasPagamento/{id}")
 	Call<Void> patch(@NonNull @Path(value = "id") BigInteger id,
 	                 @NonNull @Body FormaPagamentoDTO dto);
 
-	@POST(value = "formaspagamento")
+	@POST(value = "formasPagamento")
 	Call<Void> post(@NonNull @Body FormaPagamentoDTO dto);
 
-	@PUT(value = "formaspagamento/{id}")
+	@PUT(value = "formasPagamento/{id}")
 	Call<Void> put(@NonNull @Path(value = "id") BigInteger id,
 	               @NonNull @Body FormaPagamentoDTO dto);
 }
