@@ -37,9 +37,9 @@ public class AdaptadorRecyclerOrdens
 	@Override
 	public void onBindViewHolder(ViewHolderOrdens viewHolder, int position) {
 		Ordem ordem = mOrdens.get(position);
-		viewHolder.mLabelId.setText(ordem.getId().toString());
+		viewHolder.mLabelId.setText(ordem.getTipo().getDescricao() + " " + ordem.getId().toString());
 		viewHolder.mLabelCliente.setText(ordem.getCliente().toString());
-		viewHolder.mLabelTipo.setText(ordem.getTipo().getDescricao());
+		viewHolder.mLabelTipo.setText(ordem.getSituacao().getDescricao());
 		viewHolder.mButtonRemover.setVisibility(ordem.getId() == null
 				? View.VISIBLE : View.GONE);
 	}

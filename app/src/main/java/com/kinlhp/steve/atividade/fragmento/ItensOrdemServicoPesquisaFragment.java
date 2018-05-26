@@ -27,10 +27,12 @@ public class ItensOrdemServicoPesquisaFragment extends Fragment
 		Serializable {
 	private static final long serialVersionUID = 1072431081988394796L;
 	private static final String ITENS_ORDEM_SERVICO = "itensOrdemServico";
+	private static final String ORDEM = "ordem";
 	private AdaptadorRecyclerItensOrdemServico mAdaptadorItensOrdemServico;
 	private ArrayList<ItemOrdemServico> mItensOrdemServico;
 	private OnItemOrdemServicoSelecionadoListener mOnItemOrdemServicoSelecionadoListener;
 	private OnLongoItemOrdemServicoSelecionadoListener mOnLongoItemOrdemServicoSelecionadoListener;
+	private Ordem mOrdem;
 
 	private AppCompatImageButton mButtonNovoItemOrdemServico;
 	private AppCompatTextView mLabel0Registros;
@@ -69,11 +71,13 @@ public class ItensOrdemServicoPesquisaFragment extends Fragment
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		if (savedInstanceState != null) {
+			mOrdem = (Ordem) savedInstanceState.getSerializable(ORDEM);
 			//noinspection unchecked
 			mItensOrdemServico =
 					(ArrayList<ItemOrdemServico>) savedInstanceState
 							.getSerializable(ITENS_ORDEM_SERVICO);
 		} else if (getArguments() != null) {
+			mOrdem = (Ordem) getArguments().getSerializable(ORDEM);
 			//noinspection unchecked
 			mItensOrdemServico = (ArrayList<ItemOrdemServico>) getArguments()
 					.getSerializable(ITENS_ORDEM_SERVICO);
@@ -134,6 +138,7 @@ public class ItensOrdemServicoPesquisaFragment extends Fragment
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
+		outState.putSerializable(ORDEM, mOrdem);
 		outState.putSerializable(ITENS_ORDEM_SERVICO, mItensOrdemServico);
 	}
 
@@ -144,9 +149,8 @@ public class ItensOrdemServicoPesquisaFragment extends Fragment
 	}
 
 	private void alternarButtonNovoItemOrdemServico() {
-		Ordem ordem = mItensOrdemServico.get(0).getOrdem();
 		mButtonNovoItemOrdemServico
-				.setVisibility(ordem.getSituacao().equals(Ordem.Situacao.ABERTO)
+				.setVisibility(mOrdem.getSituacao().equals(Ordem.Situacao.ABERTO)
 						? View.VISIBLE : View.GONE);
 		mLabel0Registros.setVisibility(mItensOrdemServico.isEmpty()
 				? View.VISIBLE : View.GONE);
@@ -164,6 +168,7 @@ public class ItensOrdemServicoPesquisaFragment extends Fragment
 	public void setItensOrdemServico(@NonNull ArrayList<ItemOrdemServico> itensOrdemServico) {
 		mItensOrdemServico = itensOrdemServico;
 		if (getArguments() != null) {
+			getArguments().putSerializable(ORDEM, mOrdem);
 			getArguments()
 					.putSerializable(ITENS_ORDEM_SERVICO, mItensOrdemServico);
 		}
@@ -175,6 +180,13 @@ public class ItensOrdemServicoPesquisaFragment extends Fragment
 
 	public void setOnLongoItemOrdemServicoSelecionadoListener(@Nullable OnLongoItemOrdemServicoSelecionadoListener ouvinte) {
 		mOnLongoItemOrdemServicoSelecionadoListener = ouvinte;
+	}
+
+	public void setOrdem(@NonNull Ordem ordem) {
+		mOrdem = ordem;
+		if (getArguments() != null) {
+			getArguments().putSerializable(ORDEM, mOrdem);
+		}
 	}
 
 	public interface OnItemOrdemServicoSelecionadoListener {

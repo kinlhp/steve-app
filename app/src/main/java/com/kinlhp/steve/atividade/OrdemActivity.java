@@ -214,6 +214,7 @@ public class OrdemActivity extends AppCompatActivity
 			mFragmentoItensOrdemServicoPesquisa
 					.setItensOrdemServico(new ArrayList<>(itensOrdemServico));
 		}
+		mFragmentoItensOrdemServicoPesquisa.setOrdem(mOrdem);
 		mFragmentoItensOrdemServicoPesquisa
 				.setOnItemOrdemServicoSelecionadoListener(this);
 		mFragmentoItensOrdemServicoPesquisa

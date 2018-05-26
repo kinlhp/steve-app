@@ -1,5 +1,7 @@
 package com.kinlhp.steve.dominio;
 
+import com.kinlhp.steve.util.Data;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
@@ -77,6 +79,14 @@ public class ContaReceber extends Dominio<BigInteger> {
 	public boolean hasSaldoDevedor() {
 		final BigDecimal saldoDevedor = getSaldoDevedor();
 		return BigDecimal.ZERO.compareTo(saldoDevedor) < 0;
+	}
+
+	@Override
+	public String toString() {
+		return new StringBuilder()
+				.append(sacado != null && sacado.getNomeRazao() != null ? sacado.getNomeRazao() : "")
+				.append(dataVencimento != null ? " " + Data.paraStringData(dataVencimento) : "")
+				.toString();
 	}
 
 	@AllArgsConstructor

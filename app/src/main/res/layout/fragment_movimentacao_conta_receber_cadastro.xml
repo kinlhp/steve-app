@@ -32,7 +32,7 @@
                 app:layout_constraintTop_toTopOf="@+id/button_gerar" />
 
             <android.support.design.widget.TextInputLayout
-                android:id="@+id/label_cliente"
+                android:id="@+id/label_conta_receber"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/label_margin"
@@ -43,57 +43,15 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <android.support.design.widget.TextInputEditText
-                    android:id="@+id/input_cliente"
+                    android:id="@+id/input_conta_receber"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:focusable="false"
-                    android:hint="@string/movimentacao_conta_receber_cadastro_label_cliente_hint"
-                    android:inputType="textCapWords|textPersonName"
-                    android:maxLength="128" />
-            </android.support.design.widget.TextInputLayout>
-
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/label_ordem"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/label_margin"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/label_cliente">
-
-                <android.support.design.widget.TextInputEditText
-                    android:id="@+id/input_ordem"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:focusable="false"
-                    android:hint="@string/movimentacao_conta_receber_cadastro_label_ordem_hint"
-                    android:inputType="textCapWords|textPersonName"
-                    android:maxLength="128" />
-            </android.support.design.widget.TextInputLayout>
-
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/label_parcelas"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/label_margin"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/label_ordem">
-
-                <android.support.design.widget.TextInputEditText
-                    android:id="@+id/input_parcelas"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:focusable="false"
-                    android:hint="@string/movimentacao_conta_receber_cadastro_label_nenhum_parcela_hint" />
+                    android:hint="@string/movimentacao_conta_receber_cadastro_label_nenhum_conta_receber_hint" />
             </android.support.design.widget.TextInputLayout>
 
             <android.support.v7.widget.AppCompatTextView
-                android:id="@+id/label_valor"
+                android:id="@+id/label_valor_conta_receber"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/list_margin"
@@ -101,74 +59,74 @@
                 android:layout_marginRight="@dimen/list_margin"
                 android:layout_marginStart="@dimen/list_margin"
                 android:layout_marginTop="@dimen/label_margin"
-                android:hint="@string/movimentacao_conta_receber_cadastro_label_valor_hint"
+                android:hint="@string/movimentacao_conta_receber_cadastro_label_valor_conta_receber_hint"
                 android:textSize="@dimen/list_content_textSize"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/label_parcelas" />
+                app:layout_constraintTop_toBottomOf="@id/label_conta_receber" />
 
             <android.support.v7.widget.AppCompatTextView
-                android:id="@+id/label_numero_parcela"
+                android:id="@+id/label_numero_parcela_conta_receber"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/list_margin"
                 android:layout_marginLeft="@dimen/list_margin"
                 android:layout_marginRight="@dimen/list_margin"
                 android:layout_marginStart="@dimen/list_margin"
-                android:hint="@string/movimentacao_conta_receber_cadastro_label_numero_parcela_hint"
+                android:hint="@string/movimentacao_conta_receber_cadastro_label_numero_parcela_conta_receber_hint"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/label_valor" />
+                app:layout_constraintTop_toBottomOf="@+id/label_valor_conta_receber" />
 
             <android.support.v7.widget.AppCompatTextView
-                android:id="@+id/label_data_vencimento"
+                android:id="@+id/label_data_vencimento_conta_receber"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/list_margin"
                 android:layout_marginLeft="@dimen/list_margin"
                 android:layout_marginRight="@dimen/list_margin"
                 android:layout_marginStart="@dimen/list_margin"
-                android:hint="@string/movimentacao_conta_receber_cadastro_label_data_vencimento_hint"
+                android:hint="@string/movimentacao_conta_receber_cadastro_label_data_vencimento_conta_receber_hint"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/label_numero_parcela" />
+                app:layout_constraintTop_toBottomOf="@+id/label_numero_parcela_conta_receber" />
 
             <android.support.v7.widget.AppCompatTextView
-                android:id="@+id/label_montante_pago"
+                android:id="@+id/label_montante_pago_conta_receber"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/list_margin"
                 android:layout_marginLeft="@dimen/list_margin"
                 android:layout_marginRight="@dimen/list_margin"
                 android:layout_marginStart="@dimen/list_margin"
-                android:hint="@string/movimentacao_conta_receber_cadastro_label_montante_pago_hint"
+                android:hint="@string/movimentacao_conta_receber_cadastro_label_montante_pago_conta_receber_hint"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/label_data_vencimento" />
+                app:layout_constraintTop_toBottomOf="@+id/label_data_vencimento_conta_receber" />
 
             <android.support.v7.widget.AppCompatTextView
-                android:id="@+id/label_saldo_devedor"
+                android:id="@+id/label_saldo_devedor_conta_receber"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/list_margin"
                 android:layout_marginLeft="@dimen/list_margin"
                 android:layout_marginRight="@dimen/list_margin"
                 android:layout_marginStart="@dimen/list_margin"
-                android:hint="@string/movimentacao_conta_receber_cadastro_label_saldo_devedor_hint"
+                android:hint="@string/movimentacao_conta_receber_cadastro_label_saldo_devedor_conta_receber_hint"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/label_montante_pago" />
+                app:layout_constraintTop_toBottomOf="@+id/label_montante_pago_conta_receber" />
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/label_forma_pagamento"
@@ -179,7 +137,7 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/label_saldo_devedor">
+                app:layout_constraintTop_toBottomOf="@+id/label_saldo_devedor_conta_receber">
 
                 <android.support.design.widget.TextInputEditText
                     android:id="@+id/input_forma_pagamento"

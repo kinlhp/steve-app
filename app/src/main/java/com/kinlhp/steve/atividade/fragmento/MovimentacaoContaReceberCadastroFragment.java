@@ -7,6 +7,8 @@ import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatButton;
+import android.support.v7.widget.AppCompatTextView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,19 +20,19 @@ import com.kinlhp.steve.dominio.CondicaoPagamento;
 import com.kinlhp.steve.dominio.ContaReceber;
 import com.kinlhp.steve.dominio.FormaPagamento;
 import com.kinlhp.steve.dominio.MovimentacaoContaReceber;
-import com.kinlhp.steve.dominio.Ordem;
-import com.kinlhp.steve.dominio.Pessoa;
 import com.kinlhp.steve.dto.MovimentacaoContaReceberDTO;
 import com.kinlhp.steve.mapeamento.MovimentacaoContaReceberMapeamento;
 import com.kinlhp.steve.requisicao.Falha;
 import com.kinlhp.steve.requisicao.MovimentacaoContaReceberRequisicao;
 import com.kinlhp.steve.requisicao.Requisicao;
 import com.kinlhp.steve.resposta.VazioCallback;
+import com.kinlhp.steve.util.Data;
 import com.kinlhp.steve.util.Teclado;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.ArrayList;
+import java.math.RoundingMode;
 import java.util.Set;
 
 import retrofit2.Call;
@@ -38,35 +40,46 @@ import retrofit2.Response;
 
 public class MovimentacaoContaReceberCadastroFragment extends Fragment
 		implements Serializable, View.OnClickListener {
-	private static final String CLIENTE = "cliente";
 	private static final String CONDICAO_PAGAMENTO = "condicaoPagamento";
+	private static final String CONTA_RECEBER = "contaReceber";
 	private static final String FORMA_PAGAMENTO = "formaPagamento";
-	private static final String ORDEM = "ordem";
-	private Pessoa mCliente;
+	private static final String MOVIMENTACAO_CONTA_RECEBER = "movimentacaoContaReceber";
 	private CondicaoPagamento mCondicaoPagamento;
+	private ContaReceber mContaReceber;
 	private FormaPagamento mFormaPagamento;
-	private Ordem mOrdem;
-	private ArrayList<ContaReceber> mParcelas = new ArrayList<>();
-	private OnClientesPesquisaListener mOnClientesPesquisaListener;
+	//	private ArrayList<ContaReceber> mParcelas = new ArrayList<>();
+//	private OnClientesPesquisaListener mOnClientesPesquisaListener;
+	private MovimentacaoContaReceber mMovimentacaoContaReceber;
 	private OnCondicoesPagamentoPesquisaListener mOnCondicoesPagamentoPesquisaListener;
 	private OnFormasPagamentoPesquisaListener mOnFormasPagamentoPesquisaListener;
-	private OnOrdensPesquisaListener mOnOrdensPesquisaListener;
-	private OnParcelasPesquisaListener mOnParcelasPesquisaListener;
-	private OnParcelasGeradoListener mOnParcelasGeradoListener;
+	private OnContasReceberPesquisaListener mOnContasReceberPesquisaListener;
+	//	private OnParcelasPesquisaListener mOnParcelasPesquisaListener;
+//	private OnParcelasGeradoListener mOnParcelasGeradoListener;
 	private boolean mPressionarVoltar;
 	private int mTarefasPendentes;
 
 	private AppCompatButton mButtonGerar;
-	private TextInputEditText mInputCliente;
+	private AppCompatTextView mLabelValorContaReceber;
+	private AppCompatTextView mLabelNumeroParcelaContaReceber;
+	private AppCompatTextView mLabelDataVencimentoContaReceber;
+	private AppCompatTextView mLabelMontantePagoContaReceber;
+	private AppCompatTextView mLabelSaldoDevedorContaReceber;
+	//	private TextInputEditText mInputCliente;
 	private TextInputEditText mInputCondicaoPagamento;
+	private TextInputEditText mInputContaReceber;
+	private TextInputEditText mInputDescontoConcedido;
 	private TextInputEditText mInputFormaPagamento;
-	private TextInputEditText mInputOrdem;
-	private TextInputEditText mInputParcelas;
-	private TextInputLayout mLabelCliente;
+	private TextInputEditText mInputJuroAplicado;
+	//	private TextInputEditText mInputParcelas;
+	private TextInputEditText mInputValorPago;
+	//	private TextInputLayout mLabelCliente;
 	private TextInputLayout mLabelCondicaoPagamento;
+	private TextInputLayout mLabelContaReceber;
+	private TextInputLayout mLabelDescontoConcedido;
 	private TextInputLayout mLabelFormaPagamento;
-	private TextInputLayout mLabelOrdem;
-	private TextInputLayout mLabelParcelas;
+	private TextInputLayout mLabelJuroAplicado;
+	//	private TextInputLayout mLabelParcelas;
+	private TextInputLayout mLabelValorPago;
 	private ProgressBar mProgressBarGerar;
 	private ScrollView mScrollMovimentacaoContaReceberCadastro;
 
@@ -76,10 +89,12 @@ public class MovimentacaoContaReceberCadastroFragment extends Fragment
 	public MovimentacaoContaReceberCadastroFragment() {
 	}
 
-	public static MovimentacaoContaReceberCadastroFragment newInstance() {
+	public static MovimentacaoContaReceberCadastroFragment newInstance(@NonNull MovimentacaoContaReceber movimentacaoContaReceber) {
 		MovimentacaoContaReceberCadastroFragment fragmento =
 				new MovimentacaoContaReceberCadastroFragment();
 		Bundle argumentos = new Bundle();
+		argumentos.putSerializable(MOVIMENTACAO_CONTA_RECEBER, movimentacaoContaReceber);
+		argumentos.putSerializable(CONTA_RECEBER, movimentacaoContaReceber.getContaReceber());
 		fragmento.setArguments(argumentos);
 		return fragmento;
 	}
@@ -92,11 +107,11 @@ public class MovimentacaoContaReceberCadastroFragment extends Fragment
 					submeterFormulario();
 				}
 				break;
-			case R.id.input_cliente:
-				if (mOnClientesPesquisaListener != null) {
-					mOnClientesPesquisaListener.onClientesPesquisa(view);
-				}
-				break;
+//			case R.id.input_cliente:
+//				if (mOnClientesPesquisaListener != null) {
+//					mOnClientesPesquisaListener.onClientesPesquisa(view);
+//				}
+//				break;
 			case R.id.input_condicao_pagamento:
 				if (mOnCondicoesPagamentoPesquisaListener != null
 						&& mFormaPagamento != null) {
@@ -110,17 +125,17 @@ public class MovimentacaoContaReceberCadastroFragment extends Fragment
 							.onFormasPagamentoPesquisa(view);
 				}
 				break;
-			case R.id.input_ordem:
-				if (mOnOrdensPesquisaListener != null) {
-					mOnOrdensPesquisaListener.onOrdensPesquisa(view);
+			case R.id.input_conta_receber:
+				if (mOnContasReceberPesquisaListener != null) {
+					mOnContasReceberPesquisaListener.onContasReceberPesquisa(view);
 				}
 				break;
-			case R.id.input_parcelas:
-				if (mOnParcelasPesquisaListener != null) {
-					mOnParcelasPesquisaListener
-							.onParcelasPesquisa(view, mParcelas);
-				}
-				break;
+//			case R.id.input_parcelas:
+//				if (mOnParcelasPesquisaListener != null) {
+//					mOnParcelasPesquisaListener
+//							.onParcelasPesquisa(view);
+//				}
+//				break;
 		}
 	}
 
@@ -128,20 +143,20 @@ public class MovimentacaoContaReceberCadastroFragment extends Fragment
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		if (savedInstanceState != null) {
-			mCliente = (Pessoa) savedInstanceState.getSerializable(CLIENTE);
+			mMovimentacaoContaReceber = (MovimentacaoContaReceber) savedInstanceState.getSerializable(MOVIMENTACAO_CONTA_RECEBER);
 			mCondicaoPagamento = (CondicaoPagamento) savedInstanceState
 					.getSerializable(CONDICAO_PAGAMENTO);
 			mFormaPagamento = (FormaPagamento) savedInstanceState
 					.getSerializable(FORMA_PAGAMENTO);
-			mOrdem = (Ordem) savedInstanceState.getSerializable(ORDEM);
+			mContaReceber = (ContaReceber) savedInstanceState.getSerializable(CONTA_RECEBER);
 		}
 		if (getArguments() != null) {
-			mCliente = (Pessoa) getArguments().getSerializable(CLIENTE);
+			mMovimentacaoContaReceber = (MovimentacaoContaReceber) getArguments().getSerializable(MOVIMENTACAO_CONTA_RECEBER);
 			mCondicaoPagamento = (CondicaoPagamento) getArguments
 					().getSerializable(CONDICAO_PAGAMENTO);
 			mFormaPagamento = (FormaPagamento) getArguments()
 					.getSerializable(FORMA_PAGAMENTO);
-			mOrdem = (Ordem) getArguments().getSerializable(ORDEM);
+			mContaReceber = (ContaReceber) getArguments().getSerializable(CONTA_RECEBER);
 		}
 	}
 
@@ -151,28 +166,39 @@ public class MovimentacaoContaReceberCadastroFragment extends Fragment
 		View view = inflater
 				.inflate(R.layout.fragment_movimentacao_conta_receber_cadastro, container, false);
 		mButtonGerar = view.findViewById(R.id.button_gerar);
-		mInputCliente = view.findViewById(R.id.input_cliente);
+//		mInputCliente = view.findViewById(R.id.input_cliente);
 		mInputCondicaoPagamento = view
 				.findViewById(R.id.input_condicao_pagamento);
+		mInputContaReceber = view.findViewById(R.id.input_conta_receber);
+		mInputDescontoConcedido = view.findViewById(R.id.input_desconto_concedido);
 		mInputFormaPagamento = view.findViewById(R.id.input_forma_pagamento);
-		mInputOrdem = view.findViewById(R.id.input_ordem);
-		mInputParcelas = view.findViewById(R.id.input_parcelas);
-		mLabelCliente = view.findViewById(R.id.label_cliente);
+		mInputJuroAplicado = view.findViewById(R.id.input_juro_aplicado);
+//		mInputParcelas = view.findViewById(R.id.input_parcelas);
+//		mLabelCliente = view.findViewById(R.id.label_cliente);
+		mInputValorPago = view.findViewById(R.id.input_valor_pago);
 		mLabelCondicaoPagamento = view
 				.findViewById(R.id.label_condicao_pagamento);
+		mLabelContaReceber = view.findViewById(R.id.label_conta_receber);
+		mLabelDescontoConcedido = view.findViewById(R.id.label_desconto_concedido);
 		mLabelFormaPagamento = view.findViewById(R.id.label_forma_pagamento);
-		mLabelOrdem = view.findViewById(R.id.label_ordem);
-		mLabelParcelas = view.findViewById(R.id.label_parcelas);
+		mLabelJuroAplicado = view.findViewById(R.id.label_juro_aplicado);
+//		mLabelParcelas = view.findViewById(R.id.label_parcelas);
+		mLabelValorContaReceber = view.findViewById(R.id.label_valor_conta_receber);
+		mLabelNumeroParcelaContaReceber = view.findViewById(R.id.label_numero_parcela_conta_receber);
+		mLabelDataVencimentoContaReceber = view.findViewById(R.id.label_data_vencimento_conta_receber);
+		mLabelMontantePagoContaReceber = view.findViewById(R.id.label_montante_pago_conta_receber);
+		mLabelSaldoDevedorContaReceber = view.findViewById(R.id.label_saldo_devedor_conta_receber);
+		mLabelValorPago = view.findViewById(R.id.label_valor_pago);
 		mProgressBarGerar = view.findViewById(R.id.progress_bar_gerar);
 		mScrollMovimentacaoContaReceberCadastro = view
 				.findViewById(R.id.scroll_movimentacao_conta_receber_cadastro);
 
 		mButtonGerar.setOnClickListener(this);
-		mInputCliente.setOnClickListener(this);
+//		mInputCliente.setOnClickListener(this);
 		mInputCondicaoPagamento.setOnClickListener(this);
+		mInputContaReceber.setOnClickListener(this);
 		mInputFormaPagamento.setOnClickListener(this);
-		mInputOrdem.setOnClickListener(this);
-		mInputParcelas.setOnClickListener(this);
+//		mInputParcelas.setOnClickListener(this);
 
 		return view;
 	}
@@ -187,13 +213,13 @@ public class MovimentacaoContaReceberCadastroFragment extends Fragment
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		outState.putSerializable(CLIENTE, mCliente);
+		outState.putSerializable(MOVIMENTACAO_CONTA_RECEBER, mMovimentacaoContaReceber);
 		outState.putSerializable(CONDICAO_PAGAMENTO, mCondicaoPagamento);
+		outState.putSerializable(CONTA_RECEBER, mContaReceber);
 		outState.putSerializable(FORMA_PAGAMENTO, mFormaPagamento);
-		outState.putSerializable(ORDEM, mOrdem);
 	}
 
-	private VazioCallback callbackMovimentacaoContaReceberPOST(@NonNull MovimentacaoContaReceber movimentacaoContaReceber) {
+	private VazioCallback callbackMovimentacaoContaReceberPOST() {
 		return new VazioCallback() {
 
 			@Override
@@ -215,7 +241,7 @@ public class MovimentacaoContaReceberCadastroFragment extends Fragment
 				} else {
 					String location = resposta.headers()
 							.get(Requisicao.LOCATION_HEADER);
-					movimentacaoContaReceber.setId(new BigInteger(location.substring(location.lastIndexOf("/") + 1)));
+					mMovimentacaoContaReceber.setId(new BigInteger(location.substring(location.lastIndexOf("/") + 1)));
 //					if (mTarefasPendentes <= 0) {
 //						consumirOrdemPUTSituacao();
 //					}
@@ -252,12 +278,14 @@ public class MovimentacaoContaReceberCadastroFragment extends Fragment
 //		};
 //	}
 
-	private void consumirMovimentacaoContaReceberPOST(@NonNull MovimentacaoContaReceber movimentacaoContaReceber) {
-		MovimentacaoContaReceberDTO dto = MovimentacaoContaReceberMapeamento
-				.paraDTO(movimentacaoContaReceber);
+	private void consumirMovimentacaoContaReceberPOST() {
+		mTarefasPendentes = 0;
+		mPressionarVoltar = true;
+		exibirProgresso(mProgressBarGerar, mButtonGerar);
+		Teclado.ocultar(getActivity(), mButtonGerar);
+		MovimentacaoContaReceberDTO dto = MovimentacaoContaReceberMapeamento.paraDTO(mMovimentacaoContaReceber);
 		++mTarefasPendentes;
-		MovimentacaoContaReceberRequisicao
-				.post(callbackMovimentacaoContaReceberPOST(movimentacaoContaReceber), dto);
+		MovimentacaoContaReceberRequisicao.post(callbackMovimentacaoContaReceberPOST(), dto);
 	}
 
 //	private void consumirOrdemPUTSituacao() {
@@ -337,11 +365,15 @@ public class MovimentacaoContaReceberCadastroFragment extends Fragment
 //	}
 
 	private boolean isFormularioValido() {
-		return isClienteValido()
-				&& isOrdemValido()
-				&& isFormaPagamentoValido()
-				&& isCondicaoPagamentoValido()
-				&& isParcelasValido();
+		return
+//				isClienteValido()
+				isContaReceberValido()
+						&& isFormaPagamentoValido()
+						&& isCondicaoPagamentoValido()
+						&& isJuroAplicadoValido()
+						&& isDescontoConcedidoValido()
+						&& isValorPagoValido();
+//				&& isParcelasValido();
 	}
 
 	private boolean isCondicaoPagamentoValido() {
@@ -352,6 +384,48 @@ public class MovimentacaoContaReceberCadastroFragment extends Fragment
 		}
 		mLabelCondicaoPagamento.setError(null);
 		mLabelCondicaoPagamento.setErrorEnabled(false);
+		return true;
+	}
+
+	private boolean isContaReceberValido() {
+		if (mContaReceber == null) {
+			mLabelContaReceber.setError(getString(R.string.input_obrigatorio));
+			return false;
+		}
+		if (mContaReceber.getSituacao().equals(ContaReceber.Situacao.BAIXADO)) {
+			mLabelContaReceber
+					.setError(getString(R.string.movimentacao_conta_receber_cadastro_mensagem_baixado));
+			return false;
+		}
+		if (mContaReceber.getSituacao().equals(ContaReceber.Situacao.CANCELADO)) {
+			mLabelContaReceber
+					.setError(getString(R.string.movimentacao_conta_receber_cadastro_mensagem_cancelado));
+			return false;
+		}
+		if (!mContaReceber.hasSaldoDevedor()) {
+			mLabelContaReceber
+					.setError(getString(R.string.movimentacao_conta_receber_cadastro_mensagem_saldo_devedor_0));
+			return false;
+		}
+		mLabelContaReceber.setError(null);
+		mLabelContaReceber.setErrorEnabled(false);
+		return true;
+	}
+
+	private boolean isDescontoConcedidoValido() {
+		if (TextUtils.isEmpty(mInputDescontoConcedido.getText())) {
+			mLabelDescontoConcedido.setError(getString(R.string.input_obrigatorio));
+			return false;
+		}
+		BigDecimal descontoConcedido = new BigDecimal(mInputDescontoConcedido.getText().toString())
+				.setScale(2, RoundingMode.HALF_EVEN);
+		if (descontoConcedido.compareTo(BigDecimal.ZERO) < 0) {
+			mLabelDescontoConcedido.setError(getString(R.string.input_invalido));
+			return false;
+		}
+		mMovimentacaoContaReceber.setDescontoConcedido(descontoConcedido);
+		mLabelDescontoConcedido.setError(null);
+		mLabelDescontoConcedido.setErrorEnabled(false);
 		return true;
 	}
 
@@ -366,49 +440,81 @@ public class MovimentacaoContaReceberCadastroFragment extends Fragment
 		return true;
 	}
 
-	private boolean isOrdemValido() {
-		if (mOrdem == null) {
-			mLabelOrdem.setError(getString(R.string.input_obrigatorio));
+	private boolean isJuroAplicadoValido() {
+		if (TextUtils.isEmpty(mInputJuroAplicado.getText())) {
+			mLabelJuroAplicado.setError(getString(R.string.input_obrigatorio));
 			return false;
 		}
-		if (!mOrdem.getSituacao().equals(Ordem.Situacao.FINALIZADO)) {
-			mLabelOrdem
-					.setError(getString(R.string.conta_receber_cadastro_mensagem_ordem_nao_finalizado));
+		BigDecimal juroAplicado = new BigDecimal(mInputJuroAplicado.getText().toString())
+				.setScale(2, RoundingMode.HALF_EVEN);
+		if (juroAplicado.compareTo(BigDecimal.ZERO) < 0) {
+			mLabelJuroAplicado.setError(getString(R.string.input_invalido));
 			return false;
 		}
-		mLabelOrdem.setError(null);
-		mLabelOrdem.setErrorEnabled(false);
+		mMovimentacaoContaReceber.setJuroAplicado(juroAplicado);
+		mLabelJuroAplicado.setError(null);
+		mLabelJuroAplicado.setErrorEnabled(false);
 		return true;
 	}
 
-	private boolean isParcelasValido() {
-		if (mParcelas == null) {
-			mLabelParcelas.setError(getString(R.string.input_obrigatorio));
+	private boolean isValorPagoValido() {
+		if (TextUtils.isEmpty(mInputValorPago.getText())) {
+			mLabelValorPago.setError(getString(R.string.input_obrigatorio));
 			return false;
 		}
-		if (mParcelas.isEmpty()) {
-			mLabelParcelas.setError(getString(R.string.input_invalido));
+		BigDecimal valorPago = new BigDecimal(mInputValorPago.getText().toString())
+				.setScale(2, RoundingMode.HALF_EVEN);
+		if (valorPago.compareTo(BigDecimal.ZERO) < 0) {
+			mLabelValorPago.setError(getString(R.string.input_invalido));
 			return false;
 		}
-		mLabelParcelas.setError(null);
-		mLabelParcelas.setErrorEnabled(false);
+		mMovimentacaoContaReceber.setValorPago(valorPago);
+		mLabelValorPago.setError(null);
+		mLabelValorPago.setErrorEnabled(false);
 		return true;
 	}
 
-	private boolean isClienteValido() {
-		if (mCliente == null) {
-			mLabelCliente.setError(getString(R.string.input_obrigatorio));
-			return false;
-		}
-//		if (!mCliente.isPerfilCliente()) {
-//			mLabelCliente
-//					.setError(getString(R.string.conta_receber_cadastro_mensagem_sacado_nao_cliente));
+	private void iterarFormulario() {
+		mMovimentacaoContaReceber.setBaseCalculo(mMovimentacaoContaReceber.getContaReceber().getSaldoDevedor());
+	}
+
+	private void limparErros() {
+		mLabelContaReceber.setError(null);
+		mLabelFormaPagamento.setErrorEnabled(false);
+		mLabelCondicaoPagamento.setError(null);
+		mLabelJuroAplicado.setErrorEnabled(false);
+		mLabelDescontoConcedido.setError(null);
+		mLabelValorPago.setErrorEnabled(false);
+	}
+
+//	private boolean isParcelasValido() {
+//		if (mParcelas == null) {
+//			mLabelParcelas.setError(getString(R.string.input_obrigatorio));
 //			return false;
 //		}
-		mLabelCliente.setError(null);
-		mLabelCliente.setErrorEnabled(false);
-		return true;
-	}
+//		if (mParcelas.isEmpty()) {
+//			mLabelParcelas.setError(getString(R.string.input_invalido));
+//			return false;
+//		}
+//		mLabelParcelas.setError(null);
+//		mLabelParcelas.setErrorEnabled(false);
+//		return true;
+//	}
+
+//	private boolean isClienteValido() {
+//		if (mCliente == null) {
+//			mLabelCliente.setError(getString(R.string.input_obrigatorio));
+//			return false;
+//		}
+////		if (!mCliente.isPerfilCliente()) {
+////			mLabelCliente
+////					.setError(getString(R.string.conta_receber_cadastro_mensagem_sacado_nao_cliente));
+////			return false;
+////		}
+//		mLabelCliente.setError(null);
+//		mLabelCliente.setErrorEnabled(false);
+//		return true;
+//	}
 
 	private void ocultarProgresso(@NonNull ProgressBar progresso,
 	                              @Nullable View view) {
@@ -418,21 +524,37 @@ public class MovimentacaoContaReceberCadastroFragment extends Fragment
 			}
 			progresso.setVisibility(View.GONE);
 			if (mPressionarVoltar) {
-				if (mOnParcelasGeradoListener != null) {
-					mOnParcelasGeradoListener
-							.onParcelasGerado(mButtonGerar, mParcelas);
-				}
+//				if (mOnParcelasGeradoListener != null) {
+//					mOnParcelasGeradoListener
+//							.onParcelasGerado(mButtonGerar, mParcelas);
+//				}
 				getActivity().onBackPressed();
 			}
 		}
 	}
 
 	private void preencherFormulario() {
-		preencherViewCliente();
-		preencherViewOrdem();
+		limparErros();
+//		preencherViewCliente();
+		preencherViewContaReceber();
+		mLabelValorContaReceber.setText(mContaReceber.getValor() == null
+				? getString(R.string.movimentacao_conta_receber_cadastro_label_valor_conta_receber_hint)
+				: getString(R.string.movimentacao_conta_receber_cadastro_label_valor_conta_receber_hint) + " " + mContaReceber.getValor().setScale(2, RoundingMode.HALF_EVEN).toString());
+		mLabelNumeroParcelaContaReceber.setText(mContaReceber.getNumeroParcela() == null
+				? getString(R.string.movimentacao_conta_receber_cadastro_label_numero_parcela_conta_receber_hint)
+				: getString(R.string.movimentacao_conta_receber_cadastro_label_numero_parcela_conta_receber_hint) + " " + mContaReceber.getNumeroParcela().toString());
+		mLabelDataVencimentoContaReceber.setText(mContaReceber.getDataVencimento() == null
+				? getString(R.string.movimentacao_conta_receber_cadastro_label_data_vencimento_conta_receber_hint)
+				: getString(R.string.movimentacao_conta_receber_cadastro_label_data_vencimento_conta_receber_hint) + " " + Data.paraStringData(mContaReceber.getDataVencimento()));
+		mLabelMontantePagoContaReceber.setText(mContaReceber.getMontantePago() == null
+				? getString(R.string.movimentacao_conta_receber_cadastro_label_montante_pago_conta_receber_hint)
+				: getString(R.string.movimentacao_conta_receber_cadastro_label_montante_pago_conta_receber_hint) + " " +mContaReceber.getMontantePago().setScale(2, RoundingMode.HALF_EVEN).toString());
+		mLabelSaldoDevedorContaReceber.setText(mContaReceber.getSaldoDevedor() == null
+				? getString(R.string.movimentacao_conta_receber_cadastro_label_saldo_devedor_conta_receber_hint)
+				: getString(R.string.movimentacao_conta_receber_cadastro_label_saldo_devedor_conta_receber_hint) + " " + mContaReceber.getSaldoDevedor().setScale(2, RoundingMode.HALF_EVEN).toString());
 		preencherViewFormaPagamento();
 		preencherViewCondicaoPagamento();
-		preencherViewParcelas();
+//		preencherViewParcelas();
 	}
 
 	private void preencherViewCondicaoPagamento() {
@@ -451,31 +573,32 @@ public class MovimentacaoContaReceberCadastroFragment extends Fragment
 				? "" : mFormaPagamento.toString());
 	}
 
-	private void preencherViewOrdem() {
-		mLabelOrdem.setHint(mOrdem == null
-				? getString(R.string.movimentacao_conta_receber_cadastro_label_nenhum_ordem_hint)
-				: getString(R.string.movimentacao_conta_receber_cadastro_label_ordem_hint));
-		mInputOrdem.setText(mOrdem == null ? "" : mOrdem.toString());
+	private void preencherViewContaReceber() {
+		mLabelContaReceber.setHint(mContaReceber == null
+				? getString(R.string.movimentacao_conta_receber_cadastro_label_nenhum_conta_receber_hint)
+				: getString(R.string.movimentacao_conta_receber_cadastro_label_conta_receber_hint));
+		mInputContaReceber.setText(mContaReceber == null ? "" : mContaReceber.toString());
 	}
 
-	private void preencherViewParcelas() {
-		mLabelParcelas.setHint(mParcelas == null || mParcelas.isEmpty()
-				? getString(R.string.movimentacao_conta_receber_cadastro_label_nenhum_parcela_hint)
-				: getString(R.string.movimentacao_conta_receber_cadastro_label_parcelas_hint));
-		mInputParcelas.setText(mParcelas == null || mParcelas.isEmpty()
-				? ""
-				: getString(R.string.movimentacao_conta_receber_cadastro_input_parcelas_text));
-	}
+//	private void preencherViewParcelas() {
+//		mLabelParcelas.setHint(mParcelas == null || mParcelas.isEmpty()
+//				? getString(R.string.movimentacao_conta_receber_cadastro_label_nenhum_parcela_hint)
+//				: getString(R.string.movimentacao_conta_receber_cadastro_label_parcelas_hint));
+//		mInputParcelas.setText(mParcelas == null || mParcelas.isEmpty()
+//				? ""
+//				: getString(R.string.movimentacao_conta_receber_cadastro_input_parcelas_text));
+//	}
 
-	private void preencherViewCliente() {
-		mLabelCliente.setHint(mCliente == null
-				? getString(R.string.movimentacao_conta_receber_cadastro_label_nenhum_cliente_hint)
-				: getString(R.string.movimentacao_conta_receber_cadastro_label_cliente_hint));
-		mInputCliente.setText(mCliente == null ? "" : mCliente.toString());
-	}
+//	private void preencherViewCliente() {
+//		mLabelCliente.setHint(mCliente == null
+//				? getString(R.string.movimentacao_conta_receber_cadastro_label_nenhum_cliente_hint)
+//				: getString(R.string.movimentacao_conta_receber_cadastro_label_cliente_hint));
+//		mInputCliente.setText(mCliente == null ? "" : mCliente.toString());
+//	}
 
 	public void setCondicaoPagamento(@NonNull CondicaoPagamento condicaoPagamento) {
 		mCondicaoPagamento = condicaoPagamento;
+		mMovimentacaoContaReceber.setCondicaoPagamento(mCondicaoPagamento);
 		if (getArguments() != null) {
 			getArguments()
 					.putSerializable(CONDICAO_PAGAMENTO, mCondicaoPagamento);
@@ -491,15 +614,15 @@ public class MovimentacaoContaReceberCadastroFragment extends Fragment
 			getArguments().putSerializable(FORMA_PAGAMENTO, mFormaPagamento);
 		}
 		mCondicaoPagamento = null;
-		mParcelas.clear();
+//		mParcelas.clear();
 //		gerarParcelas();
 //		calcularDescontoOuJuro();
 		isFormaPagamentoValido();
 	}
 
-	public void setOnClientesPesquisaListener(@Nullable OnClientesPesquisaListener ouvinte) {
-		mOnClientesPesquisaListener = ouvinte;
-	}
+//	public void setOnClientesPesquisaListener(@Nullable OnClientesPesquisaListener ouvinte) {
+//		mOnClientesPesquisaListener = ouvinte;
+//	}
 
 	public void setOnCondicoesPagamentoPesquisaListener(@Nullable OnCondicoesPagamentoPesquisaListener ouvinte) {
 		mOnCondicoesPagamentoPesquisaListener = ouvinte;
@@ -509,55 +632,48 @@ public class MovimentacaoContaReceberCadastroFragment extends Fragment
 		mOnFormasPagamentoPesquisaListener = ouvinte;
 	}
 
-	public void setOnOrdensPesquisaListener(@Nullable OnOrdensPesquisaListener ouvinte) {
-		mOnOrdensPesquisaListener = ouvinte;
+	public void setOnContasReceberPesquisaListener(@Nullable OnContasReceberPesquisaListener ouvinte) {
+		mOnContasReceberPesquisaListener = ouvinte;
 	}
 
-	public void setOnParcelasGeradoListener(@Nullable OnParcelasGeradoListener ouvinte) {
-		mOnParcelasGeradoListener = ouvinte;
-	}
+//	public void setOnParcelasGeradoListener(@Nullable OnParcelasGeradoListener ouvinte) {
+//		mOnParcelasGeradoListener = ouvinte;
+//	}
 
-	public void setOnParcelasPesquisaListener(@Nullable OnParcelasPesquisaListener ouvinte) {
-		mOnParcelasPesquisaListener = ouvinte;
-	}
+//	public void setOnParcelasPesquisaListener(@Nullable OnParcelasPesquisaListener ouvinte) {
+//		mOnParcelasPesquisaListener = ouvinte;
+//	}
 
-	public void setOrdem(@NonNull Ordem ordem) {
-		mOrdem = ordem;
+	public void setContaReceber(@NonNull ContaReceber contaReceber) {
+		mContaReceber = contaReceber;
+		mMovimentacaoContaReceber.setContaReceber(mContaReceber);
 		if (getArguments() != null) {
-			getArguments().putSerializable(ORDEM, mOrdem);
+			getArguments().putSerializable(CONTA_RECEBER, mContaReceber);
 		}
 //		gerarParcelas();
 //		calcularDescontoOuJuro();
-		isOrdemValido();
+		isContaReceberValido();
 	}
 
-	public void setCliente(@NonNull Pessoa cliente) {
-		mCliente = cliente;
-		if (getArguments() != null) {
-			getArguments().putSerializable(CLIENTE, mCliente);
-		}
-//		gerarParcelas();
-//		calcularDescontoOuJuro();
-		isClienteValido();
-	}
+//	public void setCliente(@NonNull Pessoa cliente) {
+//		mCliente = cliente;
+//		if (getArguments() != null) {
+//			getArguments().putSerializable(CLIENTE, mCliente);
+//		}
+////		gerarParcelas();
+////		calcularDescontoOuJuro();
+//		isClienteValido();
+//	}
 
 	private void submeterFormulario() {
-		mTarefasPendentes = 0;
-		mPressionarVoltar = true;
-		exibirProgresso(mProgressBarGerar, mButtonGerar);
-		Teclado.ocultar(getActivity(), mButtonGerar);
-		for (ContaReceber contaReceber : mParcelas) {
-			if (contaReceber.getId() == null) {
-//				consumirContaReceberPOST(contaReceber);
-			}
-		}
-		ocultarProgresso(mProgressBarGerar, mButtonGerar);
+		iterarFormulario();
+		consumirMovimentacaoContaReceberPOST();
 	}
 
-	public interface OnClientesPesquisaListener {
-
-		void onClientesPesquisa(@NonNull View view);
-	}
+//	public interface OnClientesPesquisaListener {
+//
+//		void onClientesPesquisa(@NonNull View view);
+//	}
 
 	public interface OnCondicoesPagamentoPesquisaListener {
 
@@ -570,20 +686,19 @@ public class MovimentacaoContaReceberCadastroFragment extends Fragment
 		void onFormasPagamentoPesquisa(@NonNull View view);
 	}
 
-	public interface OnOrdensPesquisaListener {
+	public interface OnContasReceberPesquisaListener {
 
-		void onOrdensPesquisa(@NonNull View view);
+		void onContasReceberPesquisa(@NonNull View view);
 	}
 
-	public interface OnParcelasGeradoListener {
+//	public interface OnParcelasGeradoListener {
+//
+//		void onParcelasGerado(@NonNull View view,
+//		                      @NonNull ArrayList<ContaReceber> contasReceber);
+//	}
 
-		void onParcelasGerado(@NonNull View view,
-		                      @NonNull ArrayList<ContaReceber> contasReceber);
-	}
-
-	public interface OnParcelasPesquisaListener {
-
-		void onParcelasPesquisa(@NonNull View view,
-		                        @NonNull ArrayList<ContaReceber> contasReceber);
-	}
+//	public interface OnParcelasPesquisaListener {
+//
+//		void onParcelasPesquisa(@NonNull View view);
+//	}
 }

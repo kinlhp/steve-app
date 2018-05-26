@@ -64,6 +64,7 @@ public class OrdensPesquisaFragment extends Fragment
 	private Links mLinks;
 	private OnLongoOrdemSelecionadoListener mOnLongoOrdemSelecionadoListener;
 	private OnOrdemSelecionadoListener mOnOrdemSelecionadoListener;
+	private boolean mOuvinteJaChamado;
 	private int mTarefasPendentes;
 	private View mViewSelecionada;
 
@@ -160,10 +161,11 @@ public class OrdensPesquisaFragment extends Fragment
 				new StringBuilder(getString(R.string.requisicao_url_base))
 						.append("ordens/")
 						.append("search/")
-						.append("id-cnpjCpf")
-						.append("?id=").append(query)
-						.append("&cnpjCpf=").append(query)
-						.append("&sort=id,asc")
+						.append("cnpjCpf-nomeRazao-fantasiaSobrenome")
+						.append("?cnpjCpf=").append(query)
+						.append("&nomeRazao=").append(query)
+						.append("&fantasiaSobrenome=").append(query)
+						.append("&sort=cliente.nomeRazao,asc&sort=id,asc")
 						.append("&page=0&size=20");
 		HRef pagina0 = new HRef(url.toString());
 		consumirOrdensGETPesquisaPaginado(pagina0);
@@ -180,6 +182,7 @@ public class OrdensPesquisaFragment extends Fragment
 			consumirOrdensGETPaginado(pagina0);
 		}
 		alternarLabel0Registros();
+		mOuvinteJaChamado = false;
 	}
 
 	@Override
@@ -423,7 +426,10 @@ public class OrdensPesquisaFragment extends Fragment
 					mOnOrdemSelecionadoListener
 							.onOrdemSelecionado(mViewSelecionada, mOrdemSelecionada);
 				}
-				getActivity().onBackPressed();
+				if (!mOuvinteJaChamado) {
+					mOuvinteJaChamado = true;
+					getActivity().onBackPressed();
+				}
 			}
 		}
 	}

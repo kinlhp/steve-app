@@ -25,6 +25,19 @@ public final class CondicaoPagamentoMapeamento implements Serializable {
 	}
 
 	@NonNull
+	public static CondicaoPagamento paraDominio(@NonNull CondicaoPagamentoDTO dto) {
+		final CondicaoPagamento dominio = CondicaoPagamento.builder()
+				.descricao(dto.getDescricao())
+				.periodoEntreParcelas(dto.getPeriodoEntreParcelas())
+				.quantidadeParcelas(dto.getQuantidadeParcelas())
+				.build();
+		dominio.setDataCriacao(dto.getDataCriacao());
+		dominio.setDataUltimaAlteracao(dto.getDataUltimaAlteracao());
+		dominio.setId(obterId(dto.getLinks().getSelf()));
+		return dominio;
+	}
+
+	@NonNull
 	public static CondicaoPagamento paraDominio(@NonNull CondicaoPagamentoDTO dto,
 	                                            @NonNull final FormaPagamento formaPagamento) {
 		final CondicaoPagamento dominio = CondicaoPagamento.builder()

@@ -2,6 +2,7 @@ package com.kinlhp.steve.mapeamento;
 
 import android.support.annotation.NonNull;
 
+import com.kinlhp.steve.dominio.ContaReceber;
 import com.kinlhp.steve.dominio.MovimentacaoContaReceber;
 import com.kinlhp.steve.dto.MovimentacaoContaReceberDTO;
 import com.kinlhp.steve.href.HRef;
@@ -41,10 +42,39 @@ public final class MovimentacaoContaReceberMapeamento implements Serializable {
 	}
 
 	@NonNull
+	public static MovimentacaoContaReceber paraDominio(@NonNull MovimentacaoContaReceberDTO dto,
+	                                                   @NonNull ContaReceber contaReceber) {
+		final MovimentacaoContaReceber dominio = MovimentacaoContaReceber.builder()
+				.baseCalculo(dto.getBaseCalculo())
+				.contaReceber(contaReceber)
+				.descontoConcedido(dto.getDescontoConcedido())
+				.estornado(dto.isEstornado())
+				.juroAplicado(dto.getJuroAplicado())
+				.observacao(dto.getObservacao())
+				.saldoDevedor(dto.getSaldoDevedor())
+				.valorPago(dto.getValorPago())
+				.build();
+		dominio.setDataCriacao(dto.getDataCriacao());
+		dominio.setDataUltimaAlteracao(dto.getDataUltimaAlteracao());
+		dominio.setId(obterId(dto.getLinks().getSelf()));
+		return dominio;
+	}
+
+	@NonNull
 	public static Set<MovimentacaoContaReceber> paraDominios(@NonNull Set<MovimentacaoContaReceberDTO> dtos) {
 		Set<MovimentacaoContaReceber> dominios = new LinkedHashSet<>();
 		for (MovimentacaoContaReceberDTO dto : dtos) {
 			dominios.add(paraDominio(dto));
+		}
+		return dominios;
+	}
+
+	@NonNull
+	public static Set<MovimentacaoContaReceber> paraDominios(@NonNull Set<MovimentacaoContaReceberDTO> dtos,
+	                                                         @NonNull ContaReceber contaReceber) {
+		Set<MovimentacaoContaReceber> dominios = new LinkedHashSet<>();
+		for (MovimentacaoContaReceberDTO dto : dtos) {
+			dominios.add(paraDominio(dto, contaReceber));
 		}
 		return dominios;
 	}
