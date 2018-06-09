@@ -120,7 +120,7 @@ public class MovimentacaoContaReceberCadastroFragment extends Fragment
 					: BigDecimal.ZERO;
 			trocoADevolver = calcularTrocoADevolver(baseCalculo, juroAplicado, descontoConcedido, valorPago);
 		}
-		mLabelTrocoADevolver.setText(getString(R.string.movimentacao_conta_receber_cadastro_label_troco_a_devolver_hint) + Moeda.comSifra(trocoADevolver));
+		mLabelTrocoADevolver.setText(getString(R.string.movimentacao_conta_receber_cadastro_label_troco_a_devolver_hint) + " " + Moeda.comSifra(trocoADevolver));
 	}
 
 	@Override

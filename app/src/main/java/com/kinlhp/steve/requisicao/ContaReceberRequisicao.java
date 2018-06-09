@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.kinlhp.steve.dto.ContaReceberDTO;
 import com.kinlhp.steve.dto.MovimentacaoContaReceberDTO;
+import com.kinlhp.steve.dto.OrdemDTO;
 import com.kinlhp.steve.dto.PessoaDTO;
 import com.kinlhp.steve.href.HRef;
 import com.kinlhp.steve.recurso.ContaReceberRecurso;
@@ -18,7 +19,7 @@ import retrofit2.Callback;
  * Created by kin on 9/28/17.
  */
 public class ContaReceberRequisicao implements Serializable {
-	private static final long serialVersionUID = 7244225706173262770L;
+	private static final long serialVersionUID = 3256616368321599660L;
 	private static final ContaReceberRecurso RECURSO = Requisicao
 			.criar(ContaReceberRecurso.class);
 
@@ -30,13 +31,18 @@ public class ContaReceberRequisicao implements Serializable {
 		RECURSO.getMovimentacoes(movimentacoes.getHref()).enqueue(callback);
 	}
 
+	public static void getOrdem(@NonNull Callback<OrdemDTO> callback,
+	                            @NonNull HRef ordem) {
+		RECURSO.getOrdem(ordem.getHref()).enqueue(callback);
+	}
+
 	public static void getPaginado(@NonNull Callback<Colecao<ContaReceberDTO>> callback,
 	                               @NonNull HRef pagina) {
 		RECURSO.getPaginado(pagina.getHref()).enqueue(callback);
 	}
 
 	public static void getSacado(@NonNull Callback<PessoaDTO> callback,
-	                              @NonNull HRef sacado) {
+	                             @NonNull HRef sacado) {
 		RECURSO.getSacado(sacado.getHref()).enqueue(callback);
 	}
 

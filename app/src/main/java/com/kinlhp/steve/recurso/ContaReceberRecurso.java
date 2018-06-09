@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.kinlhp.steve.dto.ContaReceberDTO;
 import com.kinlhp.steve.dto.MovimentacaoContaReceberDTO;
+import com.kinlhp.steve.dto.OrdemDTO;
 import com.kinlhp.steve.dto.PessoaDTO;
 import com.kinlhp.steve.resposta.Colecao;
 
@@ -27,16 +28,19 @@ public interface ContaReceberRecurso {
 	Call<Colecao<ContaReceberDTO>> get();
 
 	@GET
-	Call<PessoaDTO> getSacado(@NonNull @Url String href);
+	Call<Colecao<MovimentacaoContaReceberDTO>> getMovimentacoes(@NonNull @Url String href);
 
 	@GET
-	Call<Colecao<MovimentacaoContaReceberDTO>> getMovimentacoes(@NonNull @Url String href);
+	Call<OrdemDTO> getOrdem(@NonNull @Url String href);
 
 	@GET
 	Call<Colecao<ContaReceberDTO>> getPaginado(@NonNull @Url String href);
 
 	@GET(value = "contasReceber/{id}")
 	Call<ContaReceberDTO> getPorId(@NonNull @Path(value = "id") BigInteger id);
+
+	@GET
+	Call<PessoaDTO> getSacado(@NonNull @Url String href);
 
 	@PATCH(value = "contasReceber/{id}")
 	Call<Void> patch(@NonNull @Path(value = "id") BigInteger id,

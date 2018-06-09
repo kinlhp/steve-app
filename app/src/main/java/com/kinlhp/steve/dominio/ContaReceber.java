@@ -1,6 +1,6 @@
 package com.kinlhp.steve.dominio;
 
-import com.kinlhp.steve.util.Data;
+import android.text.TextUtils;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -83,10 +83,14 @@ public class ContaReceber extends Dominio<BigInteger> {
 
 	@Override
 	public String toString() {
-		return new StringBuilder()
-				.append(sacado != null && sacado.getNomeRazao() != null ? sacado.getNomeRazao() : "")
-				.append(dataVencimento != null ? " " + Data.paraStringData(dataVencimento) : "")
-				.toString();
+		StringBuilder toString = new StringBuilder()
+				.append(ordem != null && sacado.getId() != null ? "Ordem " + ordem.getId() : "");
+		if (!TextUtils.isEmpty(toString)) {
+			toString.append(numeroParcela != null ? " [parcela " + numeroParcela : "")
+					.append(situacao != null ? " - " + situacao.descricao + "]" : "")
+					.append(sacado != null && !TextUtils.isEmpty(sacado.getNomeRazao()) ? " - " + sacado.getNomeRazao() : "");
+		}
+		return toString.toString();
 	}
 
 	@AllArgsConstructor

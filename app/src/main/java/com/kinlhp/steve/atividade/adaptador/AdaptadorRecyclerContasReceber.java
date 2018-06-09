@@ -41,8 +41,8 @@ public class AdaptadorRecyclerContasReceber
 		ContaReceber contaReceber = mContasReceber.get(position);
 		viewHolder.mLabelSacado.setText(contaReceber.getSacado() == null ? "" : contaReceber.getSacado().toString());
 		viewHolder.mLabelValor.setText(contaReceber.getValor() == null ? "" : "Valor ".concat(Moeda.comSifra(contaReceber.getValor())));
-		viewHolder.mLabelFormaPagamento.setText(contaReceber.getCondicaoPagamento() != null && contaReceber.getCondicaoPagamento().getFormaPagamento() != null ? contaReceber.getCondicaoPagamento().getFormaPagamento().toString() : "");
-		viewHolder.mLabelCondicaoPagamento.setText(contaReceber.getCondicaoPagamento() != null ? contaReceber.getCondicaoPagamento().toString() : "");
+//		viewHolder.mLabelFormaPagamento.setText(contaReceber.getCondicaoPagamento() != null && contaReceber.getCondicaoPagamento().getFormaPagamento() != null ? contaReceber.getCondicaoPagamento().getFormaPagamento().toString() : "");
+//		viewHolder.mLabelCondicaoPagamento.setText(contaReceber.getCondicaoPagamento() != null ? contaReceber.getCondicaoPagamento().toString() : "");
 		viewHolder.mLabelNumeroParcela.setText(contaReceber.getNumeroParcela() == null ? "" : "Parcela " + contaReceber.getNumeroParcela().toString());
 		viewHolder.mLabelDataVencimento.setText(contaReceber.getDataVencimento() == null ? "" : "Vencimento " + Data.paraStringData(contaReceber.getDataVencimento()));
 		viewHolder.mLabelMontantePago.setText(contaReceber.getMontantePago() == null ? "" : "Montante pago ".concat(Moeda.comSifra(contaReceber.getMontantePago())));
@@ -81,9 +81,9 @@ public class AdaptadorRecyclerContasReceber
 			Serializable {
 		private static final long serialVersionUID = 4335851568331325066L;
 		private AppCompatImageButton mButtonRemover;
-		private AppCompatTextView mLabelCondicaoPagamento;
+//		private AppCompatTextView mLabelCondicaoPagamento;
 		private AppCompatTextView mLabelDataVencimento;
-		private AppCompatTextView mLabelFormaPagamento;
+//		private AppCompatTextView mLabelFormaPagamento;
 		private AppCompatTextView mLabelMontantePago;
 		private AppCompatTextView mLabelNumeroParcela;
 		private AppCompatTextView mLabelSacado;
@@ -93,9 +93,9 @@ public class AdaptadorRecyclerContasReceber
 		ViewHolderContasReceber(View itemView) {
 			super(itemView);
 			mButtonRemover = itemView.findViewById(R.id.button_remover_conta_receber);
-			mLabelCondicaoPagamento = itemView.findViewById(R.id.label_condicao_pagamento);
+//			mLabelCondicaoPagamento = itemView.findViewById(R.id.label_condicao_pagamento);
 			mLabelDataVencimento = itemView.findViewById(R.id.label_data_vencimento);
-			mLabelFormaPagamento = itemView.findViewById(R.id.label_forma_pagamento);
+//			mLabelFormaPagamento = itemView.findViewById(R.id.label_forma_pagamento);
 			mLabelMontantePago = itemView.findViewById(R.id.label_montante_pago);
 			mLabelNumeroParcela = itemView.findViewById(R.id.label_numero_parcela);
 			mLabelSacado = itemView.findViewById(R.id.label_sacado);

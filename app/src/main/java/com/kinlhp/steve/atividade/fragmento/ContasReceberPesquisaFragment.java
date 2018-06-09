@@ -21,15 +21,18 @@ import com.kinlhp.steve.atividade.adaptador.AdaptadorRecyclerContasReceber;
 import com.kinlhp.steve.dominio.CondicaoPagamento;
 import com.kinlhp.steve.dominio.ContaReceber;
 import com.kinlhp.steve.dominio.MovimentacaoContaReceber;
+import com.kinlhp.steve.dominio.Ordem;
 import com.kinlhp.steve.dominio.Pessoa;
 import com.kinlhp.steve.dto.CondicaoPagamentoDTO;
 import com.kinlhp.steve.dto.ContaReceberDTO;
 import com.kinlhp.steve.dto.MovimentacaoContaReceberDTO;
+import com.kinlhp.steve.dto.OrdemDTO;
 import com.kinlhp.steve.dto.PessoaDTO;
 import com.kinlhp.steve.href.HRef;
 import com.kinlhp.steve.mapeamento.CondicaoPagamentoMapeamento;
 import com.kinlhp.steve.mapeamento.ContaReceberMapeamento;
 import com.kinlhp.steve.mapeamento.MovimentacaoContaReceberMapeamento;
+import com.kinlhp.steve.mapeamento.OrdemMapeamento;
 import com.kinlhp.steve.mapeamento.PessoaMapeamento;
 import com.kinlhp.steve.requisicao.ContaReceberRequisicao;
 import com.kinlhp.steve.requisicao.Falha;
@@ -56,7 +59,7 @@ public class ContasReceberPesquisaFragment extends Fragment
 		Serializable {
 	private static final long serialVersionUID = 1208743848156612458L;
 	private static final String LINKS = "_links";
-	private static final String PAGINA_0 = "contasReceber?sort=sacado.nomeRazao,asc&sort=dataVencimento,desc&page=0&size=20";
+	private static final String PAGINA_0 = "contasReceber?sort=sacado.nomeRazao,asc&sort=dataVencimento,asc&page=0&size=20";
 	private static final String CONTAS_RECEBER = "contasReceber";
 	private AdaptadorRecyclerContasReceber mAdaptadorContasReceber;
 	private ArrayList<ContaReceber> mContasReceber = new ArrayList<>();
@@ -129,15 +132,29 @@ public class ContasReceberPesquisaFragment extends Fragment
 	@Override
 	public void onItemClick(View view, int posicao) {
 		mContaReceberSelecionada = mContasReceber.get(posicao);
-		mViewSelecionada = view;
-		consumirContaReceberGETMovimentacoesContaReceber();
+		if (ContaReceber.Situacao.ABERTO.equals(mContaReceberSelecionada.getSituacao())
+				|| ContaReceber.Situacao.AMORTIZADO.equals(mContaReceberSelecionada.getSituacao())) {
+			mViewSelecionada = view;
+			if (mOnContaReceberSelecionadoListener != null) {
+				mOnContaReceberSelecionadoListener
+						.onContaReceberSelecionado(mViewSelecionada, mContaReceberSelecionada);
+				getActivity().onBackPressed();
+			}
+		}
 	}
 
 	@Override
 	public void onItemLongClickListener(View view, int posicao) {
 		mContaReceberSelecionada = mContasReceber.get(posicao);
-		mViewSelecionada = view;
-		consumirContaReceberGETMovimentacoesContaReceber();
+		if (ContaReceber.Situacao.ABERTO.equals(mContaReceberSelecionada.getSituacao())
+				|| ContaReceber.Situacao.AMORTIZADO.equals(mContaReceberSelecionada.getSituacao())) {
+			mViewSelecionada = view;
+			if (mOnLongoContaReceberSelecionadoListener != null) {
+				mOnLongoContaReceberSelecionadoListener
+						.onLongoContaReceberSelecionado(mViewSelecionada, mContaReceberSelecionada);
+				getActivity().onBackPressed();
+			}
+		}
 	}
 
 	@Override
@@ -165,7 +182,7 @@ public class ContasReceberPesquisaFragment extends Fragment
 						.append("?cnpjCpf=").append(query)
 						.append("&nomeRazao=").append(query)
 						.append("&fantasiaSobrenome=").append(query)
-						.append("&sort=sacado.nomeRazao,asc&sort=dataVencimento,desc")
+						.append("&sort=sacado.nomeRazao,asc&sort=dataVencimento,asc")
 						.append("&page=0&size=20");
 		HRef pagina0 = new HRef(url.toString());
 		consumirContasReceberGETPesquisaPaginado(pagina0);
@@ -194,9 +211,10 @@ public class ContasReceberPesquisaFragment extends Fragment
 
 	private void addContaReceber(@NonNull ContaReceber contaReceber) {
 		if (contaReceber.getId().compareTo(BigInteger.ZERO) > 0) {
-			mContasReceber.add(contaReceber);
-			int indice = mContasReceber.indexOf(contaReceber);
-			mAdaptadorContasReceber.notifyItemInserted(indice);
+			if (mContasReceber.indexOf(contaReceber) < 0) {
+				mContasReceber.add(contaReceber);
+			}
+			mAdaptadorContasReceber.notifyDataSetChanged();
 		}
 		alternarLabel0Registros();
 	}
@@ -213,7 +231,7 @@ public class ContasReceberPesquisaFragment extends Fragment
 			public void onFailure(@NonNull Call<CondicaoPagamentoDTO> chamada,
 			                      @NonNull Throwable causa) {
 				--mTarefasPendentes;
-				ocultarProgresso(mProgressBarConsumirContasReceberPaginado, false);
+				ocultarProgresso(mProgressBarConsumirContasReceberPaginado);
 				Falha.tratar(mProgressBarConsumirContasReceberPaginado, causa);
 			}
 
@@ -222,13 +240,13 @@ public class ContasReceberPesquisaFragment extends Fragment
 			                       @NonNull Response<CondicaoPagamentoDTO> resposta) {
 				--mTarefasPendentes;
 				if (!resposta.isSuccessful()) {
-					ocultarProgresso(mProgressBarConsumirContasReceberPaginado, false);
+					ocultarProgresso(mProgressBarConsumirContasReceberPaginado);
 					Falha.tratar(mProgressBarConsumirContasReceberPaginado, resposta);
 				} else {
 					CondicaoPagamentoDTO dto = resposta.body();
 					CondicaoPagamento condicaoPagamento = CondicaoPagamentoMapeamento.paraDominio(dto);
 					movimentacaoContaReceber.setCondicaoPagamento(condicaoPagamento);
-					ocultarProgresso(mProgressBarConsumirContasReceberPaginado, true);
+					ocultarProgresso(mProgressBarConsumirContasReceberPaginado);
 				}
 			}
 		};
@@ -241,7 +259,7 @@ public class ContasReceberPesquisaFragment extends Fragment
 			public void onFailure(@NonNull Call<PessoaDTO> chamada,
 			                      @NonNull Throwable causa) {
 				--mTarefasPendentes;
-				ocultarProgresso(mProgressBarConsumirContasReceberPaginado, false);
+				ocultarProgresso(mProgressBarConsumirContasReceberPaginado);
 				Falha.tratar(mProgressBarConsumirContasReceberPaginado, causa);
 			}
 
@@ -250,27 +268,55 @@ public class ContasReceberPesquisaFragment extends Fragment
 			                       @NonNull Response<PessoaDTO> resposta) {
 				--mTarefasPendentes;
 				if (!resposta.isSuccessful()) {
-					ocultarProgresso(mProgressBarConsumirContasReceberPaginado, false);
+					ocultarProgresso(mProgressBarConsumirContasReceberPaginado);
 					Falha.tratar(mProgressBarConsumirContasReceberPaginado, resposta);
 				} else {
 					PessoaDTO dto = resposta.body();
 					Pessoa cliente = PessoaMapeamento.paraDominio(dto);
 					contaReceber.setSacado(cliente);
 					addContaReceber(contaReceber);
-					ocultarProgresso(mProgressBarConsumirContasReceberPaginado, false);
+					ocultarProgresso(mProgressBarConsumirContasReceberPaginado);
 				}
 			}
 		};
 	}
 
-	private ColecaoCallback<Colecao<MovimentacaoContaReceberDTO>> callbackContaReceberGETMovimentacoesContaReceber() {
+	private ItemCallback<OrdemDTO> callbackContaReceberGETOrdem(@NonNull ContaReceber contaReceber) {
+		return new ItemCallback<OrdemDTO>() {
+
+			@Override
+			public void onFailure(@NonNull Call<OrdemDTO> chamada,
+			                      @NonNull Throwable causa) {
+				--mTarefasPendentes;
+				ocultarProgresso(mProgressBarConsumirContasReceberPaginado);
+				Falha.tratar(mProgressBarConsumirContasReceberPaginado, causa);
+			}
+
+			@Override
+			public void onResponse(@NonNull Call<OrdemDTO> chamada,
+			                       @NonNull Response<OrdemDTO> resposta) {
+				--mTarefasPendentes;
+				if (!resposta.isSuccessful()) {
+					ocultarProgresso(mProgressBarConsumirContasReceberPaginado);
+					Falha.tratar(mProgressBarConsumirContasReceberPaginado, resposta);
+				} else {
+					OrdemDTO dto = resposta.body();
+					Ordem ordem = OrdemMapeamento.paraDominio(dto);
+					contaReceber.setOrdem(ordem);
+					ocultarProgresso(mProgressBarConsumirContasReceberPaginado);
+				}
+			}
+		};
+	}
+
+	private ColecaoCallback<Colecao<MovimentacaoContaReceberDTO>> callbackContaReceberGETMovimentacoesContaReceber(@NonNull ContaReceber contaReceber) {
 		return new ColecaoCallback<Colecao<MovimentacaoContaReceberDTO>>() {
 
 			@Override
 			public void onFailure(@NonNull Call<Colecao<MovimentacaoContaReceberDTO>> chamada,
 			                      @NonNull Throwable causa) {
 				--mTarefasPendentes;
-				ocultarProgresso(mProgressBarConsumirContasReceberPaginado, false);
+				ocultarProgresso(mProgressBarConsumirContasReceberPaginado);
 				Falha.tratar(mProgressBarConsumirContasReceberPaginado, causa);
 			}
 
@@ -279,7 +325,7 @@ public class ContasReceberPesquisaFragment extends Fragment
 			                       @NonNull Response<Colecao<MovimentacaoContaReceberDTO>> resposta) {
 				--mTarefasPendentes;
 				if (!resposta.isSuccessful()) {
-					ocultarProgresso(mProgressBarConsumirContasReceberPaginado, false);
+					ocultarProgresso(mProgressBarConsumirContasReceberPaginado);
 					Falha.tratar(mProgressBarConsumirContasReceberPaginado, resposta);
 				} else {
 					Set<MovimentacaoContaReceberDTO> dtos = resposta.body()
@@ -287,11 +333,13 @@ public class ContasReceberPesquisaFragment extends Fragment
 					Set<MovimentacaoContaReceber> movimentacoesContaReceber =
 							MovimentacaoContaReceberMapeamento
 									.paraDominios(dtos, mContaReceberSelecionada);
-					mContaReceberSelecionada.getMovimentacoes().addAll(movimentacoesContaReceber);
+//					mContaReceberSelecionada.getMovimentacoes().addAll(movimentacoesContaReceber);
+					contaReceber.setMovimentacoes(movimentacoesContaReceber);
+					addContaReceber(contaReceber);
 					for (MovimentacaoContaReceber movimentacaoContaReceber : movimentacoesContaReceber) {
 						consumirMovimentacaoContaReceberGETCondicaoPagamento(movimentacaoContaReceber);
 					}
-					ocultarProgresso(mProgressBarConsumirContasReceberPaginado, true);
+					ocultarProgresso(mProgressBarConsumirContasReceberPaginado);
 				}
 			}
 		};
@@ -304,7 +352,7 @@ public class ContasReceberPesquisaFragment extends Fragment
 			public void onFailure(@NonNull Call<Colecao<ContaReceberDTO>> chamada,
 			                      @NonNull Throwable causa) {
 				--mTarefasPendentes;
-				ocultarProgresso(mProgressBarConsumirContasReceberPaginado, false);
+				ocultarProgresso(mProgressBarConsumirContasReceberPaginado);
 				Falha.tratar(mProgressBarConsumirContasReceberPaginado, causa);
 			}
 
@@ -319,11 +367,14 @@ public class ContasReceberPesquisaFragment extends Fragment
 					Set<ContaReceberDTO> dtos = colecao.getEmbedded().getDtos();
 					Set<ContaReceber> contasReceber = ContaReceberMapeamento.paraDominios(dtos);
 					for (ContaReceber contaReceber : contasReceber) {
+						addContaReceber(contaReceber);
+						consumirContaReceberGETOrdem(contaReceber);
 						consumirContaReceberGETSacado(contaReceber);
+						consumirContaReceberGETMovimentacoesContaReceber(contaReceber);
 					}
 					mLinks = colecao.getLinks();
 				}
-				ocultarProgresso(mProgressBarConsumirContasReceberPaginado, false);
+				ocultarProgresso(mProgressBarConsumirContasReceberPaginado);
 			}
 		};
 	}
@@ -335,7 +386,7 @@ public class ContasReceberPesquisaFragment extends Fragment
 			public void onFailure(@NonNull Call<Colecao<ContaReceberDTO>> chamada,
 			                      @NonNull Throwable causa) {
 				--mTarefasPendentes;
-				ocultarProgresso(mProgressBarConsumirContasReceberPaginado, false);
+				ocultarProgresso(mProgressBarConsumirContasReceberPaginado);
 				Falha.tratar(mProgressBarConsumirContasReceberPaginado, causa);
 			}
 
@@ -350,11 +401,13 @@ public class ContasReceberPesquisaFragment extends Fragment
 					Set<ContaReceberDTO> dtos = colecao.getEmbedded().getDtos();
 					Set<ContaReceber> contasReceber = ContaReceberMapeamento.paraDominios(dtos);
 					for (ContaReceber contaReceber : contasReceber) {
+						addContaReceber(contaReceber);
 						consumirContaReceberGETSacado(contaReceber);
+						consumirContaReceberGETMovimentacoesContaReceber(contaReceber);
 					}
 					mLinks = colecao.getLinks();
 				}
-				ocultarProgresso(mProgressBarConsumirContasReceberPaginado, false);
+				ocultarProgresso(mProgressBarConsumirContasReceberPaginado);
 			}
 		};
 	}
@@ -378,13 +431,22 @@ public class ContasReceberPesquisaFragment extends Fragment
 		ContaReceberRequisicao.getSacado(callbackContaReceberGETSacado(contaReceber), href);
 	}
 
-	private void consumirContaReceberGETMovimentacoesContaReceber() {
+	private void consumirContaReceberGETOrdem(@NonNull ContaReceber contaReceber) {
+		// TODO: 9/11/17 corrigir hard-coded
+		String url = Parametro.get(Parametro.Chave.URL_BASE).toString()
+				.concat("contasReceber/%d/ordem");
+		HRef href = new HRef(String.format(url, contaReceber.getId()));
+		++mTarefasPendentes;
+		ContaReceberRequisicao.getOrdem(callbackContaReceberGETOrdem(contaReceber), href);
+	}
+
+	private void consumirContaReceberGETMovimentacoesContaReceber(@NonNull ContaReceber contaReceber) {
 		exibirProgresso(mProgressBarConsumirContasReceberPaginado);
 		String url = Parametro.get(Parametro.Chave.URL_BASE).toString()
 				.concat("contasReceber/%d/movimentacoes");
-		HRef href = new HRef(String.format(url, mContaReceberSelecionada.getId()));
+		HRef href = new HRef(String.format(url, contaReceber.getId()));
 		++mTarefasPendentes;
-		ContaReceberRequisicao.getMovimentacoes(callbackContaReceberGETMovimentacoesContaReceber(), href);
+		ContaReceberRequisicao.getMovimentacoes(callbackContaReceberGETMovimentacoesContaReceber(contaReceber), href);
 	}
 
 	private void consumirContasReceberGETPaginado(@NonNull HRef href) {
@@ -411,26 +473,10 @@ public class ContasReceberPesquisaFragment extends Fragment
 		progresso.setVisibility(View.VISIBLE);
 	}
 
-	private void ocultarProgresso(@NonNull ProgressBar progresso,
-	                              boolean chamarOuvinte) {
+	private void ocultarProgresso(@NonNull ProgressBar progresso) {
 		if (mTarefasPendentes <= 0) {
 			alternarLabel0Registros();
 			progresso.setVisibility(View.GONE);
-			if (chamarOuvinte) {
-				// TODO: 9/18/17 definir implementações diferentes para clique curto e longo
-				if (mOnLongoContaReceberSelecionadoListener != null) {
-					mOnLongoContaReceberSelecionadoListener
-							.onLongoContaReceberSelecionado(mViewSelecionada, mContaReceberSelecionada);
-				}
-				if (mOnContaReceberSelecionadoListener != null) {
-					mOnContaReceberSelecionadoListener
-							.onContaReceberSelecionado(mViewSelecionada, mContaReceberSelecionada);
-				}
-				if (!mOuvinteJaChamado) {
-					mOuvinteJaChamado = true;
-					getActivity().onBackPressed();
-				}
-			}
 		}
 	}
 
