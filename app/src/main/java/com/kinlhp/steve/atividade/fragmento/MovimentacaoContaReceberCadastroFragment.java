@@ -8,7 +8,9 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatTextView;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +29,7 @@ import com.kinlhp.steve.requisicao.MovimentacaoContaReceberRequisicao;
 import com.kinlhp.steve.requisicao.Requisicao;
 import com.kinlhp.steve.resposta.VazioCallback;
 import com.kinlhp.steve.util.Data;
+import com.kinlhp.steve.util.Moeda;
 import com.kinlhp.steve.util.Teclado;
 
 import java.io.Serializable;
@@ -39,7 +42,7 @@ import retrofit2.Call;
 import retrofit2.Response;
 
 public class MovimentacaoContaReceberCadastroFragment extends Fragment
-		implements Serializable, View.OnClickListener {
+		implements Serializable, TextWatcher, View.OnClickListener {
 	private static final String CONDICAO_PAGAMENTO = "condicaoPagamento";
 	private static final String CONTA_RECEBER = "contaReceber";
 	private static final String FORMA_PAGAMENTO = "formaPagamento";
@@ -64,6 +67,7 @@ public class MovimentacaoContaReceberCadastroFragment extends Fragment
 	private AppCompatTextView mLabelDataVencimentoContaReceber;
 	private AppCompatTextView mLabelMontantePagoContaReceber;
 	private AppCompatTextView mLabelSaldoDevedorContaReceber;
+	private AppCompatTextView mLabelTrocoADevolver;
 	//	private TextInputEditText mInputCliente;
 	private TextInputEditText mInputCondicaoPagamento;
 	private TextInputEditText mInputContaReceber;
@@ -97,6 +101,32 @@ public class MovimentacaoContaReceberCadastroFragment extends Fragment
 		argumentos.putSerializable(CONTA_RECEBER, movimentacaoContaReceber.getContaReceber());
 		fragmento.setArguments(argumentos);
 		return fragmento;
+	}
+
+	@Override
+	public void afterTextChanged(Editable s) {
+		BigDecimal trocoADevolver = BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_EVEN);
+		if (mContaReceber != null) {
+			final BigDecimal baseCalculo = mContaReceber.getSaldoDevedor() != null
+					? mContaReceber.getSaldoDevedor() : BigDecimal.ZERO;
+			final BigDecimal juroAplicado = !TextUtils.isEmpty(mInputJuroAplicado.getText())
+					? new BigDecimal(mInputJuroAplicado.getText().toString())
+					: BigDecimal.ZERO;
+			final BigDecimal descontoConcedido = !TextUtils.isEmpty(mInputDescontoConcedido.getText())
+					? new BigDecimal(mInputDescontoConcedido.getText().toString())
+					: BigDecimal.ZERO;
+			final BigDecimal valorPago = !TextUtils.isEmpty(mInputValorPago.getText())
+					? new BigDecimal(mInputValorPago.getText().toString())
+					: BigDecimal.ZERO;
+			trocoADevolver = calcularTrocoADevolver(baseCalculo, juroAplicado, descontoConcedido, valorPago);
+		}
+		mLabelTrocoADevolver.setText(getString(R.string.movimentacao_conta_receber_cadastro_label_troco_a_devolver_hint) + Moeda.comSifra(trocoADevolver));
+	}
+
+	@Override
+	public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+		/*
+		 */
 	}
 
 	@Override
@@ -188,6 +218,7 @@ public class MovimentacaoContaReceberCadastroFragment extends Fragment
 		mLabelDataVencimentoContaReceber = view.findViewById(R.id.label_data_vencimento_conta_receber);
 		mLabelMontantePagoContaReceber = view.findViewById(R.id.label_montante_pago_conta_receber);
 		mLabelSaldoDevedorContaReceber = view.findViewById(R.id.label_saldo_devedor_conta_receber);
+		mLabelTrocoADevolver = view.findViewById(R.id.label_troco_a_devolver);
 		mLabelValorPago = view.findViewById(R.id.label_valor_pago);
 		mProgressBarGerar = view.findViewById(R.id.progress_bar_gerar);
 		mScrollMovimentacaoContaReceberCadastro = view
@@ -199,6 +230,7 @@ public class MovimentacaoContaReceberCadastroFragment extends Fragment
 		mInputContaReceber.setOnClickListener(this);
 		mInputFormaPagamento.setOnClickListener(this);
 //		mInputParcelas.setOnClickListener(this);
+		mInputValorPago.addTextChangedListener(this);
 
 		return view;
 	}
@@ -217,6 +249,25 @@ public class MovimentacaoContaReceberCadastroFragment extends Fragment
 		outState.putSerializable(CONDICAO_PAGAMENTO, mCondicaoPagamento);
 		outState.putSerializable(CONTA_RECEBER, mContaReceber);
 		outState.putSerializable(FORMA_PAGAMENTO, mFormaPagamento);
+	}
+
+	@Override
+	public void onTextChanged(CharSequence s, int start, int before, int count) {
+		/*
+		 */
+	}
+
+	private BigDecimal calcularTrocoADevolver(@NonNull BigDecimal baseCalculo,
+	                                          @NonNull BigDecimal juroAplicado,
+	                                          @NonNull BigDecimal descontoConcedido,
+	                                          @NonNull BigDecimal valorPago) {
+		BigDecimal trocoADevolver = baseCalculo
+				.add(juroAplicado)
+				.subtract(descontoConcedido)
+				.subtract(valorPago)
+				.setScale(2, BigDecimal.ROUND_HALF_EVEN);
+		return BigDecimal.ZERO.compareTo(trocoADevolver) > 0
+				? trocoADevolver.abs() : BigDecimal.ZERO;
 	}
 
 	private VazioCallback callbackMovimentacaoContaReceberPOST() {
@@ -390,21 +441,25 @@ public class MovimentacaoContaReceberCadastroFragment extends Fragment
 	private boolean isContaReceberValido() {
 		if (mContaReceber == null) {
 			mLabelContaReceber.setError(getString(R.string.input_obrigatorio));
+			mScrollMovimentacaoContaReceberCadastro.fullScroll(View.FOCUS_UP);
 			return false;
 		}
 		if (mContaReceber.getSituacao().equals(ContaReceber.Situacao.BAIXADO)) {
 			mLabelContaReceber
 					.setError(getString(R.string.movimentacao_conta_receber_cadastro_mensagem_baixado));
+			mScrollMovimentacaoContaReceberCadastro.fullScroll(View.FOCUS_UP);
 			return false;
 		}
 		if (mContaReceber.getSituacao().equals(ContaReceber.Situacao.CANCELADO)) {
 			mLabelContaReceber
 					.setError(getString(R.string.movimentacao_conta_receber_cadastro_mensagem_cancelado));
+			mScrollMovimentacaoContaReceberCadastro.fullScroll(View.FOCUS_UP);
 			return false;
 		}
 		if (!mContaReceber.hasSaldoDevedor()) {
 			mLabelContaReceber
 					.setError(getString(R.string.movimentacao_conta_receber_cadastro_mensagem_saldo_devedor_0));
+			mScrollMovimentacaoContaReceberCadastro.fullScroll(View.FOCUS_UP);
 			return false;
 		}
 		mLabelContaReceber.setError(null);
@@ -467,6 +522,9 @@ public class MovimentacaoContaReceberCadastroFragment extends Fragment
 		if (valorPago.compareTo(BigDecimal.ZERO) < 0) {
 			mLabelValorPago.setError(getString(R.string.input_invalido));
 			return false;
+		}
+		if (mContaReceber.getSaldoDevedor().compareTo(valorPago) < 0) {
+			valorPago = mContaReceber.getSaldoDevedor();
 		}
 		mMovimentacaoContaReceber.setValorPago(valorPago);
 		mLabelValorPago.setError(null);
