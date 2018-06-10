@@ -177,7 +177,7 @@
     <string name="login_mensagem_usuario_inativo">%s, seu usuário está inativo</string>
     <string name="login_titulo">Login</string>
     <!-- movimentacao conta receber -->
-    <string name="movimentacao_conta_receber_cadastro_button_gerar_hint">GERAR</string>
+    <string name="movimentacao_conta_receber_cadastro_button_receber_hint">RECEBER</string>
     <string name="movimentacao_conta_receber_cadastro_input_parcelas_text">Visualizar parcelas</string>
     <string name="movimentacao_conta_receber_cadastro_label_cliente_hint">Cliente</string>
     <string name="movimentacao_conta_receber_cadastro_label_condicao_pagamento_hint">Condição de Pagamento</string>

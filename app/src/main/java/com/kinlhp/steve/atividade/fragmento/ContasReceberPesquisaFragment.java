@@ -210,7 +210,9 @@ public class ContasReceberPesquisaFragment extends Fragment
 	}
 
 	private void addContaReceber(@NonNull ContaReceber contaReceber) {
-		if (contaReceber.getId().compareTo(BigInteger.ZERO) > 0) {
+		if (contaReceber.getId().compareTo(BigInteger.ZERO) > 0
+				&& !ContaReceber.Situacao.BAIXADO.equals(contaReceber.getSituacao())
+				&& !ContaReceber.Situacao.CANCELADO.equals(contaReceber.getSituacao())) {
 			if (mContasReceber.indexOf(contaReceber) < 0) {
 				mContasReceber.add(contaReceber);
 			}

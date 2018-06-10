@@ -251,7 +251,7 @@
                 android:layout_marginBottom="@dimen/last_view_marginBottom"
                 android:layout_marginTop="@dimen/button_margin"
                 android:background="@drawable/layout_componente_arredondado_accent"
-                android:hint="@string/movimentacao_conta_receber_cadastro_button_gerar_hint"
+                android:hint="@string/movimentacao_conta_receber_cadastro_button_receber_hint"
                 android:paddingEnd="@dimen/round_button_padding"
                 android:paddingLeft="@dimen/round_button_padding"
                 android:paddingRight="@dimen/round_button_padding"
