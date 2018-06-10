@@ -72,7 +72,12 @@ public class ContaReceberActivity extends AppCompatActivity
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 		mSavedInstanceState = savedInstanceState;
-		inflarContaReceberCadastro();
+		final Ordem ordem = (Ordem) getIntent().getSerializableExtra("ordem");
+		if (ordem == null) {
+			inflarContaReceberCadastro();
+		} else {
+			inflarContaReceberCadastro(ordem);
+		}
 	}
 
 	@Override
@@ -177,6 +182,23 @@ public class ContaReceberActivity extends AppCompatActivity
 	private void inflarContaReceberCadastro() {
 		if (mFragmentoContaReceberCadastro == null) {
 			mFragmentoContaReceberCadastro = ContaReceberCadastroFragment.newInstance();
+		}
+		mFragmentoContaReceberCadastro.setOnCondicoesPagamentoPesquisaListener(this);
+		mFragmentoContaReceberCadastro.setOnFormasPagamentoPesquisaListener(this);
+		mFragmentoContaReceberCadastro.setOnOrdensPesquisaListener(this);
+		mFragmentoContaReceberCadastro.setOnParcelasGeradoListener(this);
+		mFragmentoContaReceberCadastro.setOnParcelasPesquisaListener(this);
+		mFragmentoContaReceberCadastro.setOnSacadosPesquisaListener(this);
+		String tag = getString(R.string.conta_receber_cadastro_titulo);
+
+		if (mSavedInstanceState == null) {
+			getSupportFragmentManager().beginTransaction().replace(R.id.content_conta_receber, mFragmentoContaReceberCadastro, tag).commit();
+		}
+	}
+
+	private void inflarContaReceberCadastro(@NonNull Ordem ordem) {
+		if (mFragmentoContaReceberCadastro == null) {
+			mFragmentoContaReceberCadastro = ContaReceberCadastroFragment.newInstance(ordem);
 		}
 		mFragmentoContaReceberCadastro.setOnCondicoesPagamentoPesquisaListener(this);
 		mFragmentoContaReceberCadastro.setOnFormasPagamentoPesquisaListener(this);

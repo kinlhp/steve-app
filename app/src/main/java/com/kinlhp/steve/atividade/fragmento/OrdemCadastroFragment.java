@@ -665,7 +665,7 @@ public class OrdemCadastroFragment extends Fragment
 	private void consumirItemOrdemServicoGETServico(@NonNull ItemOrdemServico itemOrdemServico) {
 		// TODO: 9/21/17 corrigir hard-coded
 		String url = Parametro.get(Parametro.Chave.URL_BASE).toString()
-				.concat("itensordemservico/%d/servico");
+				.concat("itensOrdemServico/%d/servico");
 		HRef href = new HRef(String.format(url, itemOrdemServico.getId()));
 		++mTarefasPendentes;
 		ItemOrdemServicoRequisicao
@@ -684,7 +684,7 @@ public class OrdemCadastroFragment extends Fragment
 	private void consumirOrdemGETItensOrdemServico() {
 		// TODO: 9/21/17 corrigir hard-coded
 		String url = Parametro.get(Parametro.Chave.URL_BASE).toString()
-				.concat("ordens/%d/itensOrdemServico");
+				.concat("ordens/%d/itens");
 		HRef href = new HRef(String.format(url, mOrdem.getId()));
 		++mTarefasPendentes;
 		OrdemRequisicao.getItens(callbackOrdemGETItensOrdemServico(), href);
@@ -917,8 +917,7 @@ public class OrdemCadastroFragment extends Fragment
 					break;
 				case FINALIZADO:
 					mAdaptadorSituacoes.clear();
-					mAdaptadorSituacoes
-							.addAll(Ordem.Situacao.FINALIZADO, Ordem.Situacao.GERADO);
+					mAdaptadorSituacoes.add(Ordem.Situacao.FINALIZADO);
 					break;
 				case GERADO:
 					mAdaptadorSituacoes.clear();

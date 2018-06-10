@@ -1,5 +1,6 @@
 package com.kinlhp.steve.atividade;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 
 import com.kinlhp.steve.R;
 import com.kinlhp.steve.dominio.Credencial;
+import com.kinlhp.steve.dominio.Ordem;
 import com.kinlhp.steve.util.Parametro;
 
 import java.io.Serializable;
@@ -25,6 +27,17 @@ public class DashboardActivity extends AppCompatActivity
 	private static final long serialVersionUID = -9134543732313010320L;
 	private DrawerLayout mDrawerLayout;
 	private NavigationView mNavigationDashboard;
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//		super.onActivityResult(requestCode, resultCode, data);
+		if (Activity.RESULT_OK == resultCode) {
+			final Ordem ordem = (Ordem) data.getSerializableExtra("ordem");
+			if (ordem != null) {
+				iniciarContaReceber(ordem);
+			}
+		}
+	}
 
 	@Override
 	public void onBackPressed() {
@@ -130,6 +143,13 @@ public class DashboardActivity extends AppCompatActivity
 	private void iniciarContaReceber() {
 		Intent intentContaReceber = new Intent(this,
 				ContaReceberActivity.class);
+		startActivityForResult(intentContaReceber, 0);
+	}
+
+	private void iniciarContaReceber(@NonNull Ordem ordem) {
+		Intent intentContaReceber = new Intent(this,
+				ContaReceberActivity.class);
+		intentContaReceber.putExtra("ordem", ordem);
 		startActivityForResult(intentContaReceber, 0);
 	}
 

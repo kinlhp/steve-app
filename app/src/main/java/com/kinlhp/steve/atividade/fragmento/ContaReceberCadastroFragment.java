@@ -93,6 +93,15 @@ public class ContaReceberCadastroFragment extends Fragment
 		return fragmento;
 	}
 
+	public static ContaReceberCadastroFragment newInstance(@NonNull Ordem ordem) {
+		ContaReceberCadastroFragment fragmento =
+				new ContaReceberCadastroFragment();
+		Bundle argumentos = new Bundle();
+		argumentos.putSerializable(ORDEM, ordem);
+		fragmento.setArguments(argumentos);
+		return fragmento;
+	}
+
 	@Override
 	public void onClick(View view) {
 		switch (view.getId()) {

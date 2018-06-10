@@ -1,7 +1,10 @@
 package com.kinlhp.steve.atividade;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -16,11 +19,19 @@ import com.kinlhp.steve.atividade.fragmento.PessoasPesquisaFragment;
 import com.kinlhp.steve.dominio.ItemOrdemServico;
 import com.kinlhp.steve.dominio.Ordem;
 import com.kinlhp.steve.dominio.Pessoa;
+import com.kinlhp.steve.dto.OrdemDTO;
+import com.kinlhp.steve.mapeamento.OrdemMapeamento;
+import com.kinlhp.steve.requisicao.OrdemRequisicao;
+import com.kinlhp.steve.resposta.ItemCallback;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
+import retrofit2.Call;
+import retrofit2.Response;
 
 public class OrdemActivity extends AppCompatActivity
 		implements OrdemCadastroFragment.OnClientesPesquisaListener,
@@ -82,6 +93,10 @@ public class OrdemActivity extends AppCompatActivity
 		}
 		mOrdem.getItens().clear();
 		mOrdem.getItens().addAll(itens);
+		if (mOrdem.getId() != null) {
+//			abrirDialogoGeracaoContaReceber();
+			consumirOrdemGETPorId(mOrdem.getId());
+		}
 	}
 
 	@Override
@@ -182,6 +197,70 @@ public class OrdemActivity extends AppCompatActivity
 	@Override
 	public void onReferenciaOrdemAlterado(@NonNull Ordem novaReferencia) {
 		mOrdem = novaReferencia;
+	}
+
+	public void abrirDialogoGeracaoContaReceber() {
+		AlertDialog.Builder alerta = new AlertDialog.Builder(this);
+		alerta.setTitle("Geração")
+				.setMessage("Deseja gerar contas a receber?")
+				.setCancelable(false)
+				.setPositiveButton("Sim", (dialogInterface, i) -> {
+					final Intent retorno = new Intent().putExtra("ordem", mOrdem);
+					setResult(Activity.RESULT_OK, retorno);
+					finish();
+				})
+				.setNegativeButton("Não", (dialogInterface, i) -> {
+					finish();
+				});
+		AlertDialog alertDialog = alerta.create();
+		alertDialog.show();
+
+	}
+
+	private ItemCallback<OrdemDTO> callbackOrdemGETPorId() {
+
+		return new ItemCallback<OrdemDTO>() {
+			@Override
+			public void onFailure(@NonNull Call<OrdemDTO> chamada,
+			                      @NonNull Throwable causa) {
+			}
+
+			@Override
+			public void onResponse(@NonNull Call<OrdemDTO> chamada,
+			                       @NonNull Response<OrdemDTO> resposta) {
+				if (resposta.isSuccessful()) {
+					OrdemDTO dto = resposta.body();
+					Ordem ordem = OrdemMapeamento.paraDominio(dto);
+					ordem.setCliente(mOrdem.getCliente());
+					ordem.setItens(mOrdem.getItens());
+					// TODO: 9/21/17 definir implementações diferentes para clique curto e longo
+					mOrdem = ordem;
+					if (mFragmentoOrdemCadastro != null) {
+						mFragmentoOrdemCadastro.setOrdem(mOrdem);
+					}
+
+					if (Ordem.Situacao.FINALIZADO.equals(ordem.getSituacao())) {
+						abrirDialogoGeracaoContaReceber();
+					}
+				}
+			}
+		};
+	}
+
+	private void consumirOrdemGETPorId(@NonNull BigInteger id) {
+//		if (!TextUtils.isEmpty(mInputId.getText())) {
+//			BigInteger id = new BigInteger(mInputId.getText().toString());
+		OrdemRequisicao.getPorId(callbackOrdemGETPorId(), id);
+//		if (id.compareTo(BigInteger.ONE) < 0) {
+//				mInputId.getText().clear();
+//			} else {
+//				mLabelId.setError(null);
+//				mLabelId.setErrorEnabled(false);
+//				Teclado.ocultar(getActivity(), mButtonConsumirPorId);
+//				++mTarefasPendentes;
+//			}
+//		}
+//		ocultarProgresso(mProgressBarConsumirPorId, mButtonConsumirPorId);
 	}
 
 	private void inflarItemOrdemServicoCadastro(@NonNull ItemOrdemServico itemOrdemServico) {
