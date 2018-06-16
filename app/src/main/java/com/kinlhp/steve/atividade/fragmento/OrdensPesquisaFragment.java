@@ -54,10 +54,12 @@ public class OrdensPesquisaFragment extends Fragment
 		AdaptadorRecyclerOrdens.OnItemLongClickListener,
 		MenuItem.OnActionExpandListener, SearchView.OnQueryTextListener,
 		Serializable {
-	private static final long serialVersionUID = 1208743848156612458L;
+	private static final long serialVersionUID = 1926891103269496308L;
 	private static final String LINKS = "_links";
 	private static final String PAGINA_0 = "ordens?sort=id,asc&page=0&size=20";
 	private static final String ORDENS = "ordens";
+	private static final String URL_BASE = Parametro
+			.get(Parametro.Chave.URL_BASE).toString();
 	private AdaptadorRecyclerOrdens mAdaptadorOrdens;
 	private ArrayList<Ordem> mOrdens = new ArrayList<>();
 	private Ordem mOrdemSelecionada;
@@ -158,7 +160,7 @@ public class OrdensPesquisaFragment extends Fragment
 	@Override
 	public boolean onQueryTextSubmit(String query) {
 		StringBuilder url =
-				new StringBuilder(getString(R.string.requisicao_url_base))
+				new StringBuilder(URL_BASE)
 						.append("ordens/")
 						.append("search/")
 						.append("cnpjCpf-nomeRazao-fantasiaSobrenome")
@@ -177,7 +179,7 @@ public class OrdensPesquisaFragment extends Fragment
 		super.onResume();
 		getActivity().setTitle(R.string.ordens_pesquisa_titulo);
 		if (mOrdens.isEmpty()) {
-			String url = getString(R.string.requisicao_url_base) + PAGINA_0;
+			String url = URL_BASE + PAGINA_0;
 			HRef pagina0 = new HRef(url);
 			consumirOrdensGETPaginado(pagina0);
 		}

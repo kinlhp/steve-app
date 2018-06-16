@@ -57,11 +57,13 @@ public class PessoasPesquisaFragment extends Fragment
 		AdaptadorRecyclerPessoas.OnItemLongClickListener,
 		MenuItem.OnActionExpandListener, SearchView.OnQueryTextListener,
 		Serializable {
-	private static final long serialVersionUID = 7719005372445071516L;
+	private static final long serialVersionUID = 2497485130108830720L;
 	private static final String LINKS = "_links";
 	private static final String PAGINA_0 =
 			"pessoas?sort=nomeRazao,asc&page=0&size=20";
 	private static final String PESSOAS = "pessoas";
+	private static final String URL_BASE = Parametro
+			.get(Parametro.Chave.URL_BASE).toString();
 	private AdaptadorRecyclerPessoas mAdaptadorPessoas;
 	private ArrayList<Pessoa> mPessoas = new ArrayList<>();
 	private Pessoa mPessoaSelecionada;
@@ -165,7 +167,7 @@ public class PessoasPesquisaFragment extends Fragment
 	@Override
 	public boolean onQueryTextSubmit(String query) {
 		StringBuilder url =
-				new StringBuilder(getString(R.string.requisicao_url_base))
+				new StringBuilder(URL_BASE)
 						.append("pessoas/")
 						.append("search/")
 						.append("cnpjCpf-nomeRazao-fantasiaSobrenome")
@@ -184,8 +186,7 @@ public class PessoasPesquisaFragment extends Fragment
 		super.onResume();
 		getActivity().setTitle(R.string.pessoas_pesquisa_titulo);
 		if (mPessoas.isEmpty()) {
-			String url = getString(R.string.requisicao_url_base)
-					.concat(PAGINA_0);
+			String url = URL_BASE.concat(PAGINA_0);
 			HRef pagina0 = new HRef(url);
 			consumirPessoasGETPaginado(pagina0);
 		}

@@ -47,11 +47,13 @@ public class CredenciaisPesquisaFragment extends Fragment
 		AdaptadorRecyclerCredenciais.OnItemLongClickListener,
 		MenuItem.OnActionExpandListener, SearchView.OnQueryTextListener,
 		Serializable {
-	private static final long serialVersionUID = -8376353501525687443L;
+	private static final long serialVersionUID = -60454093401159040L;
 	private static final String CREDENCIAIS = "credenciais";
 	private static final String LINKS = "_links";
 	private static final String PAGINA_0 =
 			"credenciais?sort=usuario,asc&page=0&size=20";
+	private static final String URL_BASE = Parametro
+			.get(Parametro.Chave.URL_BASE).toString();
 	private AdaptadorRecyclerCredenciais mAdaptadorCredenciais;
 	private ArrayList<Credencial> mCredenciais = new ArrayList<>();
 	private Links mLinks;
@@ -157,7 +159,7 @@ public class CredenciaisPesquisaFragment extends Fragment
 	@Override
 	public boolean onQueryTextSubmit(String query) {
 		StringBuilder url =
-				new StringBuilder(getString(R.string.requisicao_url_base))
+				new StringBuilder(URL_BASE)
 						.append("credenciais/")
 						.append("search/")
 						.append("usuario-cpf")
@@ -175,7 +177,7 @@ public class CredenciaisPesquisaFragment extends Fragment
 		super.onResume();
 		getActivity().setTitle(R.string.credenciais_pesquisa_titulo);
 		if (mCredenciais.isEmpty()) {
-			String url = getString(R.string.requisicao_url_base) + PAGINA_0;
+			String url = URL_BASE + PAGINA_0;
 			HRef pagina0 = new HRef(url);
 			consumirCredenciaisGETPaginado(pagina0);
 		}

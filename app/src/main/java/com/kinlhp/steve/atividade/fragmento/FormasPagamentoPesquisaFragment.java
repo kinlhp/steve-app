@@ -46,11 +46,13 @@ public class FormasPagamentoPesquisaFragment extends Fragment
 		AdaptadorRecyclerFormasPagamento.OnItemLongClickListener,
 		MenuItem.OnActionExpandListener, SearchView.OnQueryTextListener,
 		Serializable {
-	private static final long serialVersionUID = 408735893653785118L;
+	private static final long serialVersionUID = 4624983993696013588L;
 	private static final String FORMAS_PAGAMENTO = "formasPagamento";
 	private static final String LINKS = "_links";
 	private static final String PAGINA_0 =
 			"formasPagamento?sort=descricao,asc&page=0&size=20";
+	private static final String URL_BASE = Parametro
+			.get(Parametro.Chave.URL_BASE).toString();
 	private AdaptadorRecyclerFormasPagamento mAdaptadorFormasPagamento;
 	private FormaPagamento mFormaPagamentoSelecionada;
 	private ArrayList<FormaPagamento> mFormasPagamento = new ArrayList<>();
@@ -154,7 +156,7 @@ public class FormasPagamentoPesquisaFragment extends Fragment
 	@Override
 	public boolean onQueryTextSubmit(String query) {
 		StringBuilder url =
-				new StringBuilder(getString(R.string.requisicao_url_base))
+				new StringBuilder(URL_BASE)
 						.append("formasPagamento/")
 						.append("search/")
 						.append("descricao")
@@ -171,7 +173,7 @@ public class FormasPagamentoPesquisaFragment extends Fragment
 		super.onResume();
 		getActivity().setTitle(R.string.formas_pagamento_pesquisa_titulo);
 		if (mFormasPagamento.isEmpty()) {
-			String url = getString(R.string.requisicao_url_base) + PAGINA_0;
+			String url = URL_BASE + PAGINA_0;
 			HRef pagina0 = new HRef(url);
 			consumirFormasPagamentoGETPaginado(pagina0);
 		}

@@ -57,10 +57,12 @@ public class ContasReceberPesquisaFragment extends Fragment
 		AdaptadorRecyclerContasReceber.OnItemLongClickListener,
 		MenuItem.OnActionExpandListener, SearchView.OnQueryTextListener,
 		Serializable {
-	private static final long serialVersionUID = 1208743848156612458L;
+	private static final long serialVersionUID = 159833223525522120L;
 	private static final String LINKS = "_links";
 	private static final String PAGINA_0 = "contasReceber?sort=sacado.nomeRazao,asc&sort=dataVencimento,asc&page=0&size=20";
 	private static final String CONTAS_RECEBER = "contasReceber";
+	private static final String URL_BASE = Parametro
+			.get(Parametro.Chave.URL_BASE).toString();
 	private AdaptadorRecyclerContasReceber mAdaptadorContasReceber;
 	private ArrayList<ContaReceber> mContasReceber = new ArrayList<>();
 	private ContaReceber mContaReceberSelecionada;
@@ -175,7 +177,7 @@ public class ContasReceberPesquisaFragment extends Fragment
 	@Override
 	public boolean onQueryTextSubmit(String query) {
 		StringBuilder url =
-				new StringBuilder(getString(R.string.requisicao_url_base))
+				new StringBuilder(URL_BASE)
 						.append("contasReceber/")
 						.append("search/")
 						.append("cnpjCpf-nomeRazao-fantasiaSobrenome")
@@ -194,7 +196,7 @@ public class ContasReceberPesquisaFragment extends Fragment
 		super.onResume();
 		getActivity().setTitle(R.string.contas_receber_pesquisa_titulo);
 		if (mContasReceber.isEmpty()) {
-			String url = getString(R.string.requisicao_url_base) + PAGINA_0;
+			String url = URL_BASE + PAGINA_0;
 			HRef pagina0 = new HRef(url);
 			consumirContasReceberGETPaginado(pagina0);
 		}

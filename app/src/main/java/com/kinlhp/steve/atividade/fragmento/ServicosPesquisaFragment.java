@@ -27,6 +27,7 @@ import com.kinlhp.steve.requisicao.ServicoRequisicao;
 import com.kinlhp.steve.resposta.Colecao;
 import com.kinlhp.steve.resposta.ColecaoCallback;
 import com.kinlhp.steve.resposta.Links;
+import com.kinlhp.steve.util.Parametro;
 import com.kinlhp.steve.util.Teclado;
 
 import java.io.Serializable;
@@ -42,10 +43,12 @@ public class ServicosPesquisaFragment extends Fragment
 		AdaptadorRecyclerServicos.OnItemLongClickListener,
 		MenuItem.OnActionExpandListener, SearchView.OnQueryTextListener,
 		Serializable {
-	private static final long serialVersionUID = -3379979343070269750L;
+	private static final long serialVersionUID = 3615146513082561142L;
 	private static final String LINKS = "_links";
 	private static final String PAGINA_0 = "servicos?sort=descricao,asc&page=0&size=20";
 	private static final String SERVICOS = "servicos";
+	private static final String URL_BASE = Parametro
+			.get(Parametro.Chave.URL_BASE).toString();
 	private AdaptadorRecyclerServicos mAdaptadorServicos;
 	private ArrayList<Servico> mServicos = new ArrayList<>();
 	private Links mLinks;
@@ -148,7 +151,7 @@ public class ServicosPesquisaFragment extends Fragment
 	@Override
 	public boolean onQueryTextSubmit(String query) {
 		StringBuilder url =
-				new StringBuilder(getString(R.string.requisicao_url_base))
+				new StringBuilder(URL_BASE)
 						.append("servicos/")
 						.append("search/")
 						.append("descricao")
@@ -165,7 +168,7 @@ public class ServicosPesquisaFragment extends Fragment
 		super.onResume();
 		getActivity().setTitle(R.string.servicos_pesquisa_titulo);
 		if (mServicos.isEmpty()) {
-			String url = getString(R.string.requisicao_url_base) + PAGINA_0;
+			String url = URL_BASE + PAGINA_0;
 			HRef pagina0 = new HRef(url);
 			consumirServicosGETPaginado(pagina0);
 		}

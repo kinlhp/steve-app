@@ -5,6 +5,8 @@
     <string name="action_settings">Configurações</string>
     <string name="app_name">Steve App</string>
     <string name="app_search">Pesquisa</string>
+    <string name="configuracao_button_salvar_hint">SALVAR</string>
+    <string name="configuracao_label_url_base_hint">http://IP:PORT/CONTEXT/</string>
     <string name="file_provider_authority" translatable="false">com.kinlhp.steve.provider</string>
     <!-- condicao pagamento-->
     <string name="condicao_pagamento_cadastro_button_adicionar_hint">ADICIONAR</string>
@@ -275,7 +277,6 @@
     <!-- requisicao -->
     <string name="requisicao_cliente_api_nome">aplicativo</string>
     <string name="requisicao_cliente_api_senha">\@pl1c\@t1v0</string>
-    <string name="requisicao_url_base">http://&#8249;IP&#8250;:&#8249;PORT&#8250;/&#8249;CONTEXT&#8250;/</string>
     <string name="requisicao_url_cep">http://viacep.com.br/ws/%s/json</string>
     <!-- resposta -->
     <string name="resposta_mensagem_bad_request">Dado(s) inválido(s)</string>
