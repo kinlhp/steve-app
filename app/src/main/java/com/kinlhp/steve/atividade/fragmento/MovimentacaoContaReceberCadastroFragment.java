@@ -24,6 +24,7 @@ import com.kinlhp.steve.dominio.FormaPagamento;
 import com.kinlhp.steve.dominio.MovimentacaoContaReceber;
 import com.kinlhp.steve.dto.MovimentacaoContaReceberDTO;
 import com.kinlhp.steve.mapeamento.MovimentacaoContaReceberMapeamento;
+import com.kinlhp.steve.requisicao.ContaReceberRequisicao;
 import com.kinlhp.steve.requisicao.Falha;
 import com.kinlhp.steve.requisicao.MovimentacaoContaReceberRequisicao;
 import com.kinlhp.steve.requisicao.Requisicao;
@@ -62,6 +63,7 @@ public class MovimentacaoContaReceberCadastroFragment extends Fragment
 	private int mTarefasPendentes;
 
 	private AppCompatButton mButtonGerar;
+	private AppCompatButton mButtonEstornar;
 	private AppCompatTextView mLabelValorContaReceber;
 	private AppCompatTextView mLabelNumeroParcelaContaReceber;
 	private AppCompatTextView mLabelDataVencimentoContaReceber;
@@ -137,6 +139,9 @@ public class MovimentacaoContaReceberCadastroFragment extends Fragment
 					submeterFormulario();
 				}
 				break;
+			case R.id.button_estornar:
+				estornar();
+				break;
 //			case R.id.input_cliente:
 //				if (mOnClientesPesquisaListener != null) {
 //					mOnClientesPesquisaListener.onClientesPesquisa(view);
@@ -196,6 +201,7 @@ public class MovimentacaoContaReceberCadastroFragment extends Fragment
 		View view = inflater
 				.inflate(R.layout.fragment_movimentacao_conta_receber_cadastro, container, false);
 		mButtonGerar = view.findViewById(R.id.button_gerar);
+		mButtonEstornar = view.findViewById(R.id.button_estornar);
 //		mInputCliente = view.findViewById(R.id.input_cliente);
 		mInputCondicaoPagamento = view
 				.findViewById(R.id.input_condicao_pagamento);
@@ -225,6 +231,7 @@ public class MovimentacaoContaReceberCadastroFragment extends Fragment
 				.findViewById(R.id.scroll_movimentacao_conta_receber_cadastro);
 
 		mButtonGerar.setOnClickListener(this);
+		mButtonEstornar.setOnClickListener(this);
 //		mInputCliente.setOnClickListener(this);
 		mInputCondicaoPagamento.setOnClickListener(this);
 		mInputContaReceber.setOnClickListener(this);
@@ -302,6 +309,38 @@ public class MovimentacaoContaReceberCadastroFragment extends Fragment
 		};
 	}
 
+	private VazioCallback callbackMovimentacaoContaReceberEstorno() {
+		return new VazioCallback() {
+
+			@Override
+			public void onFailure(@NonNull Call<Void> chamada,
+			                      @NonNull Throwable causa) {
+				--mTarefasPendentes;
+				mPressionarVoltar = false;
+				ocultarProgresso(mProgressBarGerar, mButtonGerar);
+				Falha.tratar(mButtonGerar, causa);
+			}
+
+			@Override
+			public void onResponse(@NonNull Call<Void> chamada,
+			                       @NonNull Response<Void> resposta) {
+				--mTarefasPendentes;
+				if (!resposta.isSuccessful()) {
+					mPressionarVoltar = false;
+					Falha.tratar(mButtonGerar, resposta);
+//				} else {
+//					String location = resposta.headers()
+//							.get(Requisicao.LOCATION_HEADER);
+//					mMovimentacaoContaReceber.setId(new BigInteger(location.substring(location.lastIndexOf("/") + 1)));
+//					if (mTarefasPendentes <= 0) {
+//						consumirOrdemPUTSituacao();
+//					}
+				}
+				ocultarProgresso(mProgressBarGerar, mButtonGerar);
+			}
+		};
+	}
+
 //	private VazioCallback callbackOrdemPUTSituacao() {
 //		return new VazioCallback() {
 //
@@ -339,6 +378,15 @@ public class MovimentacaoContaReceberCadastroFragment extends Fragment
 		MovimentacaoContaReceberRequisicao.post(callbackMovimentacaoContaReceberPOST(), dto);
 	}
 
+	private void consumirMovimentacaoContaReceberEstorno() {
+		mTarefasPendentes = 0;
+		mPressionarVoltar = true;
+		exibirProgresso(mProgressBarGerar, mButtonGerar);
+		Teclado.ocultar(getActivity(), mButtonGerar);
+		++mTarefasPendentes;
+		ContaReceberRequisicao.estorno(callbackMovimentacaoContaReceberEstorno(), mContaReceber.getId());
+	}
+
 //	private void consumirOrdemPUTSituacao() {
 //		mSituacaoAnterior = mOrdem.getSituacao();
 //		mOrdem.setSituacao(Ordem.Situacao.GERADO);
@@ -346,6 +394,13 @@ public class MovimentacaoContaReceberCadastroFragment extends Fragment
 //		++mTarefasPendentes;
 //		OrdemRequisicao.put(callbackOrdemPUTSituacao(), mOrdem.getId(), dto);
 //	}
+
+	private void estornar() {
+		if (mContaReceber != null && mContaReceber.getId() != null)
+		{
+			consumirMovimentacaoContaReceberEstorno();
+		}
+	}
 
 	private void exibirProgresso(@NonNull ProgressBar progresso,
 	                             @Nullable View view) {
@@ -613,6 +668,7 @@ public class MovimentacaoContaReceberCadastroFragment extends Fragment
 		preencherViewFormaPagamento();
 		preencherViewCondicaoPagamento();
 //		preencherViewParcelas();
+		mButtonEstornar.setVisibility((mContaReceber != null && mContaReceber.getId() != null && mContaReceber.hasMontantePago()) ? View.VISIBLE : View.GONE);
 	}
 
 	private void preencherViewCondicaoPagamento() {

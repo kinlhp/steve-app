@@ -4,4 +4,5 @@
     <color name="accent">@android:color/darker_gray</color>
     <color name="primary">#009688</color>
     <color name="primary_dark">#00695C</color>
+    <color name="tomato">#FF6347</color>
 </resources>

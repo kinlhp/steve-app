@@ -26,6 +26,11 @@ public class ContaReceberRequisicao implements Serializable {
 	private ContaReceberRequisicao() {
 	}
 
+	public static void estorno(@NonNull Callback<Void> callback,
+	                           @NonNull BigInteger id) {
+		RECURSO.estorno(id).enqueue(callback);
+	}
+
 	public static void getMovimentacoes(@NonNull Callback<Colecao<MovimentacaoContaReceberDTO>> callback,
 	                                    @NonNull HRef movimentacoes) {
 		RECURSO.getMovimentacoes(movimentacoes.getHref()).enqueue(callback);

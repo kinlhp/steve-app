@@ -57,6 +57,13 @@ public class ContaReceber extends Dominio<BigInteger> {
 		if (movimentacoes == null || movimentacoes.isEmpty()) {
 			return valor;
 		}
+		else if (movimentacoes.size() == 1) {
+			for (MovimentacaoContaReceber movimentacao : movimentacoes) {
+				if (movimentacao.isEstornado()) {
+					return valor;
+				}
+			}
+		}
 		MovimentacaoContaReceber movimentacaoMaisRecente = MovimentacaoContaReceber
 				.builder().build();
 		for (MovimentacaoContaReceber movimentacao : movimentacoes) {

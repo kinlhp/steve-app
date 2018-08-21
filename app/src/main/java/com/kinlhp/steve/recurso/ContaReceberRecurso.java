@@ -24,6 +24,9 @@ import retrofit2.http.Url;
  */
 public interface ContaReceberRecurso {
 
+	@PUT(value = "contasReceber/{id}/estorno")
+	Call<Void> estorno(@NonNull @Path(value = "id") BigInteger id);
+
 	@GET(value = "contasReceber?sort=contaReceber,asc&sort=numeroParcela,asc&page=0&size=20")
 	Call<Colecao<ContaReceberDTO>> get();
 
