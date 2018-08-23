@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="utf-8"?><!-- @layout/fragment_movimentacao_conta_pagar_cadastro.xml -->
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_movimentacao_conta_pagar_cadastro"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".atividade.fragmento.MovimentacaoContaPagarCadastroFragment">
+
+    <ScrollView
+        android:id="@+id/scroll_movimentacao_conta_pagar_cadastro"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/form_movimentacao_conta_pagar_cadastro"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ProgressBar
+                android:id="@+id/progress_bar_gerar"
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/button_gerar"
+                app:layout_constraintEnd_toEndOf="@+id/button_gerar"
+                app:layout_constraintLeft_toLeftOf="@+id/button_gerar"
+                app:layout_constraintRight_toRightOf="@+id/button_gerar"
+                app:layout_constraintStart_toStartOf="@+id/button_gerar"
+                app:layout_constraintTop_toTopOf="@+id/button_gerar" />
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/label_conta_pagar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/label_margin"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/input_conta_pagar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:focusable="false"
+                    android:hint="@string/movimentacao_conta_pagar_cadastro_label_nenhum_conta_pagar_hint" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/label_valor_conta_pagar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/list_margin"
+                android:layout_marginLeft="@dimen/list_margin"
+                android:layout_marginRight="@dimen/list_margin"
+                android:layout_marginStart="@dimen/list_margin"
+                android:layout_marginTop="@dimen/label_margin"
+                android:hint="@string/movimentacao_conta_pagar_cadastro_label_valor_conta_pagar_hint"
+                android:textSize="@dimen/list_content_textSize"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/label_conta_pagar" />
+
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/label_numero_parcela_conta_pagar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/list_margin"
+                android:layout_marginLeft="@dimen/list_margin"
+                android:layout_marginRight="@dimen/list_margin"
+                android:layout_marginStart="@dimen/list_margin"
+                android:hint="@string/movimentacao_conta_pagar_cadastro_label_numero_parcela_conta_pagar_hint"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/label_valor_conta_pagar" />
+
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/label_data_vencimento_conta_pagar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/list_margin"
+                android:layout_marginLeft="@dimen/list_margin"
+                android:layout_marginRight="@dimen/list_margin"
+                android:layout_marginStart="@dimen/list_margin"
+                android:hint="@string/movimentacao_conta_pagar_cadastro_label_data_vencimento_conta_pagar_hint"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/label_numero_parcela_conta_pagar" />
+
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/label_montante_pago_conta_pagar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/list_margin"
+                android:layout_marginLeft="@dimen/list_margin"
+                android:layout_marginRight="@dimen/list_margin"
+                android:layout_marginStart="@dimen/list_margin"
+                android:hint="@string/movimentacao_conta_pagar_cadastro_label_montante_pago_conta_pagar_hint"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/label_data_vencimento_conta_pagar" />
+
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/label_saldo_devedor_conta_pagar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/list_margin"
+                android:layout_marginLeft="@dimen/list_margin"
+                android:layout_marginRight="@dimen/list_margin"
+                android:layout_marginStart="@dimen/list_margin"
+                android:hint="@string/movimentacao_conta_pagar_cadastro_label_saldo_devedor_conta_pagar_hint"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/label_montante_pago_conta_pagar" />
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/label_forma_pagamento"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/label_margin"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/label_saldo_devedor_conta_pagar">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/input_forma_pagamento"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:focusable="false"
+                    android:hint="@string/movimentacao_conta_pagar_cadastro_label_forma_pagamento_hint"
+                    android:inputType="textCapWords|textPersonName"
+                    android:maxLength="32" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/label_condicao_pagamento"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/label_margin"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/label_forma_pagamento">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/input_condicao_pagamento"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:focusable="false"
+                    android:hint="@string/movimentacao_conta_pagar_cadastro_label_condicao_pagamento_hint"
+                    android:inputType="textCapWords|textPersonName"
+                    android:maxLength="32" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/label_juro_aplicado"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/label_margin"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/label_condicao_pagamento">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/input_juro_aplicado"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/movimentacao_conta_pagar_cadastro_label_juro_aplicado_hint"
+                    android:inputType="numberDecimal"
+                    android:maxLength="10" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/label_desconto_concedido"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/label_margin"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/label_juro_aplicado">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/input_desconto_concedido"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/movimentacao_conta_pagar_cadastro_label_desconto_concedido_hint"
+                    android:inputType="numberDecimal"
+                    android:maxLength="10" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/label_valor_pago"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/label_margin"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/label_desconto_concedido">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/input_valor_pago"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/movimentacao_conta_pagar_cadastro_label_valor_pago_hint"
+                    android:inputType="numberDecimal"
+                    android:maxLength="10" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/label_troco_a_devolver"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/label_margin"
+                android:hint="@string/movimentacao_conta_pagar_cadastro_label_troco_a_receber_hint"
+                android:textSize="@dimen/list_content_textSize"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/label_valor_pago" />
+
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/button_gerar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/last_view_marginBottom"
+                android:layout_marginTop="@dimen/button_margin"
+                android:background="@drawable/layout_componente_arredondado_accent"
+                android:hint="@string/movimentacao_conta_pagar_cadastro_button_receber_hint"
+                android:paddingEnd="@dimen/round_button_padding"
+                android:paddingLeft="@dimen/round_button_padding"
+                android:paddingRight="@dimen/round_button_padding"
+                android:paddingStart="@dimen/round_button_padding"
+                android:textColorHint="@android:color/white"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/label_troco_a_devolver" />
+
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/button_estornar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/last_view_marginBottom"
+                android:layout_marginTop="@dimen/button_margin"
+                android:background="@drawable/layout_componente_arredondado_tomato"
+                android:hint="@string/movimentacao_conta_pagar_cadastro_button_estornar_hint"
+                android:paddingEnd="@dimen/round_button_padding"
+                android:paddingLeft="@dimen/round_button_padding"
+                android:paddingRight="@dimen/round_button_padding"
+                android:paddingStart="@dimen/round_button_padding"
+                android:textColorHint="@android:color/white"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/button_gerar" />
+        </android.support.constraint.ConstraintLayout>
+    </ScrollView>
+</android.support.design.widget.CoordinatorLayout>

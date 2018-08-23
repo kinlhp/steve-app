@@ -165,9 +165,9 @@ public class DashboardActivity extends AppCompatActivity
 	}
 
 	private void iniciarMovimentacaoContaPagar() {
-//		Intent intentMovimentacaoContaPagar = new Intent(this,
-//				MovimentacaoContaPagarActivity.class);
-//		startActivityForResult(intentMovimentacaoContaPagar, 0);
+		Intent intentMovimentacaoContaPagar = new Intent(this,
+				MovimentacaoContaPagarActivity.class);
+		startActivityForResult(intentMovimentacaoContaPagar, 0);
 	}
 
 	private void iniciarMovimentacaoContaReceber() {

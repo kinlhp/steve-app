@@ -3,9 +3,11 @@ package com.kinlhp.steve.requisicao;
 import android.support.annotation.NonNull;
 
 import com.kinlhp.steve.dto.ContaPagarDTO;
+import com.kinlhp.steve.dto.MovimentacaoContaPagarDTO;
 import com.kinlhp.steve.dto.PessoaDTO;
 import com.kinlhp.steve.href.HRef;
 import com.kinlhp.steve.recurso.ContaPagarRecurso;
+import com.kinlhp.steve.resposta.Colecao;
 
 import java.io.Serializable;
 import java.math.BigInteger;
@@ -23,9 +25,24 @@ public final class ContaPagarRequisicao implements Serializable {
 	private ContaPagarRequisicao() {
 	}
 
+	public static void estorno(@NonNull Callback<Void> callback,
+	                           @NonNull BigInteger id) {
+		RECURSO.estorno(id).enqueue(callback);
+	}
+
 	public static void getCedente(@NonNull Callback<PessoaDTO> callback,
 	                              @NonNull HRef cedente) {
 		RECURSO.getCedente(cedente.getHref()).enqueue(callback);
+	}
+
+	public static void getMovimentacoes(@NonNull Callback<Colecao<MovimentacaoContaPagarDTO>> callback,
+	                                    @NonNull HRef movimentacoes) {
+		RECURSO.getMovimentacoes(movimentacoes.getHref()).enqueue(callback);
+	}
+
+	public static void getPaginado(@NonNull Callback<Colecao<ContaPagarDTO>> callback,
+	                               @NonNull HRef pagina) {
+		RECURSO.getPaginado(pagina.getHref()).enqueue(callback);
 	}
 
 	public static void getPorId(@NonNull Callback<ContaPagarDTO> callback,

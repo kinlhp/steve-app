@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?><!-- @layout/view_lista_contas_pagar.xml -->
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/view_lista_contas_pagar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/label_cedente"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/list_margin"
+        android:layout_marginLeft="@dimen/list_margin"
+        android:layout_marginRight="@dimen/list_margin"
+        android:layout_marginStart="@dimen/list_margin"
+        android:layout_marginTop="@dimen/list_margin"
+        android:hint="@string/contas_pagar_pesquisa_label_cedente_hint"
+        android:textSize="@dimen/list_title_textSize"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/label_valor"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/list_margin"
+        android:layout_marginLeft="@dimen/list_margin"
+        android:layout_marginRight="@dimen/list_margin"
+        android:layout_marginStart="@dimen/list_margin"
+        android:hint="@string/contas_pagar_pesquisa_label_valor_hint"
+        android:textSize="@dimen/list_content_textSize"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/label_cedente" />
+
+    <!--<android.support.v7.widget.AppCompatTextView-->
+        <!--android:id="@+id/label_forma_pagamento"-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginEnd="@dimen/list_margin"-->
+        <!--android:layout_marginLeft="@dimen/list_margin"-->
+        <!--android:layout_marginRight="@dimen/list_margin"-->
+        <!--android:layout_marginStart="@dimen/list_margin"-->
+        <!--android:hint="@string/contas_pagar_pesquisa_label_forma_pagamento_hint"-->
+        <!--app:layout_constraintEnd_toEndOf="parent"-->
+        <!--app:layout_constraintLeft_toLeftOf="parent"-->
+        <!--app:layout_constraintRight_toRightOf="parent"-->
+        <!--app:layout_constraintStart_toStartOf="parent"-->
+        <!--app:layout_constraintTop_toBottomOf="@+id/label_valor" />-->
+
+    <!--<android.support.v7.widget.AppCompatTextView-->
+        <!--android:id="@+id/label_condicao_pagamento"-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginEnd="@dimen/list_margin"-->
+        <!--android:layout_marginLeft="@dimen/list_margin"-->
+        <!--android:layout_marginRight="@dimen/list_margin"-->
+        <!--android:layout_marginStart="@dimen/list_margin"-->
+        <!--android:hint="@string/contas_pagar_pesquisa_label_condicao_pagamento_hint"-->
+        <!--app:layout_constraintEnd_toEndOf="parent"-->
+        <!--app:layout_constraintLeft_toLeftOf="parent"-->
+        <!--app:layout_constraintRight_toRightOf="parent"-->
+        <!--app:layout_constraintStart_toStartOf="parent"-->
+        <!--app:layout_constraintTop_toBottomOf="@+id/label_forma_pagamento" />-->
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/label_numero_parcela"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/list_margin"
+        android:layout_marginLeft="@dimen/list_margin"
+        android:layout_marginRight="@dimen/list_margin"
+        android:layout_marginStart="@dimen/list_margin"
+        android:hint="@string/contas_pagar_pesquisa_label_numero_parcela_hint"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/label_valor" />
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/label_data_vencimento"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/list_margin"
+        android:layout_marginLeft="@dimen/list_margin"
+        android:layout_marginRight="@dimen/list_margin"
+        android:layout_marginStart="@dimen/list_margin"
+        android:hint="@string/contas_pagar_pesquisa_label_data_vencimento_hint"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/label_numero_parcela" />
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/label_montante_pago"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/list_margin"
+        android:layout_marginLeft="@dimen/list_margin"
+        android:layout_marginRight="@dimen/list_margin"
+        android:layout_marginStart="@dimen/list_margin"
+        android:hint="@string/contas_pagar_pesquisa_label_montante_pago_hint"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/label_data_vencimento" />
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/label_saldo_devedor"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/list_margin"
+        android:layout_marginLeft="@dimen/list_margin"
+        android:layout_marginRight="@dimen/list_margin"
+        android:layout_marginStart="@dimen/list_margin"
+        android:hint="@string/contas_pagar_pesquisa_label_saldo_devedor_hint"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/label_montante_pago" />
+
+    <android.support.v7.widget.AppCompatImageButton
+        android:id="@+id/button_remover_conta_pagar"
+        android:layout_width="@dimen/round_button_small_width"
+        android:layout_height="@dimen/round_button_small_height"
+        android:layout_marginEnd="@dimen/button_margin"
+        android:layout_marginRight="@dimen/button_margin"
+        android:background="@drawable/layout_componente_arredondado_transparente"
+        app:layout_constraintBottom_toBottomOf="@id/label_numero_parcela"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/label_numero_parcela"
+        app:srcCompat="@drawable/ic_lixeira_tomato_24dp" />
+
+    <View
+        android:id="@+id/divider_conta_pagar"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/list_divider_height"
+        android:layout_marginTop="@dimen/list_margin"
+        android:background="@color/accent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/label_saldo_devedor" />
+</android.support.constraint.ConstraintLayout>

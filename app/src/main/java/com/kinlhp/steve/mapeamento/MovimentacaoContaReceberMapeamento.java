@@ -82,8 +82,8 @@ public final class MovimentacaoContaReceberMapeamento implements Serializable {
 	public static MovimentacaoContaReceberDTO paraDTO(@NonNull MovimentacaoContaReceber dominio) {
 		return MovimentacaoContaReceberDTO.builder()
 				.baseCalculo(dominio.getBaseCalculo())
-				.condicaoPagamento(URL_BASE + "condicoespagamento/" + dominio.getCondicaoPagamento().getId().intValue())
-				.contaReceber(URL_BASE + "contasreceber/" + dominio.getContaReceber().getId().intValue())
+				.condicaoPagamento(URL_BASE + "condicoesPagamento/" + dominio.getCondicaoPagamento().getId().intValue())
+				.contaReceber(URL_BASE + "contasReceber/" + dominio.getContaReceber().getId().intValue())
 				.descontoConcedido(dominio.getDescontoConcedido())
 				.estornado(dominio.isEstornado())
 				.juroAplicado(dominio.getJuroAplicado())

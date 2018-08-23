@@ -313,7 +313,7 @@ public class ContaPagarCadastroFragment extends Fragment
 	private void consumirContaPagarGETCedente() {
 		// TODO: 9/21/17 corrigir hard-coded
 		String url = Parametro.get(Parametro.Chave.URL_BASE).toString()
-				.concat("contaspagar/%d/cedente");
+				.concat("contasPagar/%d/cedente");
 		HRef href = new HRef(String.format(url, mContaPagar.getId()));
 		++mTarefasPendentes;
 		ContaPagarRequisicao.getCedente(callbackContaPagarGETCedente(), href);

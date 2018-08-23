@@ -1,5 +1,7 @@
 package com.kinlhp.steve.dominio;
 
+import android.text.TextUtils;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
@@ -56,6 +58,13 @@ public class ContaPagar extends Dominio<BigInteger> {
 		if (movimentacoes == null || movimentacoes.isEmpty()) {
 			return valor;
 		}
+		else if (movimentacoes.size() == 1) {
+			for (MovimentacaoContaPagar movimentacao : movimentacoes) {
+				if (movimentacao.isEstornado()) {
+					return valor;
+				}
+			}
+		}
 		MovimentacaoContaPagar movimentacaoMaisRecente = MovimentacaoContaPagar
 				.builder().build();
 		for (MovimentacaoContaPagar movimentacao : movimentacoes) {
@@ -78,6 +87,15 @@ public class ContaPagar extends Dominio<BigInteger> {
 	public boolean hasSaldoDevedor() {
 		final BigDecimal saldoDevedor = getSaldoDevedor();
 		return BigDecimal.ZERO.compareTo(saldoDevedor) < 0;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder toString = new StringBuilder()
+				.append(numeroParcela != null ? " [parcela " + numeroParcela : "")
+					.append(situacao != null ? " - " + situacao.descricao + "]" : "")
+					.append(cedente != null && !TextUtils.isEmpty(cedente.getNomeRazao()) ? " - " + cedente.getNomeRazao() : "");
+		return toString.toString();
 	}
 
 	@AllArgsConstructor
